@@ -1,6 +1,6 @@
 .app-shell {
   min-height: 100vh;
-  padding: 1rem 1rem 5rem;
+  padding: 1rem 1rem 1rem;
   background:
     radial-gradient(circle at top, rgba(126, 208, 158, 0.18), transparent 32%),
     linear-gradient(180deg, rgba(7, 26, 21, 0.9), rgba(6, 18, 15, 0.98));

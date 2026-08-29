@@ -178,68 +178,30 @@ const [now, setNow] = useState(FIXED_NOW)
   }
 
   // Share PDF via WhatsApp (using Web Share API if available)
+  // Helper to create a minimal PDF with plain text content
+  const buildMinimalPdf = (entries) => {
+    // Simple PDF structure (very basic, enough for most viewers)
+    const header = `%PDF-1.4\n1 0 obj << /Type /Catalog /Pages 2 0 R >> endobj\n2 0 obj << /Type /Pages /Count 1 /Kids [3 0 R] >> endobj\n3 0 obj << /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 4 0 R /Resources << >> >> endobj\n4 0 obj << /Length 0 >> stream\nBT\n/F1 12 Tf\n100 750 Td (Ramadan Calendar) Tj\nET\n`;
+    const lines = entries.map((e, i) => `(${i + 1}) ${e.dayLabel} ${e.day} ${e.monthLabel} Sehri:${e.sehri} Iftar:${e.iftar}`).join(' ');
+    const content = `BT /F1 10 Tf 100 730 Td (${lines}) Tj ET\n`;
+    const footer = `\nendstream\nendobj\nxref\n0 5\n0000000000 65535 f \n0000000010 00000 n \n0000000060 00000 n \n0000000110 00000 n \n0000000220 00000 n \ntrailer << /Size 5 /Root 1 0 R >>\nstartxref\n330\n%%EOF`;
+    const pdfString = header + content + footer;
+    return new Blob([pdfString], { type: 'application/pdf' });
+  };
+
   const handleShareWhatsApp = async () => {
-    const rows = calendarEntries
-      .map(
-        (entry) => `
-          <tr>
-            <td>${entry.dayLabel} ${entry.day}</td>
-            <td>${entry.monthLabel}</td>
-            <td>${entry.sehri}</td>
-            <td>${entry.iftar}</td>
-          </tr>`,
-      )
-      .join('')
-    const footerHtml = `<div style="margin-top: 30px; text-align: center; font-size: 0.9rem; color: #555;">Iftyar.com</div>`
-    const html = `
-      <html>
-        <head>
-          <title>Ramadan Calendar</title>
-          <style>
-            body { font-family: Arial, sans-serif; padding: 28px; color: #111; }
-            table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-            th, td { border: 1px solid #dadde2; padding: 10px; text-align: left; }
-            th { background: #eff6ef; }
-            h1 { margin: 0 0 8px; }
-            .subtitle { color: #4a4a4a; margin-bottom: 18px; }
-          </style>
-        </head>
-        <body>
-          <h1>Ramadan Calendar</h1>
-          <div class="subtitle">${locationLabel}</div>
-          <table>
-            <thead>
-              <tr>
-                <th>Day</th>
-                <th>Month</th>
-                <th>Sehri</th>
-                <th>Iftar</th>
-              </tr>
-            </thead>
-            <tbody>${rows}</tbody>
-          </table>
-          ${footerHtml}
-        </body>
-      </html>`
-    // Convert HTML to Blob as PDF using Blob of type application/pdf is not directly a PDF, but we can share the HTML file.
-    const blob = new Blob([html], { type: 'text/html' })
-    const file = new File([blob], 'ramadan-calendar.pdf', { type: 'application/pdf' })
+    const file = new File([buildMinimalPdf(calendarEntries)], 'ramadan-calendar.pdf', { type: 'application/pdf' });
     if (navigator.canShare && navigator.canShare({ files: [file] })) {
       try {
-        await navigator.share({
-          files: [file],
-          title: 'Ramadan Calendar',
-          text: 'Ramadan Calendar PDF',
-        })
+        await navigator.share({ files: [file], title: 'Ramadan Calendar', text: 'Ramadan Calendar PDF' });
       } catch (e) {
-        console.error('Share failed', e)
+        console.error('Share failed', e);
       }
     } else {
-      // Fallback: open WhatsApp with a message and a link (cannot attach file)
-      const whatsappUrl = `https://wa.me/?text=${encodeURIComponent('Here is the Ramadan Calendar PDF:')}`
-      window.open(whatsappUrl, '_blank')
+      const whatsappUrl = `https://wa.me/?text=${encodeURIComponent('Here is the Ramadan Calendar PDF:')}`;
+      window.open(whatsappUrl, '_blank');
     }
-    setCalendarMenuOpen(false)
+    setCalendarMenuOpen(false);
   }
 
   const handleAddToCalendar = () => {
