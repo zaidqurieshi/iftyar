@@ -416,14 +416,27 @@
   transform: translateX(-50%);
 }
 
-/*
-  font-size: 0.78rem;
+/* Simple timer styles */
+.simple-timer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 1rem;
+}
+.simple-timer__label {
+  font-size: 0.8rem;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+.simple-timer__time {
+  font-size: 2.4rem; /* slightly larger */
   font-weight: 600;
   color: #bcefcf;
-  min-width: 3rem;
-  text-align: right;
+  font-family: inherit;
 }
-*/
+
+
 
 .ramadan-timer {
   margin-top: 1rem;
