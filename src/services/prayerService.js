@@ -74,7 +74,57 @@ export const CALCULATION_METHODS = [
     region: 'North America',
     getMethod: () => CalculationMethod.NorthAmerica(),
   },
-]
+  // Additional methods supported by the adhan library and present on iftarkar.com
+  {
+    id: 'moonsightingCommittee',
+    name: 'Moonsighting Committee',
+    school: 'Various',
+    region: 'International',
+    getMethod: () => CalculationMethod.MoonsightingCommittee(),
+  },
+  {
+    id: 'kuwait',
+    name: 'Kuwait',
+    school: '',
+    region: 'Kuwait',
+    getMethod: () => CalculationMethod.Kuwait(),
+  },
+  {
+    id: 'qatar',
+    name: 'Qatar',
+    school: '',
+    region: 'Qatar',
+    getMethod: () => CalculationMethod.Qatar(),
+  },
+  {
+    id: 'singapore',
+    name: 'Singapore',
+    school: '',
+    region: 'Singapore',
+    getMethod: () => CalculationMethod.Singapore(),
+  },
+  {
+    id: 'tehran',
+    name: 'Tehran',
+    school: '',
+    region: 'Iran',
+    getMethod: () => CalculationMethod.Tehran(),
+  },
+  {
+    id: 'turkey',
+    name: 'Turkey',
+    school: '',
+    region: 'Turkey',
+    getMethod: () => CalculationMethod.Turkey(),
+  },
+  {
+    id: 'other',
+    name: 'Other',
+    school: '',
+    region: '',
+    getMethod: () => CalculationMethod.Other(),
+  },
+];
 
 function buildPrayerCalculationParameters(methodId = 'muslimWorldLeague') {
   const method = CALCULATION_METHODS.find((m) => m.id === methodId)
