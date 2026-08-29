@@ -882,13 +882,14 @@ input:focus-visible {
 }
 
 @media (max-width: 600px) {
-.app-footer {
-  text-align: center;
-  padding: 0.5rem;
-  font-size: 0.75rem;
-  color: var(--muted);
-  pointer-events: none;
-}
+  .app-footer {
+    text-align: center;
+    padding: 0.5rem;
+    font-size: 1rem; /* increased size */
+    font-family: 'Mark Pro Bold', sans-serif; /* new font */
+    color: var(--muted);
+    pointer-events: none;
+  }
   .panel-card {
     padding: 0.5rem;
   }

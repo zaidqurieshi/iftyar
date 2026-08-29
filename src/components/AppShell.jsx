@@ -18,7 +18,7 @@ export default function AppShell() {
           <Outlet />
         </main>
 <footer className="app-footer">
-          Made by Sentinel - Remember Me and My parents in your prayers.
+          Made by Sentinel
         </footer>
       </div>
 
