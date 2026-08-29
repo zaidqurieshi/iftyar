@@ -57,6 +57,12 @@
   min-height: 0;
 }
 
+/* Reserve space for footer to prevent overlap */
+.main-content {
+  padding-bottom: 4rem;
+}
+
+
 .page-stack {
   display: grid;
   gap: 1rem;
