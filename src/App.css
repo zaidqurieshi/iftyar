@@ -880,3 +880,9 @@ input:focus-visible {
     padding: 1.35rem;
   }
 }
+
+@media (max-width: 600px) {
+  .panel-card {
+    padding: 0.5rem;
+  }
+}

@@ -12,6 +12,7 @@ import {
   getPrayerSchedule,
 } from '../services/prayerService'
 import { describeLocation } from '../services/locationService'
+import { formatHijri } from '../services/dateService'
 
 function HomePage({ location }) {
   const [now, setNow] = useState(new Date())
@@ -206,7 +207,7 @@ function HomePage({ location }) {
           </div>
           <div>
             <p className="eyebrow">Hijri</p>
-            <p className="meta-value">1447 AH</p>
+            <p className="meta-value">{formatHijri(now)}</p>
           </div>
         </div>
 
