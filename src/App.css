@@ -9,6 +9,9 @@
 .app-shell__inner {
   width: min(100%, 75rem);
   margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
 }
 
 .topbar {
@@ -55,11 +58,12 @@
 .main-content {
   display: block;
   min-height: 0;
+  flex: 1;
 }
 
 /* Reserve space for footer to prevent overlap */
 .main-content {
-  padding-bottom: 4rem;
+  padding-bottom: 2rem;
 }
 
 
@@ -892,9 +896,9 @@ input:focus-visible {
   display: flex;
   justify-content: center;
   align-items: center;
-  width: fit-content;
+  width: 100%;
   max-width: 90%;
-  margin: 1rem auto;
+  margin: 0 auto;
   padding: 0.5rem 1rem;
   font-size: 1rem;
   font-family: 'Mark Pro Bold', sans-serif;
@@ -905,6 +909,7 @@ input:focus-visible {
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   pointer-events: none;
+  margin-top: 1rem;
 }
 
 /* Keep panel-card padding small on mobile */
