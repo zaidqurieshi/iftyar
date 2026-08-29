@@ -881,15 +881,28 @@ input:focus-visible {
   }
 }
 
+/* Footer with glass morphism and centered */
+.app-footer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: fit-content;
+  max-width: 90%;
+  margin: 1rem auto;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  font-family: 'Mark Pro Bold', sans-serif;
+  color: var(--muted);
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 0.8rem;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  pointer-events: none;
+}
+
+/* Keep panel-card padding small on mobile */
 @media (max-width: 600px) {
-  .app-footer {
-    text-align: center;
-    padding: 0.5rem;
-    font-size: 1rem; /* increased size */
-    font-family: 'Mark Pro Bold', sans-serif; /* new font */
-    color: var(--muted);
-    pointer-events: none;
-  }
   .panel-card {
     padding: 0.5rem;
   }
