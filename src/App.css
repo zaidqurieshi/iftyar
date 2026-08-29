@@ -430,7 +430,7 @@
   text-transform: uppercase;
 }
 .simple-timer__time {
-  font-size: 2.4rem; /* slightly larger */
+  font-size: 3rem; /* increased size */
   font-weight: 600;
   color: #bcefcf;
   font-family: inherit;

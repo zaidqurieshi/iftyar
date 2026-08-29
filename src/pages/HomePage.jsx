@@ -257,12 +257,12 @@ const [now, setNow] = useState(FIXED_NOW)
 
       <GlassCard className="panel-card">
         <div className="section-head">
-          <h3>{activeFastingLabel}</h3>
+          
         </div>
 
         <div className="ramadan-timer-wrap">
           <CircularTimer
-            label={activeFastingLabel}
+            
             hours={activeCountdownHours}
             minutes={activeCountdownMinutes}
             seconds={activeCountdownSecondsOnly}
