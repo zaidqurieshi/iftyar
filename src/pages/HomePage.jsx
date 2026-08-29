@@ -190,25 +190,7 @@ const [now, setNow] = useState(FIXED_NOW)
     return new Blob([pdfString], { type: 'application/pdf' });
   };
 
-  const handleShareWhatsApp = async () => {
-    // Build a PDF calendar with the entries and share via WhatsApp / native share
-    const pdfBlob = buildMinimalPdf(calendarEntries);
-    const file = new File([pdfBlob], 'ramadan-calendar.pdf', { type: 'application/pdf' });
-    if (navigator.canShare && navigator.canShare({ files: [file] })) {
-      try {
-        await navigator.share({ files: [file], title: 'Ramadan Calendar', text: 'Ramadan Calendar PDF' });
-      } catch (e) {
-        console.error('Share failed', e);
-      }
-    } else {
-      // Fallback – open WhatsApp with a link to the PDF (since we can't attach file directly)
-      const url = URL.createObjectURL(pdfBlob);
-      const whatsappUrl = `https://wa.me/?text=${encodeURIComponent('Ramadan Calendar PDF: ' + url)}`;
-      window.open(whatsappUrl, '_blank');
-      setTimeout(() => URL.revokeObjectURL(url), 5000);
-    }
-    setCalendarMenuOpen(false);
-  }
+
 
   const handleAddToCalendar = () => {
     const title = `Ramadan Calendar - ${locationLabel}`
@@ -346,9 +328,11 @@ const [now, setNow] = useState(FIXED_NOW)
               <button type="button" className="ramadan-calendar__menu-item" onClick={handleAddToCalendar}>
                 Add to Calendar
               </button>
+                {/* Begin removed WhatsApp share block
                <button type="button" className="ramadan-calendar__menu-item" onClick={handleShareWhatsApp}>
                  Share via WhatsApp
                </button>
+                */}
             </div>
           </div>
         </div>
