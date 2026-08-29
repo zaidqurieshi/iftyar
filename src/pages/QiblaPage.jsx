@@ -4,10 +4,12 @@ import { calculateQiblaBearing, formatBearingText, getQiblaDisplay } from '../se
 
 function QiblaPage({ location }) {
   const [heading, setHeading] = useState(null)
+  const [compassPermission, setCompassPermission] = useState('checking')
   const orientationSupported = typeof window !== 'undefined' && 'DeviceOrientationEvent' in window
 
   useEffect(() => {
     if (!orientationSupported) {
+      setCompassPermission('unsupported')
       return undefined
     }
 
@@ -18,30 +20,47 @@ function QiblaPage({ location }) {
       }
     }
 
-    const requestPermission = async () => {
-      try {
-        if (
-          typeof DeviceOrientationEvent !== 'undefined' &&
-          typeof DeviceOrientationEvent.requestPermission === 'function'
-        ) {
-          const permission = await DeviceOrientationEvent.requestPermission()
-          if (permission !== 'granted') {
-            return
-          }
-        }
+    if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
+      setCompassPermission('prompt')
+      return undefined
+    }
 
-        window.addEventListener('deviceorientation', onOrientation)
-      } catch {
-        // Gracefully fall back when the browser blocks device orientation access.
+    window.addEventListener('deviceorientation', onOrientation, true)
+    setCompassPermission('granted')
+
+    return () => {
+      window.removeEventListener('deviceorientation', onOrientation, true)
+    }
+  }, [orientationSupported])
+
+  const enableCompass = async () => {
+    if (!orientationSupported) {
+      setCompassPermission('unsupported')
+      return
+    }
+
+    const onOrientation = (event) => {
+      const alpha = event?.webkitCompassHeading ?? event?.alpha
+      if (typeof alpha === 'number') {
+        setHeading((alpha + 360) % 360)
       }
     }
 
-    requestPermission()
+    try {
+      if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
+        const permission = await DeviceOrientationEvent.requestPermission()
+        if (permission !== 'granted') {
+          setCompassPermission('denied')
+          return
+        }
+      }
 
-    return () => {
-      window.removeEventListener('deviceorientation', onOrientation)
+      window.addEventListener('deviceorientation', onOrientation, true)
+      setCompassPermission('granted')
+    } catch {
+      setCompassPermission('denied')
     }
-  }, [orientationSupported])
+  }
 
   const qiblaInfo = useMemo(() => getQiblaDisplay(location.lat, location.lng, heading), [location.lat, location.lng, heading])
   const relativeBearing = heading === null ? null : ((qiblaInfo.bearing - heading + 360) % 360)
@@ -73,14 +92,24 @@ function QiblaPage({ location }) {
           </div>
           <div>
             <p className="eyebrow">Device heading</p>
-            <p className="meta-value">{heading === null ? 'Unavailable' : `${Math.round(heading)}°`}</p>
+            <p className="meta-value">{heading === null ? 'Waiting…' : `${Math.round(heading)}°`}</p>
           </div>
         </div>
 
+        {orientationSupported && compassPermission !== 'granted' && (
+          <button type="button" className="action-button action-button--secondary" onClick={enableCompass}>
+            {compassPermission === 'denied' ? 'Allow compass access' : 'Enable compass'}
+          </button>
+        )}
+
         <p className="supporting-copy">
-          {orientationSupported
-            ? 'Use your device orientation to align the compass to the Kaaba.'
-            : 'Orientation is not available on this device or browser. The bearing below still shows the correct Kaaba direction for manual use.'}
+          {compassPermission === 'granted'
+            ? 'Your compass is active. Hold your phone level and turn until the needle points to the Kaaba.'
+            : compassPermission === 'denied'
+              ? 'Compass access was blocked. Please allow motion & orientation access to use the live Qibla compass.'
+              : orientationSupported
+                ? 'Allow access to your phone sensors to use the live Qibla compass.'
+                : 'Orientation is not available on this device or browser. The bearing still shows the correct Kaaba direction for manual use.'}
         </p>
       </GlassCard>
 

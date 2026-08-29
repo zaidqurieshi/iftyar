@@ -1,6 +1,6 @@
 .app-shell {
   min-height: 100vh;
-  padding: 1rem 1rem calc(6.5rem + env(safe-area-inset-bottom));
+  padding: 1rem 1rem 5rem;
   background:
     radial-gradient(circle at top, rgba(126, 208, 158, 0.18), transparent 32%),
     linear-gradient(180deg, rgba(7, 26, 21, 0.9), rgba(6, 18, 15, 0.98));
@@ -54,6 +54,7 @@
 
 .main-content {
   display: block;
+  min-height: 0;
 }
 
 .page-stack {
@@ -711,6 +712,41 @@
   border-radius: 0.9rem;
   padding: 0.9rem 1rem;
   transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.calendar-actions {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.7rem;
+  margin-top: 1rem;
+}
+
+.calendar-grid {
+  display: grid;
+  gap: 0.7rem;
+  margin-top: 1rem;
+}
+
+.calendar-row {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 1fr;
+  gap: 0.75rem;
+  align-items: center;
+  padding: 0.75rem 0.8rem;
+  border-radius: 0.9rem;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  color: var(--soft);
+}
+
+.calendar-row span {
+  color: var(--muted);
+}
+
+.calendar-row strong {
+  color: var(--text);
+  font-size: 0.9rem;
+  font-weight: 600;
 }
 
 .action-button:focus-visible,

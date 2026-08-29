@@ -262,6 +262,81 @@ export function getPrayerSourceNote() {
   return 'Prayer times are calculated deterministically using the Adhan library.'
 }
 
+export function generateRamadanCalendarEntries(lat, lng, baseDate = new Date(), methodId = 'muslimWorldLeague', days = 30) {
+  const entries = []
+
+  for (let index = 0; index < days; index += 1) {
+    const date = new Date(baseDate.getFullYear(), baseDate.getMonth(), index + 1)
+    const schedule = getPrayerSchedule(lat, lng, date, methodId)
+    const fajr = schedule.find((entry) => entry.key === 'fajr')
+    const maghrib = schedule.find((entry) => entry.key === 'maghrib')
+
+    if (!fajr || !maghrib) {
+      continue
+    }
+
+    entries.push({
+      date,
+      day: date.getDate(),
+      dayLabel: new Intl.DateTimeFormat('en-US', { weekday: 'short' }).format(date),
+      monthLabel: new Intl.DateTimeFormat('en-US', { month: 'short' }).format(date),
+      sehri: formatPrayerTime(fajr.time),
+      iftar: formatPrayerTime(maghrib.time),
+    })
+  }
+
+  return entries
+}
+
+export function buildRamadanCalendarIcs(entries, title = 'Ramadan Calendar') {
+  const lines = [
+    'BEGIN:VCALENDAR',
+    'VERSION:2.0',
+    'PRODID:-//Iftyar//Ramadan Calendar//EN',
+    'CALSCALE:GREGORIAN',
+  ]
+
+  entries.forEach((entry) => {
+    const startDate = new Date(entry.date)
+    const endDate = new Date(entry.date)
+    endDate.setHours(23, 59, 59)
+
+    const formatIcsDate = (date) => {
+      const pad = (value) => String(value).padStart(2, '0')
+      return `${date.getUTCFullYear()}${pad(date.getUTCMonth() + 1)}${pad(date.getUTCDate())}T${pad(date.getUTCHours())}${pad(date.getUTCMinutes())}${pad(date.getUTCSeconds())}Z`
+    }
+
+    lines.push('BEGIN:VEVENT')
+    lines.push(`UID:ramadan-${entry.day}-${startDate.getTime()}@iftyar`)
+    lines.push(`DTSTAMP:${formatIcsDate(new Date())}`)
+    lines.push(`DTSTART:${formatIcsDate(startDate)}`)
+    lines.push(`DTEND:${formatIcsDate(endDate)}`)
+    lines.push(`SUMMARY:${title}`)
+    lines.push(`DESCRIPTION:Sehri ${entry.sehri} | Iftar ${entry.iftar}`)
+    lines.push('END:VEVENT')
+  })
+
+  lines.push('END:VCALENDAR')
+  return lines.join('\r\n')
+}
+
+export function buildGoogleCalendarUrl(entries, title = 'Ramadan Calendar') {
+  const eventText = `${title} - ${entries[0]?.sehri || 'Sehri'} / ${entries[0]?.iftar || 'Iftar'}`
+  const firstEvent = entries[0]
+  if (!firstEvent) {
+    return 'https://calendar.google.com/calendar/render?action=TEMPLATE&text=Ramadan+Calendar'
+  }
+
+  const start = new Date(firstEvent.date)
+  start.setHours(18, 0, 0, 0)
+  const end = new Date(firstEvent.date)
+  end.setHours(19, 0, 0, 0)
+
+  const formatGoogleDate = (date) => date.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z'
+
+  return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(eventText)}&details=${encodeURIComponent('Sehri and Iftar timings for Ramadan')}&location=${encodeURIComponent('Local Ramadan schedule')}&dates=${formatGoogleDate(start)}/${formatGoogleDate(end)}`
+}
+
 export function getCalculationMethodInfo(methodId = 'muslimWorldLeague') {
   const method = CALCULATION_METHODS.find((m) => m.id === methodId)
   return method || CALCULATION_METHODS[0]
