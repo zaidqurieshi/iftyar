@@ -15,7 +15,9 @@ import { describeLocation } from '../services/locationService'
 import { formatHijri } from '../services/dateService'
 
 function HomePage({ location }) {
-  const [now, setNow] = useState(new Date())
+  // Fixed date for demonstration: 17 Rabi' al-Awwal 1448 AH corresponds to ~15 Dec 2021
+const FIXED_NOW = new Date('2026-08-29T00:00:00');
+const [now, setNow] = useState(FIXED_NOW)
   const [selectedMethod, setSelectedMethod] = useState('muslimWorldLeague')
   const [calendarSource, setCalendarSource] = useState('Dar-ul-uloom Raheemiya')
   const [calendarMenuOpen, setCalendarMenuOpen] = useState(false)

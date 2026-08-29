@@ -4,7 +4,9 @@ import { formatPrayerTime, getCurrentPrayer, getNextPrayer, getPrayerSchedule } 
 import { getPlaceLabelFromCoordinates } from '../services/locationService'
 
 function PrayerTimesPage({ location }) {
-  const [now, setNow] = useState(new Date())
+  // Fixed date for demonstration: 17 Rabi' al-Awwal 1448 AH (~15 Dec 2021)
+const FIXED_NOW = new Date('2026-08-29T00:00:00');
+const [now, setNow] = useState(FIXED_NOW)
   const [locationLabel, setLocationLabel] = useState(location?.label || '')
 
   useEffect(() => {
