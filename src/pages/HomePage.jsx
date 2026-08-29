@@ -4,7 +4,6 @@ import DuaCard from '../components/DuaCard'
 import CircularTimer from '../components/CircularTimer'
 import MethodSelector from '../components/MethodSelector'
 import {
-  buildGoogleCalendarUrl,
   buildRamadanCalendarIcs,
   formatPrayerTime,
   generateRamadanCalendarEntries,
@@ -17,6 +16,8 @@ import { describeLocation } from '../services/locationService'
 function HomePage({ location }) {
   const [now, setNow] = useState(new Date())
   const [selectedMethod, setSelectedMethod] = useState('muslimWorldLeague')
+  const [calendarSource, setCalendarSource] = useState('Dar-ul-uloom Raheemiya')
+  const [calendarMenuOpen, setCalendarMenuOpen] = useState(false)
 
   useEffect(() => {
     const timer = window.setInterval(() => setNow(new Date()), 1000)
@@ -109,26 +110,82 @@ function HomePage({ location }) {
     printWindow.print()
   }
 
-  const handleDownloadIcs = () => {
-    const calendarText = buildRamadanCalendarIcs(calendarEntries, `Ramadan Calendar - ${locationLabel}`)
-    const blob = new Blob([calendarText], { type: 'text/calendar;charset=utf-8' })
-    const url = URL.createObjectURL(blob)
-    const link = document.createElement('a')
-    link.href = url
-    link.download = 'ramadan-calendar.ics'
-    document.body.appendChild(link)
-    link.click()
-    document.body.removeChild(link)
-    URL.revokeObjectURL(url)
-  }
+  const isAppleDevice = /iPhone|iPad|Mac/i.test(navigator.userAgent) && !/Windows/i.test(navigator.userAgent)
 
   const handleDownloadPdf = () => {
-    handlePrintCalendar()
+    const printWindow = window.open('', '_blank', 'width=1000,height=900')
+    if (!printWindow) {
+      return
+    }
+
+    const rows = calendarEntries
+      .map(
+        (entry) => `
+          <tr>
+            <td>${entry.dayLabel} ${entry.day}</td>
+            <td>${entry.monthLabel}</td>
+            <td>${entry.sehri}</td>
+            <td>${entry.iftar}</td>
+          </tr>`,
+      )
+      .join('')
+
+    printWindow.document.write(`
+      <html>
+        <head>
+          <title>Ramadan Calendar</title>
+          <style>
+            body { font-family: Arial, sans-serif; padding: 28px; color: #111; }
+            table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+            th, td { border: 1px solid #dadde2; padding: 10px; text-align: left; }
+            th { background: #eff6ef; }
+            h1 { margin: 0 0 8px; }
+            .subtitle { color: #4a4a4a; margin-bottom: 18px; }
+          </style>
+        </head>
+        <body>
+          <h1>Ramadan Calendar</h1>
+          <div class="subtitle">${locationLabel}</div>
+          <table>
+            <thead>
+              <tr>
+                <th>Day</th>
+                <th>Month</th>
+                <th>Sehri</th>
+                <th>Iftar</th>
+              </tr>
+            </thead>
+            <tbody>${rows}</tbody>
+          </table>
+        </body>
+      </html>
+    `)
+    printWindow.document.close()
+    printWindow.focus()
+    setTimeout(() => printWindow.print(), 250)
+    setCalendarMenuOpen(false)
   }
 
-  const handleGoogleCalendar = () => {
-    const googleUrl = buildGoogleCalendarUrl(calendarEntries, `Ramadan Calendar - ${locationLabel}`)
-    window.open(googleUrl, '_blank', 'noopener,noreferrer')
+  const handleAddToCalendar = () => {
+    const title = `Ramadan Calendar - ${locationLabel}`
+    const calendarText = buildRamadanCalendarIcs(calendarEntries, title)
+
+    if (isAppleDevice) {
+      const blob = new Blob([calendarText], { type: 'text/calendar;charset=utf-8' })
+      const url = URL.createObjectURL(blob)
+      const link = document.createElement('a')
+      link.href = url
+      link.download = 'ramadan-calendar.ics'
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+      URL.revokeObjectURL(url)
+    } else {
+      const calendarUrl = buildGoogleCalendarUrl(calendarEntries, title)
+      window.open(calendarUrl, '_blank', 'noopener,noreferrer')
+    }
+
+    setCalendarMenuOpen(false)
   }
 
   return (
@@ -205,33 +262,48 @@ function HomePage({ location }) {
       <DuaCard />
 
       <GlassCard className="panel-card">
-        <div className="section-head">
-          <h3>Ramadan Calendar</h3>
-        </div>
+        <div className="ramadan-calendar">
+          <label className="ramadan-calendar__selector-wrap">
+            <span className="ramadan-calendar__label">Calendar source</span>
+            <select
+              className="ramadan-calendar__selector"
+              value={calendarSource}
+              onChange={(event) => setCalendarSource(event.target.value)}
+            >
+              {[
+                'Dar-ul-uloom Raheemiya',
+                'Educational Trust Kashmir',
+                'Jamiat Ahle Hadees J&K',
+                'Soutul Awliya Trust, J&K',
+                'All J&K Shia Association',
+                'Bangalore - Jamiat Ulama-I-Karnataka',
+                'Mumbai - Jamiatul Abrar Siddique Educational Trust',
+                'Faridabad, Haryana',
+              ].map((name) => (
+                <option key={name} value={name}>{name}</option>
+              ))}
+            </select>
+          </label>
 
-        <div className="calendar-actions">
-          <button type="button" className="action-button" onClick={handlePrintCalendar}>
-            Print / Save as PDF
-          </button>
-          <button type="button" className="action-button action-button--secondary" onClick={handleDownloadPdf}>
-            Download PDF
-          </button>
-          <button type="button" className="action-button action-button--secondary" onClick={handleDownloadIcs}>
-            Download .ics
-          </button>
-          <button type="button" className="action-button action-button--secondary" onClick={handleGoogleCalendar}>
-            Open Google Calendar
-          </button>
-        </div>
+          <div className="ramadan-calendar__action-wrap">
+            <button
+              type="button"
+              className="ramadan-calendar__button"
+              onClick={() => setCalendarMenuOpen((open) => !open)}
+            >
+              <span className="ramadan-calendar__icon" aria-hidden="true">📅</span>
+              <span>Get Ramadan Calendar</span>
+            </button>
 
-        <div className="calendar-grid">
-          {calendarEntries.slice(0, 10).map((entry) => (
-            <div key={entry.day} className="calendar-row">
-              <span>{entry.dayLabel} {entry.day}</span>
-              <strong>{entry.sehri}</strong>
-              <strong>{entry.iftar}</strong>
+            <div className={`ramadan-calendar__menu ${calendarMenuOpen ? 'ramadan-calendar__menu--open' : ''}`}>
+              <button type="button" className="ramadan-calendar__menu-item" onClick={handleDownloadPdf}>
+                Download PDF
+              </button>
+              <button type="button" className="ramadan-calendar__menu-item" onClick={handleAddToCalendar}>
+                Add to Calendar
+              </button>
             </div>
-          ))}
+          </div>
         </div>
       </GlassCard>
     </div>

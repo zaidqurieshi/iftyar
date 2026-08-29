@@ -2,9 +2,7 @@ import { NavLink } from 'react-router-dom'
 
 const navItems = [
   { to: '/', label: 'Home', icon: '⌂' },
-  { to: '/qibla', label: 'Qibla', icon: '◌' },
   { to: '/prayer-times', label: 'Prayer Times', icon: '◔' },
-  { to: '/settings', label: 'Settings', icon: '⚙' },
 ]
 
 export default function BottomNav() {
