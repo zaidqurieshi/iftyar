@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import GlassCard from '../components/GlassCard'
 import DuaCard from '../components/DuaCard'
-import CircularTimer from '../components/CircularTimer'
+import CircularTimer from '../components/CircularTimerNew'
 import MethodSelector from '../components/MethodSelector'
 import {
   buildRamadanCalendarIcs,

@@ -1,4 +1,15 @@
 .app-shell {
+/*
+@font-face {
+  font-family: 'RoxboroughCF';
+  src: url('./assets/fonts/RoxboroughCF.woff2') format('woff2'),
+       url('./assets/fonts/RoxboroughCF.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+*/
+/* stray brace */
+
   min-height: 100vh;
   padding: 1rem 1rem 1rem;
   background:
@@ -30,6 +41,7 @@
 }
 
 .brand-block__mark {
+  font-family: 'RoxboroughCF';
   width: 2.5rem;
   height: 2.5rem;
   border-radius: 0.9rem;
@@ -43,7 +55,7 @@
 }
 
 .brand-title {
-  font-family: 'Noe Display', 'NoeDisplay', Georgia, serif;
+  font-family: 'RoxboroughCF', Georgia, serif;
   font-size: clamp(1.1rem, 4vw, 1.7rem);
   letter-spacing: -0.04em;
 }
@@ -370,6 +382,48 @@
   min-width: 3rem;
   text-align: right;
 }
+
+/* New layout for circular timer */
+.circular-timer {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.circular-timer__svg {
+  transform: rotate(-90deg); /* start at top */
+}
+
+.circular-timer__progress-circle {
+  transition: stroke-dashoffset 0.5s ease;
+}
+
+.circular-timer__time-text {
+  fill: #bcefcf;
+  font-family: inherit;
+  font-size: 1.4rem;
+  font-weight: 600;
+}
+
+.circular-timer__percentage-wrap {
+  position: absolute;
+  bottom: -1.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+/*
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #bcefcf;
+  min-width: 3rem;
+  text-align: right;
+}
+*/
 
 .ramadan-timer {
   margin-top: 1rem;
