@@ -16,7 +16,8 @@ import { formatHijri } from '../services/dateService'
 
 function HomePage({ location }) {
   // Fixed date for demonstration: 17 Rabi' al-Awwal 1448 AH corresponds to ~15 Dec 2021
-const FIXED_NOW = new Date('2026-08-29T00:00:00');
+// Use UTC to avoid timezone shift that changes the Hijri date
+const FIXED_NOW = new Date(Date.UTC(2026, 7, 29, 0, 0, 0));
 const [now, setNow] = useState(FIXED_NOW)
   const [selectedMethod, setSelectedMethod] = useState('muslimWorldLeague')
   const [calendarSource, setCalendarSource] = useState('Dar-ul-uloom Raheemiya')
@@ -190,7 +191,9 @@ const [now, setNow] = useState(FIXED_NOW)
   };
 
   const handleShareWhatsApp = async () => {
-    const file = new File([buildMinimalPdf(calendarEntries)], 'ramadan-calendar.pdf', { type: 'application/pdf' });
+    // Build a PDF calendar with the entries and share via WhatsApp / native share
+    const pdfBlob = buildMinimalPdf(calendarEntries);
+    const file = new File([pdfBlob], 'ramadan-calendar.pdf', { type: 'application/pdf' });
     if (navigator.canShare && navigator.canShare({ files: [file] })) {
       try {
         await navigator.share({ files: [file], title: 'Ramadan Calendar', text: 'Ramadan Calendar PDF' });
@@ -198,8 +201,11 @@ const [now, setNow] = useState(FIXED_NOW)
         console.error('Share failed', e);
       }
     } else {
-      const whatsappUrl = `https://wa.me/?text=${encodeURIComponent('Here is the Ramadan Calendar PDF:')}`;
+      // Fallback – open WhatsApp with a link to the PDF (since we can't attach file directly)
+      const url = URL.createObjectURL(pdfBlob);
+      const whatsappUrl = `https://wa.me/?text=${encodeURIComponent('Ramadan Calendar PDF: ' + url)}`;
       window.open(whatsappUrl, '_blank');
+      setTimeout(() => URL.revokeObjectURL(url), 5000);
     }
     setCalendarMenuOpen(false);
   }
