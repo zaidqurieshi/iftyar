@@ -1,7 +1,8 @@
-export default function CircularTimer({ hours, minutes, seconds, totalSeconds, currentSeconds, label }) {
-  const safeTotalSeconds = Number.isFinite(totalSeconds) && totalSeconds > 0 ? totalSeconds : 1
-  const safeCurrentSeconds = Number.isFinite(currentSeconds) ? Math.max(0, currentSeconds) : 0
-  const progress = Math.max(0, Math.min(100, (safeCurrentSeconds / safeTotalSeconds) * 100))
+export default function CircularTimer({ hours, minutes, seconds, totalSeconds = 1, currentSeconds = 0, label }) {
+  // Ensure we always have a positive total to avoid division by zero
+  const safeTotal = Number.isFinite(totalSeconds) && totalSeconds > 0 ? totalSeconds : 1;
+  const safeCurrent = Number.isFinite(currentSeconds) && currentSeconds >= 0 ? currentSeconds : 0;
+  const progress = Math.min(100, Math.max(0, (safeCurrent / safeTotal) * 100));
 
   return (
     <div className="circular-timer">
@@ -26,5 +27,5 @@ export default function CircularTimer({ hours, minutes, seconds, totalSeconds, c
         <span className="circular-timer__percentage">{Math.round(progress)}%</span>
       </div>
     </div>
-  )
+  );
 }
