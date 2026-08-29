@@ -1,14 +1,22 @@
 import { useEffect, useMemo, useState } from 'react'
 import GlassCard from '../components/GlassCard'
 import { formatPrayerTime, getCurrentPrayer, getNextPrayer, getPrayerSchedule } from '../services/prayerService'
+import { getPlaceLabelFromCoordinates } from '../services/locationService'
 
 function PrayerTimesPage({ location }) {
   const [now, setNow] = useState(new Date())
+  const [locationLabel, setLocationLabel] = useState(location?.label || '')
 
   useEffect(() => {
     const timer = window.setInterval(() => setNow(new Date()), 1000)
     return () => window.clearInterval(timer)
   }, [])
+
+  useEffect(() => {
+    if (location.lat !== undefined && location.lng !== undefined) {
+      getPlaceLabelFromCoordinates(location.lat, location.lng).then(setLocationLabel)
+    }
+  }, [location.lat, location.lng])
 
   const schedule = useMemo(() => getPrayerSchedule(location.lat, location.lng, now), [location.lat, location.lng, now])
   const nextPrayer = useMemo(() => getNextPrayer(location.lat, location.lng, now), [location.lat, location.lng, now])
@@ -40,6 +48,12 @@ function PrayerTimesPage({ location }) {
 
         <div className="section-head prayer-times-subhead">
           <span className="section-pill">{currentPrayer.name}</span>
+        </div>
+
+        {/* Location label */}
+        <div className="prayer-times-location">
+          <p className="eyebrow">Location</p>
+          <p className="meta-value">{locationLabel || 'Loading…'}</p>
         </div>
 
         <div className="prayer-list prayer-list--full">
