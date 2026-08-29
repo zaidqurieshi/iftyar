@@ -235,7 +235,7 @@ export function getIftarSehriPlaceholder(lat, lng, now = new Date(), methodId = 
   const maghrib = schedule.find((entry) => entry.key === 'maghrib')
 
   const sehriTime = fajr
-    ? new Date(fajr.time.getTime() - (60 * 60 * 1000 + 60 * 1000)) // Subtract 1 hour and 1 minute to match iftarkar.com
+    ? new Date(fajr.time) // Use Fajr time directly as Sehri to match iftarkar.com
     : new Date(now.getTime() + (60 * 60 * 1000 + 60 * 1000))
 
   const iftarTime = maghrib ? maghrib.time : new Date(now.getTime() + 2 * 60 * 60 * 1000)
