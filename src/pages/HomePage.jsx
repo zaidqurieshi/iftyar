@@ -131,6 +131,9 @@ function HomePage({ location }) {
       )
       .join('')
 
+    // Include footer with Iftyar.com
+    const footerHtml = `<div style="margin-top: 30px; text-align: center; font-size: 0.9rem; color: #555;">Iftyar.com</div>`
+
     printWindow.document.write(`
       <html>
         <head>
@@ -158,12 +161,78 @@ function HomePage({ location }) {
             </thead>
             <tbody>${rows}</tbody>
           </table>
+          ${footerHtml}
         </body>
       </html>
     `)
     printWindow.document.close()
     printWindow.focus()
     setTimeout(() => printWindow.print(), 250)
+    setCalendarMenuOpen(false)
+  }
+
+  // Share PDF via WhatsApp (using Web Share API if available)
+  const handleShareWhatsApp = async () => {
+    const rows = calendarEntries
+      .map(
+        (entry) => `
+          <tr>
+            <td>${entry.dayLabel} ${entry.day}</td>
+            <td>${entry.monthLabel}</td>
+            <td>${entry.sehri}</td>
+            <td>${entry.iftar}</td>
+          </tr>`,
+      )
+      .join('')
+    const footerHtml = `<div style="margin-top: 30px; text-align: center; font-size: 0.9rem; color: #555;">Iftyar.com</div>`
+    const html = `
+      <html>
+        <head>
+          <title>Ramadan Calendar</title>
+          <style>
+            body { font-family: Arial, sans-serif; padding: 28px; color: #111; }
+            table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+            th, td { border: 1px solid #dadde2; padding: 10px; text-align: left; }
+            th { background: #eff6ef; }
+            h1 { margin: 0 0 8px; }
+            .subtitle { color: #4a4a4a; margin-bottom: 18px; }
+          </style>
+        </head>
+        <body>
+          <h1>Ramadan Calendar</h1>
+          <div class="subtitle">${locationLabel}</div>
+          <table>
+            <thead>
+              <tr>
+                <th>Day</th>
+                <th>Month</th>
+                <th>Sehri</th>
+                <th>Iftar</th>
+              </tr>
+            </thead>
+            <tbody>${rows}</tbody>
+          </table>
+          ${footerHtml}
+        </body>
+      </html>`
+    // Convert HTML to Blob as PDF using Blob of type application/pdf is not directly a PDF, but we can share the HTML file.
+    const blob = new Blob([html], { type: 'text/html' })
+    const file = new File([blob], 'ramadan-calendar.pdf', { type: 'application/pdf' })
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      try {
+        await navigator.share({
+          files: [file],
+          title: 'Ramadan Calendar',
+          text: 'Ramadan Calendar PDF',
+        })
+      } catch (e) {
+        console.error('Share failed', e)
+      }
+    } else {
+      // Fallback: open WhatsApp with a message and a link (cannot attach file)
+      const whatsappUrl = `https://wa.me/?text=${encodeURIComponent('Here is the Ramadan Calendar PDF:')}`
+      window.open(whatsappUrl, '_blank')
+    }
     setCalendarMenuOpen(false)
   }
 
@@ -303,6 +372,9 @@ function HomePage({ location }) {
               <button type="button" className="ramadan-calendar__menu-item" onClick={handleAddToCalendar}>
                 Add to Calendar
               </button>
+               <button type="button" className="ramadan-calendar__menu-item" onClick={handleShareWhatsApp}>
+                 Share via WhatsApp
+               </button>
             </div>
           </div>
         </div>
