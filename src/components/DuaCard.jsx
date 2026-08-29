@@ -14,18 +14,18 @@ export default function DuaCard() {
   const duas = {
     sehri: [
       {
-        arabic: 'نَوَيْتُ أَنْ أَصُومَ غَدًا مِنْ شَهْرِ رَمَضَانَ',
-        english: '"I intend to fast tomorrow in the month of Ramadan."',
-      },
-      {
-        arabic: 'اللهم بك آمنت وبك توكلت وعلى رزقك اتكلت',
-        english: '"O Allah, in You I have faith, in You I put my trust, and on You I rely for sustenance."',
+        arabic: 'وَبِصَوْمِ غَدٍ نَّوَيْتُ مِنْ شَهْرِ رَمَضَانَ',
+        english: 'I intend to keep the fast for tomorrow in the month of Ramadan',
       },
     ],
     iftar: [
       {
-        arabic: 'اَللّٰهُمَّ لَكَ صُمْنَا وَبِكَ آمَنَّا وَعَلَى رِزْقِكَ أَفْطَرْنَا',
-        english: '"O Allah, for You we fasted, in You we believed, and with Your provision we broke our fast."',
+        arabic: 'اللَّهُمَّ اِنِّى لَكَ صُمْتُ وَبِكَ امنْتُ وَعَليْكَ تَوَكّلتُ وَعَلى رِزْقِكَ اَفْطَرْتُ',
+        english: 'O Allah! I fasted for You and I believe in You and I put my trust in You and I break my fast with Your sustenance',
+      },
+      {
+        arabic: 'ذَهَبَ الظَّمَأُ وَابْتَلَّتِ الْعُرُوقُ وَثَبَتَ الأَجْرُ إِنْ شَاءَ اللَّهُ',
+        english: 'Thirst has gone, the arteries are moist, and the reward is sure, if Allah wills.',
       },
     ],
   }
@@ -59,9 +59,11 @@ export default function DuaCard() {
 
   return (
     <GlassCard className="dua-card">
-      {renderSection('Dua Sehri', 'sehri', duas.sehri)}
+      {renderSection('Dua Sahar', 'sehri', duas.sehri)}
       <div className="dua-divider" />
-      {renderSection('Dua Iftar', 'iftar', duas.iftar)}
+      {renderSection('Dua Iftar - 1', 'iftar', [duas.iftar[0]])}
+      <div className="dua-divider" />
+      {renderSection('Dua Iftar - 2', 'iftar-2', [duas.iftar[1]])}
     </GlassCard>
   )
 }

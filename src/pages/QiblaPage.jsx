@@ -14,7 +14,7 @@ function QiblaPage({ location }) {
     const onOrientation = (event) => {
       const alpha = event?.webkitCompassHeading ?? event?.alpha
       if (typeof alpha === 'number') {
-        setHeading(alpha)
+        setHeading((alpha + 360) % 360)
       }
     }
 
@@ -44,8 +44,8 @@ function QiblaPage({ location }) {
   }, [orientationSupported])
 
   const qiblaInfo = useMemo(() => getQiblaDisplay(location.lat, location.lng, heading), [location.lat, location.lng, heading])
-
-  const rotateDegrees = heading === null ? 0 : ((qiblaInfo.relativeHeading ?? 0) * -1)
+  const relativeBearing = heading === null ? null : ((qiblaInfo.bearing - heading + 360) % 360)
+  const rotateDegrees = relativeBearing === null ? 0 : (360 - relativeBearing)
 
   return (
     <div className="page-stack">
@@ -78,7 +78,7 @@ function QiblaPage({ location }) {
         </div>
 
         <p className="supporting-copy">
-          {orientationAvailable
+          {orientationSupported
             ? 'Use your device orientation to align the compass to the Kaaba.'
             : 'Orientation is not available on this device or browser. The bearing below still shows the correct Kaaba direction for manual use.'}
         </p>

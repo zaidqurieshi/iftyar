@@ -122,19 +122,6 @@ function HomePage({ location }) {
       </GlassCard>
 
       <DuaCard />
-
-      <div className="home-grid">
-        <GlassCard className="mini-card">
-          <p className="eyebrow">Qibla</p>
-          <h3>Quick direction</h3>
-          <p className="supporting-copy">Find the Kaaba with a precise compass-ready signal.</p>
-        </GlassCard>
-      </div>
-
-      <GlassCard className="panel-card panel-card--subtle">
-        <p className="eyebrow">Calculation source</p>
-        <p className="supporting-copy">{getPrayerSourceNote()}</p>
-      </GlassCard>
     </div>
   )
 }
