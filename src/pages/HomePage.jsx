@@ -45,6 +45,10 @@ function HomePage({ location }) {
   const activeCountdownHours = Math.floor(activeCountdownSeconds / 3600)
   const activeCountdownMinutes = Math.floor((activeCountdownSeconds % 3600) / 60)
   const activeCountdownSecondsOnly = activeCountdownSeconds % 60
+  // Total fasting duration (Sehri to Iftar) in seconds for the circular timer
+  const fastingTotalSeconds = Math.max(0, Math.floor((iftarSehri.iftarTime - iftarSehri.sehriTime) / 1000))
+  // Elapsed seconds since Sehri (used for progress). Before Sehri, progress is 0.
+  const fastingElapsedSeconds = now >= iftarSehri.sehriTime ? Math.max(0, Math.floor((now - iftarSehri.sehriTime) / 1000)) : 0
 
   const locationLabel = location.label || describeLocation(location.lat, location.lng)
   const calendarEntries = useMemo(
@@ -310,8 +314,8 @@ function HomePage({ location }) {
             hours={activeCountdownHours}
             minutes={activeCountdownMinutes}
             seconds={activeCountdownSecondsOnly}
-            totalSeconds={24 * 60 * 60}
-            currentSeconds={Math.max(0, activeCountdownSeconds)}
+            totalSeconds={fastingTotalSeconds}
+            currentSeconds={fastingElapsedSeconds}
           />
 
           <div className="ramadan-timer__details">
