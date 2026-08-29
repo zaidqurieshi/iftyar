@@ -74,6 +74,63 @@ export const CALCULATION_METHODS = [
     region: 'North America',
     getMethod: () => CalculationMethod.NorthAmerica(),
   },
+  // Additional regional methods requested by the client
+  {
+    id: 'fiqah-hanafiya-darul-uloom-raheemiyya',
+    name: "Fiqah Hanafiya (Dar-ul-uloom Raheemiyа)",
+    school: '',
+    region: '',
+    getMethod: () => CalculationMethod.MuslimWorldLeague(),
+  },
+  {
+    id: 'fiqah-jaffaria-educational-trust-kashmir',
+    name: "Fiqah Jaffaria (Educational Trust Kashmir)",
+    school: '',
+    region: '',
+    getMethod: () => CalculationMethod.MuslimWorldLeague(),
+  },
+  {
+    id: 'jamiat-ahle-hadees-jk',
+    name: "Jamiat Ahle Hadees J&K",
+    school: '',
+    region: '',
+    getMethod: () => CalculationMethod.MuslimWorldLeague(),
+  },
+  {
+    id: 'soutul-awliya-trust-jk',
+    name: "Soutul Awliya Trust, J&K",
+    school: '',
+    region: '',
+    getMethod: () => CalculationMethod.MuslimWorldLeague(),
+  },
+  {
+    id: 'all-jk-shia-association',
+    name: "All J&K Shia Association",
+    school: '',
+    region: '',
+    getMethod: () => CalculationMethod.MuslimWorldLeague(),
+  },
+  {
+    id: 'bangalore-jamiat-ulama-i-karnataka',
+    name: "Bangalore - Jamiat Ulama-I-Karnataka",
+    school: '',
+    region: '',
+    getMethod: () => CalculationMethod.MuslimWorldLeague(),
+  },
+  {
+    id: 'mumbai-jamiatul-abrar-siddique-educational-trust',
+    name: "Mumbai - Jamiatul Abrar Siddique Educational Trust",
+    school: '',
+    region: '',
+    getMethod: () => CalculationMethod.MuslimWorldLeague(),
+  },
+  {
+    id: 'faridabad-haryana',
+    name: "Faridabad, Haryana",
+    school: '',
+    region: '',
+    getMethod: () => CalculationMethod.MuslimWorldLeague(),
+  },
   // Additional methods supported by the adhan library and present on iftarkar.com
   {
     id: 'moonsightingCommittee',
