@@ -17,6 +17,9 @@ export default function AppShell() {
         <main className="main-content">
           <Outlet />
         </main>
+<footer className="app-footer">
+          Made by Sentinel - Remember Me and My parents in your prayers.
+        </footer>
       </div>
 
       <BottomNav />
