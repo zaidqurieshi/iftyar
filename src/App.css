@@ -902,8 +902,8 @@ input:focus-visible {
   bottom: max(0.75rem, env(safe-area-inset-bottom));
   transform: translateX(-50%);
   width: min(calc(100% - 1.25rem), 19rem);
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  display: flex;
+  justify-content: space-between;
   gap: 0.35rem;
   padding: 0.35rem;
   border-radius: 1rem;
