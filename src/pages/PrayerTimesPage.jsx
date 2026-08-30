@@ -2,12 +2,13 @@ import { useEffect, useMemo, useState } from 'react'
 import GlassCard from '../components/GlassCard'
 import { formatPrayerTime, getCurrentPrayer, getNextPrayer, getPrayerSchedule } from '../services/prayerService'
 import { getPlaceLabelFromCoordinates } from '../services/locationService'
+import MethodSelector from '../components/MethodSelector'
 
 function PrayerTimesPage({ location }) {
-  // Fixed date for demonstration: 17 Rabi' al-Awwal 1448 AH (~15 Dec 2021)
-const FIXED_NOW = new Date('2026-08-29T00:00:00');
-const [now, setNow] = useState(FIXED_NOW)
+  // Use current date/time (updates automatically)
+  const [now, setNow] = useState(new Date())
   const [locationLabel, setLocationLabel] = useState(location?.label || '')
+  const [selectedMethod, setSelectedMethod] = useState('muslimWorldLeague')
 
   useEffect(() => {
     const timer = window.setInterval(() => setNow(new Date()), 1000)
@@ -20,9 +21,9 @@ const [now, setNow] = useState(FIXED_NOW)
     }
   }, [location.lat, location.lng])
 
-  const schedule = useMemo(() => getPrayerSchedule(location.lat, location.lng, now), [location.lat, location.lng, now])
-  const nextPrayer = useMemo(() => getNextPrayer(location.lat, location.lng, now), [location.lat, location.lng, now])
-  const currentPrayer = useMemo(() => getCurrentPrayer(location.lat, location.lng, now), [location.lat, location.lng, now])
+  const schedule = useMemo(() => getPrayerSchedule(location.lat, location.lng, now, selectedMethod), [location.lat, location.lng, now, selectedMethod])
+  const nextPrayer = useMemo(() => getNextPrayer(location.lat, location.lng, now, selectedMethod), [location.lat, location.lng, now, selectedMethod])
+  const currentPrayer = useMemo(() => getCurrentPrayer(location.lat, location.lng, now, selectedMethod), [location.lat, location.lng, now, selectedMethod])
 
   const remainingMs = Math.max(0, nextPrayer.time.getTime() - now.getTime())
   const remainingSeconds = Math.floor(remainingMs / 1000)
@@ -57,6 +58,7 @@ const [now, setNow] = useState(FIXED_NOW)
           <p className="eyebrow">Location</p>
           <p className="meta-value">{locationLabel || 'Loading…'}</p>
         </div>
+        <MethodSelector selectedMethod={selectedMethod} onMethodChange={setSelectedMethod} />
 
         <div className="prayer-list prayer-list--full">
           {schedule.map((item) => (
