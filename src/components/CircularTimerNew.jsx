@@ -14,66 +14,17 @@ export default function CircularTimer({
   hours,
   minutes,
   seconds,
-  totalSeconds = 0,
-  currentSeconds = 0,
   label,
 }) {
-  // Guard against division by zero
-  const progress = totalSeconds > 0 ? Math.min(Math.max(currentSeconds / totalSeconds, 0), 1) : 0;
-  const radius = 50;
-  const circumference = 2 * Math.PI * radius;
-  const offset = circumference - progress * circumference;
+  // Combine time parts into a string
+  const timeString = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
 
   return (
-    <div className="circular-timer" style={{ width: '120px', height: '120px', position: 'relative' }}>
-      {label && <p className="circular-timer__label" style={{ textAlign: 'center', marginBottom: '0.4rem' }}>{label}</p>}
-      <svg
-        className="circular-timer__svg"
-        width="120"
-        height="120"
-        viewBox="0 0 120 120"
-        style={{ transform: 'rotate(-90deg)' }}
-      >
-        {/* Background circle */}
-        <circle
-          cx="60"
-          cy="60"
-          r={radius}
-          stroke="#e0e0e0"
-          strokeWidth="8"
-          fill="none"
-        />
-        {/* Progress circle */}
-        <circle
-          cx="60"
-          cy="60"
-          r={radius}
-          stroke="url(#gradient)"
-          strokeWidth="8"
-          fill="none"
-          strokeDasharray={circumference}
-          strokeDashoffset={offset}
-          className="circular-timer__progress-circle"
-        />
-        {/* Gradient definition */}
-        <defs>
-          <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="#76DD99" />
-            <stop offset="100%" stopColor="#5CB88A" />
-          </linearGradient>
-        </defs>
-        {/* Time text */}
-        <text
-          x="60"
-          y="60"
-          textAnchor="middle"
-          dy="0.3em"
-          className="circular-timer__time-text"
-          style={{ fontSize: '1.2rem', fill: '#bcefcf', fontFamily: 'inherit' }}
-        >
-          {String(hours).padStart(2, '0')}:{String(minutes).padStart(2, '0')}:{String(seconds).padStart(2, '0')}
-        </text>
-      </svg>
+    <div className="circular-timer" style={{ textAlign: 'center', width: '100%' }}>
+      {label && <p className="circular-timer__label" style={{ marginBottom: '0.4rem', fontSize: '1rem' }}>{label}</p>}
+      <p className="circular-timer__time-text" style={{ fontSize: '3rem', fontWeight: '600', color: '#bcefcf', margin: 0 }}>
+        {timeString}
+      </p>
     </div>
   );
 }
