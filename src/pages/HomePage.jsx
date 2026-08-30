@@ -38,20 +38,35 @@ const [now, setNow] = useState(FIXED_NOW)
   const countdownMinutes = Math.floor((remainingSeconds % 3600) / 60)
   const countdownSeconds = remainingSeconds % 60
 
-  const isSehriCountdown = now < iftarSehri.sehriTime
-  const activeFastingTarget = isSehriCountdown ? iftarSehri.sehriTime : iftarSehri.iftarTime
-  const activeFastingLabel = isSehriCountdown
-    ? `Sehri - ${iftarSehri.sehriLabel}`
-    : `Iftar - ${iftarSehri.iftarLabel}`
-  const activeCountdownMs = Math.max(0, activeFastingTarget.getTime() - now.getTime())
-  const activeCountdownSeconds = Math.floor(activeCountdownMs / 1000)
-  const activeCountdownHours = Math.floor(activeCountdownSeconds / 3600)
-  const activeCountdownMinutes = Math.floor((activeCountdownSeconds % 3600) / 60)
-  const activeCountdownSecondsOnly = activeCountdownSeconds % 60
-  // Total fasting duration (Sehri to Iftar) in seconds for the circular timer
-  const fastingTotalSeconds = Math.max(0, Math.floor((iftarSehri.iftarTime - iftarSehri.sehriTime) / 1000))
-  // Elapsed seconds since Sehri (used for progress). Before Sehri, progress is 0.
-  const fastingElapsedSeconds = now >= iftarSehri.sehriTime ? Math.max(0, Math.floor((now - iftarSehri.sehriTime) / 1000)) : 0
+  // Determine the current phase and appropriate target times
+  let activeFastingTarget, activeFastingLabel, fastingTotalSeconds, fastingElapsedSeconds;
+  if (now < iftarSehri.sehriTime) {
+    // Before Sehri
+    activeFastingTarget = iftarSehri.sehriTime;
+    activeFastingLabel = `Sehri - ${iftarSehri.sehriLabel}`;
+    fastingTotalSeconds = Math.max(0, Math.floor((iftarSehri.iftarTime - iftarSehri.sehriTime) / 1000));
+    fastingElapsedSeconds = 0;
+  } else if (now < iftarSehri.iftarTime) {
+    // Between Sehri and Iftar
+    activeFastingTarget = iftarSehri.iftarTime;
+    activeFastingLabel = `Iftar - ${iftarSehri.iftarLabel}`;
+    fastingTotalSeconds = Math.max(0, Math.floor((iftarSehri.iftarTime - iftarSehri.sehriTime) / 1000));
+    fastingElapsedSeconds = Math.max(0, Math.floor((now - iftarSehri.sehriTime) / 1000));
+  } else {
+    // After Iftar - start counting to next day's Sehri
+    const tomorrow = new Date(now);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    const tomorrowSehri = getIftarSehriPlaceholder(location.lat, location.lng, tomorrow, selectedMethod);
+    activeFastingTarget = tomorrowSehri.sehriTime;
+    activeFastingLabel = `Sehri - ${tomorrowSehri.sehriLabel}`;
+    fastingTotalSeconds = Math.max(0, Math.floor((tomorrowSehri.iftarTime - tomorrowSehri.sehriTime) / 1000));
+    fastingElapsedSeconds = 0;
+  }
+  const activeCountdownMs = Math.max(0, activeFastingTarget.getTime() - now.getTime());
+  const activeCountdownSeconds = Math.floor(activeCountdownMs / 1000);
+  const activeCountdownHours = Math.floor(activeCountdownSeconds / 3600);
+  const activeCountdownMinutes = Math.floor((activeCountdownSeconds % 3600) / 60);
+  const activeCountdownSecondsOnly = activeCountdownSeconds % 60;
 
   const locationLabel = location.label || describeLocation(location.lat, location.lng)
   const calendarEntries = useMemo(
@@ -268,6 +283,7 @@ const [now, setNow] = useState(FIXED_NOW)
             seconds={activeCountdownSecondsOnly}
             totalSeconds={fastingTotalSeconds}
             currentSeconds={fastingElapsedSeconds}
+            label={activeFastingLabel}
           />
 
           <div className="ramadan-timer__details">
