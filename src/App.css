@@ -891,10 +891,10 @@ input:focus-visible {
   left: 50%;
   bottom: max(0.75rem, env(safe-area-inset-bottom));
   transform: translateX(-50%);
-  width: min(calc(100% - 1.25rem), 22rem);
+  width: min(calc(100% - 1.25rem), 16rem);
   display: flex;
-  justify-content: space-between;
-  gap: 0.35rem;
+  justify-content: center;
+  gap: 0.15rem;
   padding: 0.35rem;
   border-radius: 1rem;
   background: rgba(17, 31, 26, 0.72);
@@ -906,6 +906,7 @@ input:focus-visible {
 }
 
 .bottom-nav__link {
+  flex: 1;
   min-height: 2.7rem;
   display: flex;
   flex-direction: column;

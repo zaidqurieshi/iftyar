@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import GlassCard from './GlassCard'
 
 const IFTYAR_URL = 'https://iftyar.com'
@@ -10,7 +10,10 @@ const FALLBACK_HADITH = {
 const HADITH_API_URL = 'https://random-hadith-generator.vercel.app/hadith/'
 
 async function getDailyHadith(signal) {
-  const response = await fetch(HADITH_API_URL, { signal })
+  const response = await fetch(`${HADITH_API_URL}?refresh=${Date.now()}`, {
+    signal,
+    cache: 'no-store',
+  })
   if (!response.ok) throw new Error('Hadith request failed.')
 
   const data = await response.json()
@@ -63,10 +66,10 @@ function drawHadithImage(hadith) {
 }
 
 export default function HadithCard() {
-  const [hadith, setHadith] = useState(FALLBACK_HADITH)
+  const [hadith, setHadith] = useState(null)
   const [isLoading, setIsLoading] = useState(true)
-  const [imageUrl, setImageUrl] = useState('')
   const [shareStatus, setShareStatus] = useState('')
+  const imageUrl = useMemo(() => (hadith ? drawHadithImage(hadith) : ''), [hadith])
 
   useEffect(() => {
     const controller = new AbortController()
@@ -78,10 +81,6 @@ export default function HadithCard() {
       .finally(() => setIsLoading(false))
     return () => controller.abort()
   }, [])
-
-  useEffect(() => {
-    setImageUrl(drawHadithImage(hadith))
-  }, [hadith])
 
   const handleShare = async () => {
     if (!imageUrl) return
