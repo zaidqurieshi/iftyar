@@ -10,15 +10,20 @@ import {
   getIftarSehriPlaceholder,
   getNextPrayer,
   getPrayerSchedule,
+  DEFAULT_METHOD_ID,
 } from '../services/prayerService'
 import { describeLocation } from '../services/locationService'
 import { formatHijri, getTimeZoneForCoordinates } from '../services/dateService'
 
 function HomePage({ location }) {
   const [now, setNow] = useState(() => new Date())
-  const [selectedMethod, setSelectedMethod] = useState('muslimWorldLeague')
+  const [selectedMethod, setSelectedMethod] = useState(DEFAULT_METHOD_ID)
   const [calendarSource, setCalendarSource] = useState('Dar-ul-uloom Raheemiya')
   const [calendarMenuOpen, setCalendarMenuOpen] = useState(false)
+  const locationTimeZone = useMemo(
+    () => getTimeZoneForCoordinates(location.lat, location.lng),
+    [location.lat, location.lng],
+  )
 
   useEffect(() => {
     const timer = window.setInterval(() => setNow(new Date()), 1000)
@@ -27,7 +32,7 @@ function HomePage({ location }) {
 
   const schedule = useMemo(() => getPrayerSchedule(location.lat, location.lng, now, selectedMethod), [location.lat, location.lng, now, selectedMethod])
   const nextPrayer = useMemo(() => getNextPrayer(location.lat, location.lng, now, selectedMethod), [location.lat, location.lng, now, selectedMethod])
-  const iftarSehri = useMemo(() => getIftarSehriPlaceholder(location.lat, location.lng, now, selectedMethod), [location.lat, location.lng, now, selectedMethod])
+  const iftarSehri = useMemo(() => getIftarSehriPlaceholder(location.lat, location.lng, now, selectedMethod, locationTimeZone), [location.lat, location.lng, now, selectedMethod, locationTimeZone])
 
   const remainingMs = Math.max(0, nextPrayer.time.getTime() - now.getTime())
   const remainingSeconds = Math.floor(remainingMs / 1000)
@@ -53,7 +58,7 @@ function HomePage({ location }) {
     // After Iftar - start counting to next day's Sehri
     const tomorrow = new Date(now);
     tomorrow.setDate(tomorrow.getDate() + 1);
-    const tomorrowSehri = getIftarSehriPlaceholder(location.lat, location.lng, tomorrow, selectedMethod);
+    const tomorrowSehri = getIftarSehriPlaceholder(location.lat, location.lng, tomorrow, selectedMethod, locationTimeZone);
     activeFastingTarget = tomorrowSehri.sehriTime;
     activeFastingLabel = `Sehri - ${tomorrowSehri.sehriLabel}`;
     fastingTotalSeconds = Math.max(0, Math.floor((tomorrowSehri.iftarTime - tomorrowSehri.sehriTime) / 1000));
@@ -66,10 +71,6 @@ function HomePage({ location }) {
   const activeCountdownSecondsOnly = activeCountdownSeconds % 60;
 
   const locationLabel = location.label || describeLocation(location.lat, location.lng)
-  const locationTimeZone = useMemo(
-    () => getTimeZoneForCoordinates(location.lat, location.lng),
-    [location.lat, location.lng],
-  )
   const calendarEntries = useMemo(
     () => generateRamadanCalendarEntries(location.lat, location.lng, now, selectedMethod, 30),
     [location.lat, location.lng, now, selectedMethod],
@@ -258,7 +259,7 @@ function HomePage({ location }) {
           <div className="next-prayer__row">
             <div>
               <h3>{nextPrayer.name}</h3>
-              <p>{formatPrayerTime(nextPrayer.time)}</p>
+              <p>{formatPrayerTime(nextPrayer.time, locationTimeZone)}</p>
             </div>
             <div className="countdown" aria-live="polite">
               <span>{String(countdownHours).padStart(2, '0')}</span>

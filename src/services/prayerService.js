@@ -1,5 +1,7 @@
 import { CalculationMethod, Coordinates, PrayerTimes, Madhab } from 'adhan'
 
+export const DEFAULT_METHOD_ID = 'darulUloomRaheemiya'
+
 export const PRAYER_ORDER = ['fajr', 'sunrise', 'dhuhr', 'asr', 'maghrib', 'isha']
 
 export const PRAYER_LABELS = {
@@ -23,21 +25,21 @@ const REFERENCE_OFFSETS = {
 // Iftarkar's default profile uses the Dar-ul-uloom Raheemiya timetable
 // convention: MWL angles with Hanafi Asr calculation.
 export const IFTARKAR_OFFSETS = {
-  fajr: 0,
+  fajr: -1,
   sunrise: 0,
   dhuhr: 0,
-  asr: 0,
-  maghrib: 0,
-  isha: 0,
+  asr: 3,
+  maghrib: 6,
+  isha: 4,
 }
 
 export const CALCULATION_METHODS = [
   {
-    id: 'muslimWorldLeague',
+    id: DEFAULT_METHOD_ID,
     name: 'Dar-ul-uloom Raheemiya',
     school: 'Fiqah Hanafiya',
     region: 'Srinagar',
-    getMethod: () => CalculationMethod.MuslimWorldLeague(),
+    getMethod: () => CalculationMethod.Karachi(),
   },
   {
     id: 'egyptian',
@@ -134,26 +136,25 @@ export const CALCULATION_METHODS = [
   
 ];
 
-function buildPrayerCalculationParameters(methodId = 'muslimWorldLeague') {
+function buildPrayerCalculationParameters(methodId = DEFAULT_METHOD_ID) {
   const method = CALCULATION_METHODS.find((m) => m.id === methodId)
   const params = method ? method.getMethod() : CalculationMethod.MuslimWorldLeague()
 
-  // Use iftarkar.com offsets for the default Muslim World League method
-  const offsets = methodId === 'muslimWorldLeague' ? IFTARKAR_OFFSETS : REFERENCE_OFFSETS
+  const offsets = methodId === DEFAULT_METHOD_ID ? IFTARKAR_OFFSETS : REFERENCE_OFFSETS
 
   params.methodAdjustments = {
     ...params.methodAdjustments,
     ...offsets,
   }
 
-  if (methodId === 'muslimWorldLeague') {
+  if (methodId === DEFAULT_METHOD_ID) {
     params.madhab = Madhab.Hanafi
   }
 
   return params
 }
 
-function buildPrayerTimes(date, lat, lng, methodId = 'muslimWorldLeague') {
+function buildPrayerTimes(date, lat, lng, methodId = DEFAULT_METHOD_ID) {
   const coordinates = new Coordinates(lat, lng)
   const params = buildPrayerCalculationParameters(methodId)
   const prayerTimes = new PrayerTimes(coordinates, date, params)
@@ -168,7 +169,7 @@ function buildPrayerTimes(date, lat, lng, methodId = 'muslimWorldLeague') {
   }
 }
 
-export function getPrayerSchedule(lat, lng, selectedDate = new Date(), methodId = 'muslimWorldLeague') {
+export function getPrayerSchedule(lat, lng, selectedDate = new Date(), methodId = DEFAULT_METHOD_ID) {
   const prayerTimes = buildPrayerTimes(selectedDate, lat, lng, methodId)
 
   return PRAYER_ORDER.map((key) => ({
@@ -178,7 +179,7 @@ export function getPrayerSchedule(lat, lng, selectedDate = new Date(), methodId 
   }))
 }
 
-export function getNextPrayer(lat, lng, now = new Date(), methodId = 'muslimWorldLeague') {
+export function getNextPrayer(lat, lng, now = new Date(), methodId = DEFAULT_METHOD_ID) {
   const schedule = getPrayerSchedule(lat, lng, now, methodId)
   const next = schedule.find((item) => item.time > now)
 
@@ -193,7 +194,7 @@ export function getNextPrayer(lat, lng, now = new Date(), methodId = 'muslimWorl
   return nextDaySchedule[0]
 }
 
-export function getCurrentPrayer(lat, lng, now = new Date(), methodId = 'muslimWorldLeague') {
+export function getCurrentPrayer(lat, lng, now = new Date(), methodId = DEFAULT_METHOD_ID) {
   const schedule = getPrayerSchedule(lat, lng, now, methodId)
   const previousPrayer = [...schedule].reverse().find((item) => item.time <= now)
 
@@ -221,8 +222,9 @@ export function getPrayerCountdownText(lat, lng, now = new Date()) {
   return [hours, minutes, seconds].map((value) => String(value).padStart(2, '0')).join(':')
 }
 
-export function formatPrayerTime(dateValue) {
+export function formatPrayerTime(dateValue, timeZone) {
   return new Intl.DateTimeFormat('en-US', {
+    timeZone,
     hour: 'numeric',
     minute: '2-digit',
   }).format(dateValue)
@@ -247,9 +249,9 @@ export function getHijriPlaceholder() {
   return '1447 AH • placeholder'
 }
 
-export function getPrayerStateLabel(lat, lng, now = new Date()) {
-  const current = getCurrentPrayer(lat, lng, now)
-  const next = getNextPrayer(lat, lng, now)
+export function getPrayerStateLabel(lat, lng, now = new Date(), methodId = DEFAULT_METHOD_ID) {
+  const current = getCurrentPrayer(lat, lng, now, methodId)
+  const next = getNextPrayer(lat, lng, now, methodId)
 
   return {
     current,
@@ -257,7 +259,7 @@ export function getPrayerStateLabel(lat, lng, now = new Date()) {
   }
 }
 
-export function compilePrayerSummary(lat, lng, now = new Date(), methodId = 'muslimWorldLeague') {
+export function compilePrayerSummary(lat, lng, now = new Date(), methodId = DEFAULT_METHOD_ID) {
   const schedule = getPrayerSchedule(lat, lng, now, methodId)
   const current = getCurrentPrayer(lat, lng, now, methodId)
   const next = getNextPrayer(lat, lng, now, methodId)
@@ -270,7 +272,7 @@ export function compilePrayerSummary(lat, lng, now = new Date(), methodId = 'mus
   }
 }
 
-export function getPrayerByKey(lat, lng, key, date = new Date(), methodId = 'muslimWorldLeague') {
+export function getPrayerByKey(lat, lng, key, date = new Date(), methodId = DEFAULT_METHOD_ID) {
   const query = key.toLowerCase()
   const schedule = getPrayerSchedule(lat, lng, date, methodId)
   return schedule.find((entry) => entry.key.toLowerCase() === query)
@@ -278,7 +280,7 @@ export function getPrayerByKey(lat, lng, key, date = new Date(), methodId = 'mus
 
 export const prayerTimeNames = ['Fajr', 'Sunrise', 'Dhuhr', 'Asr', 'Maghrib', 'Isha']
 
-export function getNextPrayerInfo(lat, lng, now = new Date(), methodId = 'muslimWorldLeague') {
+export function getNextPrayerInfo(lat, lng, now = new Date(), methodId = DEFAULT_METHOD_ID) {
   const next = getNextPrayer(lat, lng, now, methodId)
   return {
     ...next,
@@ -291,7 +293,7 @@ export function isRamadanContext() {
   return false
 }
 
-export function getIftarSehriPlaceholder(lat, lng, now = new Date(), methodId = 'muslimWorldLeague') {
+export function getIftarSehriPlaceholder(lat, lng, now = new Date(), methodId = DEFAULT_METHOD_ID, timeZone) {
   const schedule = getPrayerSchedule(lat, lng, now, methodId)
   const fajr = schedule.find((entry) => entry.key === 'fajr')
   const maghrib = schedule.find((entry) => entry.key === 'maghrib')
@@ -312,8 +314,8 @@ export function getIftarSehriPlaceholder(lat, lng, now = new Date(), methodId = 
     sehriTime,
     iftarCountdown,
     sehriCountdown,
-    sehriLabel: formatPrayerTime(sehriTime),
-    iftarLabel: formatPrayerTime(iftarTime),
+    sehriLabel: formatPrayerTime(sehriTime, timeZone),
+    iftarLabel: formatPrayerTime(iftarTime, timeZone),
     iftarStatus: `Time remaining of Iftar: ${iftarCountdown}`,
     sehriStatus: `Time remaining for Sehri: ${sehriCountdown}`,
     message: 'Fasting times calculated using your selected prayer calculation method.',
@@ -324,7 +326,7 @@ export function getPrayerSourceNote() {
   return 'Prayer times are calculated deterministically using the Adhan library.'
 }
 
-export function generateRamadanCalendarEntries(lat, lng, baseDate = new Date(), methodId = 'muslimWorldLeague', days = 30) {
+export function generateRamadanCalendarEntries(lat, lng, baseDate = new Date(), methodId = DEFAULT_METHOD_ID, days = 30) {
   const entries = []
 
   for (let index = 0; index < days; index += 1) {
@@ -399,12 +401,12 @@ export function buildGoogleCalendarUrl(entries, title = 'Ramadan Calendar') {
   return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(eventText)}&details=${encodeURIComponent('Sehri and Iftar timings for Ramadan')}&location=${encodeURIComponent('Local Ramadan schedule')}&dates=${formatGoogleDate(start)}/${formatGoogleDate(end)}`
 }
 
-export function getCalculationMethodInfo(methodId = 'muslimWorldLeague') {
+export function getCalculationMethodInfo(methodId = DEFAULT_METHOD_ID) {
   const method = CALCULATION_METHODS.find((m) => m.id === methodId)
   return method || CALCULATION_METHODS[0]
 }
 
-export function getCurrentPrayerByNow(lat, lng, now = new Date(), methodId = 'muslimWorldLeague') {
+export function getCurrentPrayerByNow(lat, lng, now = new Date(), methodId = DEFAULT_METHOD_ID) {
   const schedule = getPrayerSchedule(lat, lng, now, methodId)
 
   let current = schedule[0]

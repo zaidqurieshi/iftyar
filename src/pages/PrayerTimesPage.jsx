@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import GlassCard from '../components/GlassCard'
-import { formatPrayerTime, getCurrentPrayer, getNextPrayer, getPrayerSchedule } from '../services/prayerService'
+import { DEFAULT_METHOD_ID, formatPrayerTime, getCurrentPrayer, getNextPrayer, getPrayerSchedule } from '../services/prayerService'
+import { getTimeZoneForCoordinates } from '../services/dateService'
 import { getPlaceLabelFromCoordinates } from '../services/locationService'
 import MethodSelector from '../components/MethodSelector'
 
@@ -8,7 +9,7 @@ function PrayerTimesPage({ location }) {
   // Use current date/time (updates automatically)
   const [now, setNow] = useState(new Date())
   const [locationLabel, setLocationLabel] = useState(location?.label || '')
-  const [selectedMethod, setSelectedMethod] = useState('muslimWorldLeague')
+  const [selectedMethod, setSelectedMethod] = useState(DEFAULT_METHOD_ID)
 
   useEffect(() => {
     const timer = window.setInterval(() => setNow(new Date()), 1000)
@@ -24,6 +25,7 @@ function PrayerTimesPage({ location }) {
   const schedule = useMemo(() => getPrayerSchedule(location.lat, location.lng, now, selectedMethod), [location.lat, location.lng, now, selectedMethod])
   const nextPrayer = useMemo(() => getNextPrayer(location.lat, location.lng, now, selectedMethod), [location.lat, location.lng, now, selectedMethod])
   const currentPrayer = useMemo(() => getCurrentPrayer(location.lat, location.lng, now, selectedMethod), [location.lat, location.lng, now, selectedMethod])
+  const locationTimeZone = useMemo(() => getTimeZoneForCoordinates(location.lat, location.lng), [location.lat, location.lng])
 
   const remainingMs = Math.max(0, nextPrayer.time.getTime() - now.getTime())
   const remainingSeconds = Math.floor(remainingMs / 1000)
@@ -67,7 +69,7 @@ function PrayerTimesPage({ location }) {
               className={`prayer-row ${item.key === nextPrayer.key ? 'prayer-row--next' : ''} ${item.key === currentPrayer.key ? 'prayer-row--current' : ''}`}
             >
               <span className="prayer-name">{item.name}</span>
-              <span className="prayer-time">{formatPrayerTime(item.time)}</span>
+              <span className="prayer-time">{formatPrayerTime(item.time, locationTimeZone)}</span>
             </div>
           ))}
         </div>

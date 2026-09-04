@@ -1,7 +1,7 @@
 export const defaultLocation = {
-  lat: 51.5074,
-  lng: -0.1278,
-  label: 'Central London',
+  lat: 34.0837,
+  lng: 74.7973,
+  label: 'Srinagar, Jammu and Kashmir',
   source: 'fallback',
 }
 
