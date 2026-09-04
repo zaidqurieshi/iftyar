@@ -142,6 +142,9 @@
   padding: 0;
   position: relative;
   z-index: 15;
+  /* The dropdown renders below the card (top: 100%) — without this it is
+     clipped by .glass-card's overflow: hidden and appears invisible. */
+  overflow: visible;
 }
 
 .method-selector__button {
@@ -153,6 +156,7 @@
   padding: 1rem;
   background: none;
   border: none;
+  border-radius: inherit;
   color: inherit;
   font-family: inherit;
   cursor: pointer;
@@ -552,6 +556,9 @@
 
 .prayer-times-card {
   padding: 1rem;
+  /* MethodSelector is nested inside this card on the prayer times page —
+     allow its dropdown to escape this card's overflow: hidden clip. */
+  overflow: visible;
 }
 
 .prayer-times-header {
