@@ -1,4 +1,4 @@
-import { CalculationMethod, Coordinates, PrayerTimes } from 'adhan'
+import { CalculationMethod, Coordinates, PrayerTimes, Madhab } from 'adhan'
 
 export const PRAYER_ORDER = ['fajr', 'sunrise', 'dhuhr', 'asr', 'maghrib', 'isha']
 
@@ -20,8 +20,8 @@ const REFERENCE_OFFSETS = {
   isha: 0,
 }
 
-// Iftarkar.com uses Dar-ul-uloom Raheemiya methodology with these offsets
-// This ensures maximum accuracy and alignment with the reference site
+// Iftarkar's default profile uses the Dar-ul-uloom Raheemiya timetable
+// convention: MWL angles with Hanafi Asr calculation.
 export const IFTARKAR_OFFSETS = {
   fajr: 0,
   sunrise: 0,
@@ -34,9 +34,9 @@ export const IFTARKAR_OFFSETS = {
 export const CALCULATION_METHODS = [
   {
     id: 'muslimWorldLeague',
-    name: 'Muslim World League',
+    name: 'Dar-ul-uloom Raheemiya',
     school: 'Fiqah Hanafiya',
-    region: 'Dar-ul-uloom Raheemiya - Srinagar',
+    region: 'Srinagar',
     getMethod: () => CalculationMethod.MuslimWorldLeague(),
   },
   {
@@ -144,6 +144,10 @@ function buildPrayerCalculationParameters(methodId = 'muslimWorldLeague') {
   params.methodAdjustments = {
     ...params.methodAdjustments,
     ...offsets,
+  }
+
+  if (methodId === 'muslimWorldLeague') {
+    params.madhab = Madhab.Hanafi
   }
 
   return params

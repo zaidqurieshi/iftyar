@@ -1,5 +1,16 @@
-export function formatHijri(date) {
-  const formatter = new Intl.DateTimeFormat('en-u-ca-islamic', {
+import tzlookup from 'tz-lookup'
+
+export function getTimeZoneForCoordinates(lat, lng) {
+  try {
+    return tzlookup(Number(lat), Number(lng))
+  } catch {
+    return Intl.DateTimeFormat().resolvedOptions().timeZone
+  }
+}
+
+export function formatHijri(date, timeZone) {
+  const formatter = new Intl.DateTimeFormat('en-u-ca-islamic-umalqura', {
+    timeZone,
     day: 'numeric',
     month: 'long',
     year: 'numeric',

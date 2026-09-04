@@ -12,13 +12,10 @@ import {
   getPrayerSchedule,
 } from '../services/prayerService'
 import { describeLocation } from '../services/locationService'
-import { formatHijri } from '../services/dateService'
+import { formatHijri, getTimeZoneForCoordinates } from '../services/dateService'
 
 function HomePage({ location }) {
-  // Fixed date for demonstration: 17 Rabi' al-Awwal 1448 AH corresponds to ~15 Dec 2021
-// Use UTC to avoid timezone shift that changes the Hijri date
-const FIXED_NOW = new Date(Date.UTC(2026, 7, 29, 0, 0, 0));
-const [now, setNow] = useState(FIXED_NOW)
+  const [now, setNow] = useState(() => new Date())
   const [selectedMethod, setSelectedMethod] = useState('muslimWorldLeague')
   const [calendarSource, setCalendarSource] = useState('Dar-ul-uloom Raheemiya')
   const [calendarMenuOpen, setCalendarMenuOpen] = useState(false)
@@ -69,11 +66,16 @@ const [now, setNow] = useState(FIXED_NOW)
   const activeCountdownSecondsOnly = activeCountdownSeconds % 60;
 
   const locationLabel = location.label || describeLocation(location.lat, location.lng)
+  const locationTimeZone = useMemo(
+    () => getTimeZoneForCoordinates(location.lat, location.lng),
+    [location.lat, location.lng],
+  )
   const calendarEntries = useMemo(
     () => generateRamadanCalendarEntries(location.lat, location.lng, now, selectedMethod, 30),
     [location.lat, location.lng, now, selectedMethod],
   )
   const dateFormatter = new Intl.DateTimeFormat('en-US', {
+    timeZone: locationTimeZone,
     weekday: 'long',
     month: 'long',
     day: 'numeric',
@@ -247,7 +249,7 @@ const [now, setNow] = useState(FIXED_NOW)
           </div>
           <div>
             <p className="eyebrow">Hijri</p>
-            <p className="meta-value">{formatHijri(now)}</p>
+            <p className="meta-value">{formatHijri(now, locationTimeZone)}</p>
           </div>
         </div>
 
