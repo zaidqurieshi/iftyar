@@ -73,7 +73,7 @@ export default function HadithCard() {
     getDailyHadith(controller.signal)
       .then(setHadith)
       .catch((error) => {
-        if (error.name !== 'AbortError') setShareStatus('Showing the verified fallback while the online source is unavailable.')
+        if (error.name !== 'AbortError') setHadith(FALLBACK_HADITH)
       })
       .finally(() => setIsLoading(false))
     return () => controller.abort()
@@ -112,7 +112,7 @@ export default function HadithCard() {
           <h2>One reminder for today</h2>
         </div>
         <button type="button" className="hadith-card__share" onClick={handleShare} disabled={!imageUrl}>
-          Share image
+          Share
         </button>
       </div>
       {isLoading && <p className="supporting-copy">Fetching today&apos;s Hadith...</p>}
