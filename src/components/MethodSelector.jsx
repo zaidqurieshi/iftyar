@@ -2,8 +2,6 @@ import { CALCULATION_METHODS } from '../services/prayerService'
 import GlassCard from './GlassCard'
 
 export default function MethodSelector({ selectedMethod, onMethodChange }) {
-  const currentMethod = CALCULATION_METHODS.find((m) => m.id === selectedMethod)
-
   return (
     <GlassCard className="method-selector-card">
       <button
@@ -20,9 +18,7 @@ export default function MethodSelector({ selectedMethod, onMethodChange }) {
       >
         <div className="method-selector__label">
           <p className="eyebrow">Calculation Method</p>
-          <p className="method-selector__text">
-            {currentMethod?.school} ({currentMethod?.name}) - {currentMethod?.region}
-          </p>
+          <p className="method-selector__text">Choose a prayer calculation method</p>
         </div>
         <span className="method-selector__icon">⚙️</span>
       </button>

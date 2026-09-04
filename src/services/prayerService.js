@@ -136,6 +136,17 @@ export const CALCULATION_METHODS = [
   
 ];
 
+export const CALENDAR_SOURCES = [
+  { name: 'Dar-ul-uloom Raheemiya', methodId: DEFAULT_METHOD_ID },
+  { name: 'Educational Trust Kashmir', methodId: 'fiqah-jaffaria-educational-trust-kashmir' },
+  { name: 'Jamiat Ahle Hadees J&K', methodId: 'jamiat-ahle-hadees-jk' },
+  { name: 'Soutul Awliya Trust, J&K', methodId: 'soutul-awliya-trust-jk' },
+  { name: 'All J&K Shia Association', methodId: 'all-jk-shia-association' },
+  { name: 'Bangalore - Jamiat Ulama-I-Karnataka', methodId: 'bangalore-jamiat-ulama-i-karnataka' },
+  { name: 'Mumbai - Jamiatul Abrar Siddique Educational Trust', methodId: 'mumbai-jamiatul-abrar-siddique-educational-trust' },
+  { name: 'Faridabad, Haryana', methodId: 'faridabad-haryana' },
+]
+
 function buildPrayerCalculationParameters(methodId = DEFAULT_METHOD_ID) {
   const method = CALCULATION_METHODS.find((m) => m.id === methodId)
   const params = method ? method.getMethod() : CalculationMethod.MuslimWorldLeague()
@@ -326,7 +337,7 @@ export function getPrayerSourceNote() {
   return 'Prayer times are calculated deterministically using the Adhan library.'
 }
 
-export function generateRamadanCalendarEntries(lat, lng, baseDate = new Date(), methodId = DEFAULT_METHOD_ID, days = 30) {
+export function generateRamadanCalendarEntries(lat, lng, baseDate = new Date(), methodId = DEFAULT_METHOD_ID, days = 30, timeZone) {
   const entries = []
 
   for (let index = 0; index < days; index += 1) {
@@ -344,8 +355,8 @@ export function generateRamadanCalendarEntries(lat, lng, baseDate = new Date(), 
       day: date.getDate(),
       dayLabel: new Intl.DateTimeFormat('en-US', { weekday: 'short' }).format(date),
       monthLabel: new Intl.DateTimeFormat('en-US', { month: 'short' }).format(date),
-      sehri: formatPrayerTime(fajr.time),
-      iftar: formatPrayerTime(maghrib.time),
+      sehri: formatPrayerTime(fajr.time, timeZone),
+      iftar: formatPrayerTime(maghrib.time, timeZone),
     })
   }
 

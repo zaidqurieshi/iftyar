@@ -3,7 +3,6 @@ import { NavLink } from 'react-router-dom'
 const navItems = [
   { to: '/', label: 'Home', icon: '⌂' },
   { to: '/prayer-times', label: 'Prayer Times', icon: '◔' },
-  { to: '/zikr', label: 'Zikr', icon: '🕋' },
 ]
 
 export default function BottomNav() {

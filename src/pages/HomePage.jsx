@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import GlassCard from '../components/GlassCard'
-import DuaCard from '../components/DuaCard'
+import HadithCard from '../components/HadithCard'
 import CircularTimer from '../components/CircularTimerNew'
 import MethodSelector from '../components/MethodSelector'
 import {
@@ -11,14 +11,16 @@ import {
   getNextPrayer,
   getPrayerSchedule,
   DEFAULT_METHOD_ID,
+  CALENDAR_SOURCES,
 } from '../services/prayerService'
-import { describeLocation } from '../services/locationService'
+import { describeLocation, getPlaceLabelFromCoordinates } from '../services/locationService'
 import { formatHijri, getTimeZoneForCoordinates } from '../services/dateService'
 
 function HomePage({ location }) {
   const [now, setNow] = useState(() => new Date())
   const [selectedMethod, setSelectedMethod] = useState(DEFAULT_METHOD_ID)
-  const [calendarSource, setCalendarSource] = useState('Dar-ul-uloom Raheemiya')
+  const [calendarSource, setCalendarSource] = useState(CALENDAR_SOURCES[0].name)
+  const [locationLabel, setLocationLabel] = useState(location.label || '')
   const [calendarMenuOpen, setCalendarMenuOpen] = useState(false)
   const locationTimeZone = useMemo(
     () => getTimeZoneForCoordinates(location.lat, location.lng),
@@ -29,6 +31,14 @@ function HomePage({ location }) {
     const timer = window.setInterval(() => setNow(new Date()), 1000)
     return () => window.clearInterval(timer)
   }, [])
+
+  useEffect(() => {
+    let active = true
+    getPlaceLabelFromCoordinates(location.lat, location.lng).then((label) => {
+      if (active) setLocationLabel(label)
+    })
+    return () => { active = false }
+  }, [location.lat, location.lng])
 
   const schedule = useMemo(() => getPrayerSchedule(location.lat, location.lng, now, selectedMethod), [location.lat, location.lng, now, selectedMethod])
   const nextPrayer = useMemo(() => getNextPrayer(location.lat, location.lng, now, selectedMethod), [location.lat, location.lng, now, selectedMethod])
@@ -70,10 +80,11 @@ function HomePage({ location }) {
   const activeCountdownMinutes = Math.floor((activeCountdownSeconds % 3600) / 60);
   const activeCountdownSecondsOnly = activeCountdownSeconds % 60;
 
-  const locationLabel = location.label || describeLocation(location.lat, location.lng)
+  const displayLocation = locationLabel || location.label || describeLocation(location.lat, location.lng)
+  const selectedCalendarSource = CALENDAR_SOURCES.find((source) => source.name === calendarSource) || CALENDAR_SOURCES[0]
   const calendarEntries = useMemo(
-    () => generateRamadanCalendarEntries(location.lat, location.lng, now, selectedMethod, 30),
-    [location.lat, location.lng, now, selectedMethod],
+    () => generateRamadanCalendarEntries(location.lat, location.lng, now, selectedCalendarSource.methodId, 30, locationTimeZone),
+    [location.lat, location.lng, now, selectedCalendarSource.methodId, locationTimeZone],
   )
   const dateFormatter = new Intl.DateTimeFormat('en-US', {
     timeZone: locationTimeZone,
@@ -116,7 +127,7 @@ function HomePage({ location }) {
         </head>
         <body>
           <h1>Ramadan Calendar</h1>
-          <div class="subtitle">${locationLabel}</div>
+          <div class="subtitle">${displayLocation}</div>
           <table>
             <thead>
               <tr>
@@ -174,7 +185,7 @@ function HomePage({ location }) {
         </head>
         <body>
           <h1>Ramadan Calendar</h1>
-          <div class="subtitle">${locationLabel}</div>
+          <div class="subtitle">${displayLocation}</div>
           <table>
             <thead>
               <tr>
@@ -211,7 +222,7 @@ function HomePage({ location }) {
 
 
   const handleAddToCalendar = () => {
-    const title = `Ramadan Calendar - ${locationLabel}`
+    const title = `Ramadan Calendar - ${displayLocation}`
     const calendarText = buildRamadanCalendarIcs(calendarEntries, title)
 
     if (isAppleDevice) {
@@ -238,7 +249,7 @@ function HomePage({ location }) {
         <div className="hero-card__header">
           <div>
             <p className="eyebrow">Location</p>
-            <h2>{locationLabel}</h2>
+            <h2>{displayLocation}</h2>
           </div>
           <span className="chip">{dateFormatter.format(now)}</span>
         </div>
@@ -304,7 +315,7 @@ function HomePage({ location }) {
         <p className="supporting-copy">{iftarSehri.message}</p>
       </GlassCard>
 
-      <DuaCard />
+      <HadithCard />
 
       <GlassCard className="panel-card">
         <div className="ramadan-calendar">
@@ -315,17 +326,8 @@ function HomePage({ location }) {
               value={calendarSource}
               onChange={(event) => setCalendarSource(event.target.value)}
             >
-              {[
-                'Dar-ul-uloom Raheemiya',
-                'Educational Trust Kashmir',
-                'Jamiat Ahle Hadees J&K',
-                'Soutul Awliya Trust, J&K',
-                'All J&K Shia Association',
-                'Bangalore - Jamiat Ulama-I-Karnataka',
-                'Mumbai - Jamiatul Abrar Siddique Educational Trust',
-                'Faridabad, Haryana',
-              ].map((name) => (
-                <option key={name} value={name}>{name}</option>
+              {CALENDAR_SOURCES.map((source) => (
+                <option key={source.name} value={source.name}>{source.name}</option>
               ))}
             </select>
           </label>
