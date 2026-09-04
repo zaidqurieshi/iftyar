@@ -1,28 +1,8 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import GlassCard from './GlassCard'
+import { getRandomHadith } from '../data/hadithCollection'
 
 const IFTYAR_URL = 'https://iftyar.com'
-const FALLBACK_HADITH = {
-  text: 'Whoever believes in Allah and the Last Day should speak good or remain silent.',
-  source: 'Sahih al-Bukhari 6018',
-}
-
-const HADITH_API_URL = 'https://random-hadith-generator.vercel.app/hadith/'
-
-async function getDailyHadith(signal) {
-  const response = await fetch(`${HADITH_API_URL}?refresh=${Date.now()}`, {
-    signal,
-    cache: 'no-store',
-  })
-  if (!response.ok) throw new Error('Hadith request failed.')
-
-  const data = await response.json()
-  const text = data?.hadith_english?.trim()
-  const source = [data?.book, data?.refno].filter(Boolean).join(' ')
-  if (!text || !source) throw new Error('Hadith response was incomplete.')
-
-  return { text, source }
-}
 
 function drawHadithImage(hadith) {
   const canvas = document.createElement('canvas')
@@ -36,7 +16,7 @@ function drawHadithImage(hadith) {
   context.fillRect(70, 70, 1060, 4)
   context.fillStyle = '#edfdf3'
   context.font = '600 48px Georgia'
-  context.fillText('Daily Hadith', 70, 150)
+  context.fillText('Hadith', 70, 150)
   context.font = '42px Georgia'
   context.fillStyle = '#c8e8d5'
 
@@ -66,32 +46,21 @@ function drawHadithImage(hadith) {
 }
 
 export default function HadithCard() {
-  const [hadith, setHadith] = useState(null)
-  const [isLoading, setIsLoading] = useState(true)
+  // Pick a fresh random hadith on every mount (i.e. every page load/reload).
+  const [hadith] = useState(() => getRandomHadith())
   const [shareStatus, setShareStatus] = useState('')
-  const imageUrl = useMemo(() => (hadith ? drawHadithImage(hadith) : ''), [hadith])
-
-  useEffect(() => {
-    const controller = new AbortController()
-    getDailyHadith(controller.signal)
-      .then(setHadith)
-      .catch((error) => {
-        if (error.name !== 'AbortError') setHadith(FALLBACK_HADITH)
-      })
-      .finally(() => setIsLoading(false))
-    return () => controller.abort()
-  }, [])
+  const imageUrl = useMemo(() => drawHadithImage(hadith), [hadith])
 
   const handleShare = async () => {
     if (!imageUrl) return
 
     const response = await fetch(imageUrl)
     const blob = await response.blob()
-    const file = new File([blob], 'iftyar-daily-hadith.png', { type: 'image/png' })
+    const file = new File([blob], 'iftyar-hadith.png', { type: 'image/png' })
 
     if (navigator.share && (!navigator.canShare || navigator.canShare({ files: [file] }))) {
       try {
-        await navigator.share({ title: 'Daily Hadith - Iftyar', files: [file] })
+        await navigator.share({ title: 'Hadith - Iftyar', files: [file] })
         setShareStatus('Shared')
         return
       } catch (error) {
@@ -99,7 +68,7 @@ export default function HadithCard() {
       }
     }
 
-    window.open(`https://wa.me/?text=${encodeURIComponent(`Daily Hadith from Iftyar: ${IFTYAR_URL}`)}`, '_blank', 'noopener,noreferrer')
+    window.open(`https://wa.me/?text=${encodeURIComponent(`Hadith from Iftyar: ${IFTYAR_URL}`)}`, '_blank', 'noopener,noreferrer')
     setShareStatus('WhatsApp opened with the Iftyar link')
   }
 
@@ -107,15 +76,14 @@ export default function HadithCard() {
     <GlassCard className="panel-card hadith-card">
       <div className="section-head">
         <div>
-          <p className="eyebrow">Daily Hadith</p>
-          <h2>One reminder for today</h2>
+          <p className="eyebrow">Random Hadith</p>
+          <h2>A new reminder on every visit</h2>
         </div>
         <button type="button" className="hadith-card__share" onClick={handleShare} disabled={!imageUrl}>
           Share
         </button>
       </div>
-      {isLoading && <p className="supporting-copy">Fetching today&apos;s Hadith...</p>}
-      {imageUrl && <img className="hadith-card__image" src={imageUrl} alt={`Daily hadith: ${hadith.text}`} />}
+      {imageUrl && <img className="hadith-card__image" src={imageUrl} alt={`Hadith: ${hadith.text}`} />}
       {shareStatus && <p className="hadith-card__status" role="status">{shareStatus}</p>}
       <a className="hadith-card__link" href={IFTYAR_URL} target="_blank" rel="noreferrer">Iftyar</a>
     </GlassCard>

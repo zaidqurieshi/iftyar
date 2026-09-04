@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import GlassCard from '../components/GlassCard'
-import { DEFAULT_METHOD_ID, formatPrayerTime, getCurrentPrayer, getNextPrayer, getPrayerSchedule } from '../services/prayerService'
+import { formatPrayerTime, getCurrentPrayer, getNextPrayer, getPrayerSchedule } from '../services/prayerService'
+import { useMethodState } from '../hooks/useMethodState'
 import { getTimeZoneForCoordinates } from '../services/dateService'
 import { getPlaceLabelFromCoordinates } from '../services/locationService'
 import MethodSelector from '../components/MethodSelector'
@@ -9,7 +10,7 @@ function PrayerTimesPage({ location }) {
   // Use current date/time (updates automatically)
   const [now, setNow] = useState(new Date())
   const [locationLabel, setLocationLabel] = useState(location?.label || '')
-  const [selectedMethod, setSelectedMethod] = useState(DEFAULT_METHOD_ID)
+  const [selectedMethod, setSelectedMethod] = useMethodState()
 
   useEffect(() => {
     const timer = window.setInterval(() => setNow(new Date()), 1000)
@@ -69,7 +70,7 @@ function PrayerTimesPage({ location }) {
               className={`prayer-row ${item.key === nextPrayer.key ? 'prayer-row--next' : ''} ${item.key === currentPrayer.key ? 'prayer-row--current' : ''}`}
             >
               <span className="prayer-name">{item.name}</span>
-              <span className="prayer-time">{formatPrayerTime(item.time, locationTimeZone)}</span>
+              <span className="prayer-time">{formatPrayerTime(item.time, item.displayTimeZone || locationTimeZone)}</span>
             </div>
           ))}
         </div>

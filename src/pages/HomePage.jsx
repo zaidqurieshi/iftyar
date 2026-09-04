@@ -9,16 +9,15 @@ import {
   generateRamadanCalendarEntries,
   getIftarSehriPlaceholder,
   getNextPrayer,
-  getPrayerSchedule,
-  DEFAULT_METHOD_ID,
   CALENDAR_SOURCES,
 } from '../services/prayerService'
+import { useMethodState } from '../hooks/useMethodState'
 import { describeLocation, getPlaceLabelFromCoordinates } from '../services/locationService'
 import { formatHijri, getTimeZoneForCoordinates } from '../services/dateService'
 
 function HomePage({ location }) {
   const [now, setNow] = useState(() => new Date())
-  const [selectedMethod, setSelectedMethod] = useState(DEFAULT_METHOD_ID)
+  const [selectedMethod, setSelectedMethod] = useMethodState()
   const [calendarSource, setCalendarSource] = useState(CALENDAR_SOURCES[0].name)
   const [locationLabel, setLocationLabel] = useState(location.label || '')
   const [calendarMenuOpen, setCalendarMenuOpen] = useState(false)
@@ -40,7 +39,6 @@ function HomePage({ location }) {
     return () => { active = false }
   }, [location.lat, location.lng])
 
-  const schedule = useMemo(() => getPrayerSchedule(location.lat, location.lng, now, selectedMethod), [location.lat, location.lng, now, selectedMethod])
   const nextPrayer = useMemo(() => getNextPrayer(location.lat, location.lng, now, selectedMethod), [location.lat, location.lng, now, selectedMethod])
   const iftarSehri = useMemo(() => getIftarSehriPlaceholder(location.lat, location.lng, now, selectedMethod, locationTimeZone), [location.lat, location.lng, now, selectedMethod, locationTimeZone])
 
@@ -270,7 +268,7 @@ function HomePage({ location }) {
           <div className="next-prayer__row">
             <div>
               <h3>{nextPrayer.name}</h3>
-              <p>{formatPrayerTime(nextPrayer.time, locationTimeZone)}</p>
+              <p>{formatPrayerTime(nextPrayer.time, nextPrayer.displayTimeZone || locationTimeZone)}</p>
             </div>
             <div className="countdown" aria-live="polite">
               <span>{String(countdownHours).padStart(2, '0')}</span>

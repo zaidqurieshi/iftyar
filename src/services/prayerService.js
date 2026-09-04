@@ -1,6 +1,7 @@
 import { CalculationMethod, Coordinates, PrayerTimes, Madhab } from 'adhan'
+import iftarkarTimetables from '../data/iftarkar-timetables.json'
 
-export const DEFAULT_METHOD_ID = 'darulUloomRaheemiya'
+export const DEFAULT_METHOD_ID = 'raheemiya'
 
 export const PRAYER_ORDER = ['fajr', 'sunrise', 'dhuhr', 'asr', 'maghrib', 'isha']
 
@@ -22,172 +23,304 @@ const REFERENCE_OFFSETS = {
   isha: 0,
 }
 
-// Iftarkar's default profile uses the Dar-ul-uloom Raheemiya timetable
-// convention: MWL angles with Hanafi Asr calculation.
-export const IFTARKAR_OFFSETS = {
-  fajr: -1,
-  sunrise: 0,
-  dhuhr: 0,
-  asr: 3,
-  maghrib: 6,
-  isha: 4,
+// Iftarkar.com does not compute prayer times astronomically. It serves
+// published daily timetables (keyed as "MMDD") for each organisation. Every
+// timetable is published for a city in India, so the wall-clock times in the
+// tables are Indian Standard Time (UTC+5:30, no DST).
+const TABLE_TIME_ZONE = 'Asia/Kolkata'
+
+const ADHAN_METHOD_FACTORIES = {
+  muslimWorldLeague: CalculationMethod.MuslimWorldLeague,
+  egyptian: CalculationMethod.Egyptian,
+  karachi: CalculationMethod.Karachi,
+  ummAlQura: CalculationMethod.UmmAlQura,
+  dubai: CalculationMethod.Dubai,
+  northAmerica: CalculationMethod.NorthAmerica,
+  tehran: CalculationMethod.Tehran,
 }
 
-export const CALCULATION_METHODS = [
-  {
-    id: DEFAULT_METHOD_ID,
-    name: 'Dar-ul-uloom Raheemiya',
+// Fiqah / fallback configuration for every organisation timetable published
+// on iftarkar.com. The `fallback*` fields are only used when a requested date
+// is not covered by the published table (the four Ramadan-only calendars).
+const TABLE_METHOD_DEFS = {
+  raheemiya: {
     school: 'Fiqah Hanafiya',
-    region: 'Srinagar',
-    getMethod: () => CalculationMethod.Karachi(),
+    region: 'Jammu & Kashmir — Srinagar',
+    fallbackAdhanMethod: 'karachi',
+    fallbackMadhab: Madhab.Hanafi,
+  },
+  etk: {
+    school: 'Fiqah Jaffaria',
+    region: 'Jammu & Kashmir — Srinagar',
+    fallbackAdhanMethod: 'tehran',
+  },
+  ahlehadees: {
+    school: 'Fiqah Ahle Hadees',
+    region: 'Jammu & Kashmir — Srinagar',
+    fallbackAdhanMethod: 'muslimWorldLeague',
+  },
+  tsajk: {
+    school: 'Fiqah Hanafiya',
+    region: 'Jammu & Kashmir — Anantnag',
+    fallbackAdhanMethod: 'karachi',
+    fallbackMadhab: Madhab.Hanafi,
+  },
+  ajksa: {
+    school: 'Fiqah Jaffaria',
+    region: 'Jammu & Kashmir — Ramadan calendar',
+    fallbackAdhanMethod: 'tehran',
+  },
+  blr_juk: {
+    school: 'Fiqah Hanafi',
+    region: 'Bangalore, Karnataka — Ramadan calendar',
+    fallbackAdhanMethod: 'karachi',
+    fallbackMadhab: Madhab.Hanafi,
+  },
+  mumbai_jaset: {
+    school: 'Fiqah Hanafi',
+    region: 'Mumbai, Maharashtra — Ramadan calendar',
+    fallbackAdhanMethod: 'karachi',
+    fallbackMadhab: Madhab.Hanafi,
+  },
+  faridabad_haryana: {
+    school: 'Fiqah Hanafi',
+    region: 'Faridabad, Haryana — Ramadan calendar',
+    fallbackAdhanMethod: 'karachi',
+    fallbackMadhab: Madhab.Hanafi,
+  },
+}
+
+// The four Ramadan-only tables don't ship a `header` column list — derive one
+// from the first published row, ordered chronologically by wall-clock time.
+function deriveHeader(timings) {
+  const firstEntry = Object.values(timings)[0]
+  return Object.keys(firstEntry)
+    .map((key) => ({
+      key,
+      label: PRAYER_LABELS[key] || key.charAt(0).toUpperCase() + key.slice(1),
+    }))
+    .sort((a, b) => {
+      const aClock = parseWallClock(firstEntry[a.key])
+      const bClock = parseWallClock(firstEntry[b.key])
+      return aClock.hours * 60 + aClock.minutes - (bClock.hours * 60 + bClock.minutes)
+    })
+}
+
+const TABLE_METHODS = Object.keys(TABLE_METHOD_DEFS).map((id) => {
+  const data = iftarkarTimetables[id]
+  const def = TABLE_METHOD_DEFS[id]
+
+  return {
+    id,
+    name: data.name,
+    school: def.school,
+    region: def.region,
+    description: data.description,
+    source: 'iftarkar-table',
+    header: data.header || deriveHeader(data.timings),
+    timings: data.timings,
+    regionOffsets: data.offsets || [],
+    fallbackAdhanMethod: def.fallbackAdhanMethod,
+    fallbackMadhab: def.fallbackMadhab,
+  }
+})
+
+const STANDARD_METHODS = [
+  {
+    id: 'muslimWorldLeague',
+    name: 'Muslim World League',
+    school: 'Fiqah Shafii',
+    region: 'Europe, Far East, parts of US',
   },
   {
     id: 'egyptian',
     name: 'Egyptian General Authority',
     school: 'Fiqah Shafii',
-    region: 'Egypt',
-    getMethod: () => CalculationMethod.Egyptian(),
+    region: 'Egypt, Africa, Syria, Iraq, Lebanon',
   },
   {
     id: 'karachi',
     name: 'University of Islamic Sciences',
     school: 'Fiqah Hanafi',
-    region: 'Karachi, Pakistan',
-    getMethod: () => CalculationMethod.Karachi(),
+    region: 'Karachi, Pakistan & India',
   },
   {
     id: 'uummAlQura',
     name: 'Umm Al-Qura University',
     school: 'Fiqah Hanbali',
     region: 'Makkah, Saudi Arabia',
-    getMethod: () => CalculationMethod.UmmAlQura(),
   },
   {
     id: 'dubai',
     name: 'Dubai Method',
     school: 'Fiqah Maliki',
-    region: 'Dubai',
-    getMethod: () => CalculationMethod.Dubai(),
+    region: 'Dubai, UAE',
   },
   {
     id: 'northAmerica',
-    name: 'North America',
+    name: 'Islamic Society of North America',
     school: 'Fiqah Hanafi',
     region: 'North America',
-    getMethod: () => CalculationMethod.NorthAmerica(),
   },
-  // Additional regional methods requested by the client
-  {
-    id: 'fiqah-hanafiya-darul-uloom-raheemiyya',
-    name: "Fiqah Hanafiya (Dar-ul-uloom Raheemiyа)",
-    school: '',
-    region: '',
-    getMethod: () => CalculationMethod.MuslimWorldLeague(),
-  },
-  {
-    id: 'fiqah-jaffaria-educational-trust-kashmir',
-    name: "Fiqah Jaffaria (Educational Trust Kashmir)",
-    school: '',
-    region: '',
-    getMethod: () => CalculationMethod.MuslimWorldLeague(),
-  },
-  {
-    id: 'jamiat-ahle-hadees-jk',
-    name: "Jamiat Ahle Hadees J&K",
-    school: '',
-    region: '',
-    getMethod: () => CalculationMethod.MuslimWorldLeague(),
-  },
-  {
-    id: 'soutul-awliya-trust-jk',
-    name: "Soutul Awliya Trust, J&K",
-    school: '',
-    region: '',
-    getMethod: () => CalculationMethod.MuslimWorldLeague(),
-  },
-  {
-    id: 'all-jk-shia-association',
-    name: "All J&K Shia Association",
-    school: '',
-    region: '',
-    getMethod: () => CalculationMethod.MuslimWorldLeague(),
-  },
-  {
-    id: 'bangalore-jamiat-ulama-i-karnataka',
-    name: "Bangalore - Jamiat Ulama-I-Karnataka",
-    school: '',
-    region: '',
-    getMethod: () => CalculationMethod.MuslimWorldLeague(),
-  },
-  {
-    id: 'mumbai-jamiatul-abrar-siddique-educational-trust',
-    name: "Mumbai - Jamiatul Abrar Siddique Educational Trust",
-    school: '',
-    region: '',
-    getMethod: () => CalculationMethod.MuslimWorldLeague(),
-  },
-  {
-    id: 'faridabad-haryana',
-    name: "Faridabad, Haryana",
-    school: '',
-    region: '',
-    getMethod: () => CalculationMethod.MuslimWorldLeague(),
-  },
-  
-];
+].map((method) => ({
+  ...method,
+  description: `${method.name} — computed astronomically with the Adhan library.`,
+  source: 'adhan',
+  adhanMethodId: method.id,
+}))
 
-export const CALENDAR_SOURCES = [
-  { name: 'Dar-ul-uloom Raheemiya', methodId: DEFAULT_METHOD_ID },
-  { name: 'Educational Trust Kashmir', methodId: 'fiqah-jaffaria-educational-trust-kashmir' },
-  { name: 'Jamiat Ahle Hadees J&K', methodId: 'jamiat-ahle-hadees-jk' },
-  { name: 'Soutul Awliya Trust, J&K', methodId: 'soutul-awliya-trust-jk' },
-  { name: 'All J&K Shia Association', methodId: 'all-jk-shia-association' },
-  { name: 'Bangalore - Jamiat Ulama-I-Karnataka', methodId: 'bangalore-jamiat-ulama-i-karnataka' },
-  { name: 'Mumbai - Jamiatul Abrar Siddique Educational Trust', methodId: 'mumbai-jamiatul-abrar-siddique-educational-trust' },
-  { name: 'Faridabad, Haryana', methodId: 'faridabad-haryana' },
-]
+// All calculation methods: the eight organisation timetables published on
+// iftarkar.com, followed by the standard astronomical methods.
+export const CALCULATION_METHODS = [...TABLE_METHODS, ...STANDARD_METHODS]
 
-function buildPrayerCalculationParameters(methodId = DEFAULT_METHOD_ID) {
-  const method = CALCULATION_METHODS.find((m) => m.id === methodId)
-  const params = method ? method.getMethod() : CalculationMethod.MuslimWorldLeague()
+export const CALENDAR_SOURCES = TABLE_METHODS.map((method) => ({
+  name: method.name,
+  methodId: method.id,
+}))
 
-  const offsets = methodId === DEFAULT_METHOD_ID ? IFTARKAR_OFFSETS : REFERENCE_OFFSETS
+// ---------------------------------------------------------------------------
+// Time zone helpers
+// ---------------------------------------------------------------------------
 
-  params.methodAdjustments = {
-    ...params.methodAdjustments,
-    ...offsets,
+function getZoneParts(timeZone, date) {
+  const formatter = new Intl.DateTimeFormat('en-US', {
+    timeZone,
+    hourCycle: 'h23',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+  })
+
+  const parts = {}
+  formatter.formatToParts(date).forEach(({ type, value }) => {
+    parts[type] = value
+  })
+
+  return {
+    year: Number(parts.year),
+    month: Number(parts.month),
+    day: Number(parts.day),
+    hour: Number(parts.hour),
+    minute: Number(parts.minute),
+  }
+}
+
+function getTimeZoneOffsetMs(timeZone, date) {
+  const parts = getZoneParts(timeZone, date)
+  const asUtc = Date.UTC(parts.year, parts.month - 1, parts.day, parts.hour, parts.minute, 0, 0)
+  return asUtc - Math.floor(date.getTime() / 1000) * 1000
+}
+
+function parseWallClock(value) {
+  const [hours, minutes] = String(value).split(':').map((part) => Number(part))
+  return { hours, minutes }
+}
+
+/**
+ * Convert a wall-clock time (e.g. "6:08" from a timetable) into a real Date
+ * instant for the given time zone, so countdowns and "next prayer" logic work
+ * correctly regardless of the user's device time zone.
+ */
+function createInstantFromWallClock(year, month, day, wallClock, timeZone) {
+  const { hours, minutes } = parseWallClock(wallClock)
+  const naiveUtc = Date.UTC(year, month - 1, day, hours, minutes, 0, 0)
+  const offset = getTimeZoneOffsetMs(timeZone, new Date(naiveUtc))
+  return new Date(naiveUtc - offset)
+}
+
+// ---------------------------------------------------------------------------
+// Schedule builders
+// ---------------------------------------------------------------------------
+
+function createAdhanParameters(adhanMethodId, madhab, applyOffsets = false) {
+  const factory = ADHAN_METHOD_FACTORIES[adhanMethodId] || CalculationMethod.MuslimWorldLeague
+  const params = factory()
+
+  if (applyOffsets) {
+    params.methodAdjustments = {
+      ...params.methodAdjustments,
+      ...REFERENCE_OFFSETS,
+    }
   }
 
-  if (methodId === DEFAULT_METHOD_ID) {
-    params.madhab = Madhab.Hanafi
+  if (madhab) {
+    params.madhab = madhab
   }
 
   return params
 }
 
-function buildPrayerTimes(date, lat, lng, methodId = DEFAULT_METHOD_ID) {
+function buildAdhanSchedule(lat, lng, date, adhanMethodId, madhab, applyOffsets = false) {
   const coordinates = new Coordinates(lat, lng)
-  const params = buildPrayerCalculationParameters(methodId)
+  const params = createAdhanParameters(adhanMethodId, madhab, applyOffsets)
   const prayerTimes = new PrayerTimes(coordinates, date, params)
-
-  return {
-    fajr: new Date(prayerTimes.fajr),
-    sunrise: new Date(prayerTimes.sunrise),
-    dhuhr: new Date(prayerTimes.dhuhr),
-    asr: new Date(prayerTimes.asr),
-    maghrib: new Date(prayerTimes.maghrib),
-    isha: new Date(prayerTimes.isha),
-  }
-}
-
-export function getPrayerSchedule(lat, lng, selectedDate = new Date(), methodId = DEFAULT_METHOD_ID) {
-  const prayerTimes = buildPrayerTimes(selectedDate, lat, lng, methodId)
 
   return PRAYER_ORDER.map((key) => ({
     key,
     name: PRAYER_LABELS[key],
-    time: prayerTimes[key],
+    time: new Date(prayerTimes[key]),
   }))
+}
+
+function getTableEntry(timings, day, month) {
+  // iftarkar.com keys its timetable rows as "DDMM" (day of month + month),
+  // e.g. "0509" = 5 September, "2902" = 29 February on leap-year tables.
+  const key = `${String(day).padStart(2, '0')}${String(month).padStart(2, '0')}`
+  if (timings[key]) {
+    return timings[key]
+  }
+
+  // 365-day tables (e.g. Educational Trust Kashmir) miss 29 February —
+  // reuse the 28 February row on leap days so the app never breaks.
+  if (month === 2 && day === 29) {
+    return timings['2802'] || null
+  }
+
+  return null
+}
+
+function buildTableSchedule(method, lat, lng, date) {
+  const { year, month, day } = getZoneParts(TABLE_TIME_ZONE, date)
+  const entry = getTableEntry(method.timings, day, month)
+
+  if (!entry) {
+    // Date not covered by the published table (the four Ramadan-only
+    // calendars) — fall back to the closest astronomical approximation.
+    return buildAdhanSchedule(
+      lat,
+      lng,
+      date,
+      method.fallbackAdhanMethod,
+      method.fallbackMadhab,
+      false,
+    )
+  }
+
+  return method.header
+    .filter((column) => Boolean(entry[column.key]))
+    .map((column) => ({
+      key: column.key,
+      name: column.label,
+      time: createInstantFromWallClock(year, month, day, entry[column.key], TABLE_TIME_ZONE),
+      displayTimeZone: TABLE_TIME_ZONE,
+    }))
+}
+
+// ---------------------------------------------------------------------------
+// Public API — every function below keeps the same signature it had before,
+// but dispatches between iftarkar.com timetables and Adhan-based methods.
+// ---------------------------------------------------------------------------
+
+export function getPrayerSchedule(lat, lng, selectedDate = new Date(), methodId = DEFAULT_METHOD_ID) {
+  const method = getCalculationMethodInfo(methodId)
+
+  if (method.source === 'iftarkar-table') {
+    return buildTableSchedule(method, lat, lng, selectedDate)
+  }
+
+  return buildAdhanSchedule(lat, lng, selectedDate, method.adhanMethodId, null, true)
 }
 
 export function getNextPrayer(lat, lng, now = new Date(), methodId = DEFAULT_METHOD_ID) {
@@ -212,8 +345,8 @@ export function getCurrentPrayer(lat, lng, now = new Date(), methodId = DEFAULT_
   return previousPrayer || schedule[0]
 }
 
-export function getPrayerCountdownText(lat, lng, now = new Date()) {
-  const next = getNextPrayer(lat, lng, now)
+export function getPrayerCountdownText(lat, lng, now = new Date(), methodId = DEFAULT_METHOD_ID) {
+  const next = getNextPrayer(lat, lng, now, methodId)
 
   if (!next) {
     return 'Calculating...'
@@ -295,7 +428,7 @@ export function getNextPrayerInfo(lat, lng, now = new Date(), methodId = DEFAULT
   const next = getNextPrayer(lat, lng, now, methodId)
   return {
     ...next,
-    timeLabel: formatPrayerTime(next.time),
+    timeLabel: formatPrayerTime(next.time, next.displayTimeZone),
     countdown: formatCountdownToText(next.time, now),
   }
 }
@@ -310,13 +443,19 @@ export function getIftarSehriPlaceholder(lat, lng, now = new Date(), methodId = 
   const maghrib = schedule.find((entry) => entry.key === 'maghrib')
 
   const sehriTime = fajr
-    ? new Date(fajr.time) // Use Fajr time directly as Sehri to match iftarkar.com
+    ? fajr.time // Use Fajr time directly as Sehri to match iftarkar.com
     : new Date(now.getTime() + (60 * 60 * 1000 + 60 * 1000))
 
   const iftarTime = maghrib ? maghrib.time : new Date(now.getTime() + 2 * 60 * 60 * 1000)
 
+  // Organisation timetables are published in IST — format their wall-clock
+  // times in the table's own zone so they always match the printed calendar.
+  const labelTimeZone = fajr?.displayTimeZone || maghrib?.displayTimeZone || timeZone
+
   const iftarCountdown = formatCountdownToText(iftarTime, now)
   const sehriCountdown = formatCountdownToText(sehriTime, now)
+
+  const method = getCalculationMethodInfo(methodId)
 
   return {
     label: 'Iftar / Sehri',
@@ -325,16 +464,18 @@ export function getIftarSehriPlaceholder(lat, lng, now = new Date(), methodId = 
     sehriTime,
     iftarCountdown,
     sehriCountdown,
-    sehriLabel: formatPrayerTime(sehriTime, timeZone),
-    iftarLabel: formatPrayerTime(iftarTime, timeZone),
+    sehriLabel: formatPrayerTime(sehriTime, labelTimeZone),
+    iftarLabel: formatPrayerTime(iftarTime, labelTimeZone),
     iftarStatus: `Time remaining of Iftar: ${iftarCountdown}`,
     sehriStatus: `Time remaining for Sehri: ${sehriCountdown}`,
-    message: 'Fasting times calculated using your selected prayer calculation method.',
+    message: method.source === 'iftarkar-table'
+      ? `Sehri and Iftar follow the official ${method.name} timetable (as published on iftarkar.com).`
+      : 'Fasting times calculated using your selected prayer calculation method.',
   }
 }
 
 export function getPrayerSourceNote() {
-  return 'Prayer times are calculated deterministically using the Adhan library.'
+  return 'Organisation timetables are taken from iftarkar.com; other methods are computed with the Adhan library.'
 }
 
 export function generateRamadanCalendarEntries(lat, lng, baseDate = new Date(), methodId = DEFAULT_METHOD_ID, days = 30, timeZone) {
@@ -355,8 +496,8 @@ export function generateRamadanCalendarEntries(lat, lng, baseDate = new Date(), 
       day: date.getDate(),
       dayLabel: new Intl.DateTimeFormat('en-US', { weekday: 'short' }).format(date),
       monthLabel: new Intl.DateTimeFormat('en-US', { month: 'short' }).format(date),
-      sehri: formatPrayerTime(fajr.time, timeZone),
-      iftar: formatPrayerTime(maghrib.time, timeZone),
+      sehri: formatPrayerTime(fajr.time, fajr.displayTimeZone || timeZone),
+      iftar: formatPrayerTime(maghrib.time, maghrib.displayTimeZone || timeZone),
     })
   }
 
@@ -442,11 +583,12 @@ export function getPlannedSchedule(lat, lng, now = new Date()) {
   return getPrayerSchedule(lat, lng, now)
 }
 
-export function calculatePrayerCountdownSeconds(lat, lng, now = new Date()) {
-  const next = getNextPrayer(lat, lng, now)
+export function calculatePrayerCountdownSeconds(lat, lng, now = new Date(), methodId = DEFAULT_METHOD_ID) {
+  const next = getNextPrayer(lat, lng, now, methodId)
   return Math.max(0, Math.round((next.time.getTime() - now.getTime()) / 1000))
 }
 
 export function getPrayerItem(lat, lng, key, date = new Date()) {
   return getPrayerByKey(lat, lng, key, date)
 }
+
