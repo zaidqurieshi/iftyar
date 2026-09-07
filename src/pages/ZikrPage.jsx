@@ -138,9 +138,9 @@ export default function ZikrPage() {
       {/* Top Segmented Controls */}
       <div className="segmented-control" role="tablist">
         {[
-          { id: 'tasbih', label: '📿 Digital Tasbih' },
-          { id: 'names', label: '✨ 99 Names' },
-          { id: 'duas', label: '📖 Ramadan Duas' },
+          { id: 'tasbih', label: 'Digital Tasbih' },
+          { id: 'names', label: '99 Names of Allah' },
+          { id: 'duas', label: 'Ramadan Duas' },
         ].map((tab) => (
           <button
             key={tab.id}

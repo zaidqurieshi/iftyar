@@ -17,6 +17,7 @@ import {
 import { useMethodState } from '../hooks/useMethodState'
 import { describeLocation, getPlaceLabelFromCoordinates } from '../services/locationService'
 import { formatHijri, getTimeZoneForCoordinates } from '../services/dateService'
+import { SunriseIcon, SunsetIcon } from '../components/Icons'
 
 export default function HomePage({ location }) {
   const [now, setNow] = useState(() => new Date())
@@ -280,7 +281,9 @@ export default function HomePage({ location }) {
         {/* Sehri & Iftar Glances */}
         <div className="fasting-meta-grid">
           <div className={`fasting-meta-card ${!isFastingNow ? 'fasting-meta-card--highlight' : ''}`}>
-            <div className="fasting-meta-icon fasting-meta-icon--gold">🌅</div>
+            <div className="fasting-meta-icon fasting-meta-icon--gold">
+              <SunriseIcon size={20} />
+            </div>
             <div className="fasting-meta-info">
               <span className="eyebrow">Sehri Ends</span>
               <strong className="fasting-meta-time">{iftarSehri.sehriLabel}</strong>
@@ -288,7 +291,9 @@ export default function HomePage({ location }) {
           </div>
 
           <div className={`fasting-meta-card ${isFastingNow ? 'fasting-meta-card--highlight' : ''}`}>
-            <div className="fasting-meta-icon">🌇</div>
+            <div className="fasting-meta-icon">
+              <SunsetIcon size={20} />
+            </div>
             <div className="fasting-meta-info">
               <span className="eyebrow">Iftar Begins</span>
               <strong className="fasting-meta-time">{iftarSehri.iftarLabel}</strong>
@@ -343,7 +348,12 @@ export default function HomePage({ location }) {
             className="calendar-action-btn"
             onClick={() => setCalendarMenuOpen((open) => !open)}
           >
-            <span>📅</span>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <rect width="18" height="18" x="3" y="4" rx="2" ry="2" />
+              <line x1="16" x2="16" y1="2" y2="6" />
+              <line x1="8" x2="8" y1="2" y2="6" />
+              <line x1="3" x2="21" y1="10" y2="10" />
+            </svg>
             <span>Get Ramadan Timetable</span>
             <span style={{ fontSize: '0.75rem', opacity: 0.8 }}>
               {calendarMenuOpen ? '▲' : '▼'}
@@ -364,7 +374,12 @@ export default function HomePage({ location }) {
                   className="calendar-menu-item"
                   onClick={handleDownloadPdf}
                 >
-                  <span>📄</span>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                    <polyline points="14 2 14 8 20 8" />
+                    <line x1="16" y1="13" x2="8" y2="13" />
+                    <line x1="16" y1="17" x2="8" y2="17" />
+                  </svg>
                   <span>Print or Download PDF Timetable</span>
                 </button>
 
@@ -373,7 +388,13 @@ export default function HomePage({ location }) {
                   className="calendar-menu-item"
                   onClick={handleAddToCalendar}
                 >
-                  <span>🗓️</span>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <rect width="18" height="18" x="3" y="4" rx="2" ry="2" />
+                    <line x1="16" x2="16" y1="2" y2="6" />
+                    <line x1="8" x2="8" y1="2" y2="6" />
+                    <line x1="3" x2="21" y1="10" y2="10" />
+                    <circle cx="12" cy="15" r="2" />
+                  </svg>
                   <span>{isAppleDevice ? 'Download Apple Calendar (.ics)' : 'Add to Google Calendar'}</span>
                 </button>
               </motion.div>

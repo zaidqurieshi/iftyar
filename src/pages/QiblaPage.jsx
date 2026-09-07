@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { motion } from 'motion/react'
 import GlassCard from '../components/GlassCard'
 import { getQiblaDisplay } from '../services/qiblaService'
+import { KaabaIcon, LocationIcon } from '../components/Icons'
 
 export default function QiblaPage({ location }) {
   const [deviceHeading, setDeviceHeading] = useState(null)
@@ -144,7 +145,9 @@ export default function QiblaPage({ location }) {
 
         <div className="fasting-meta-grid" style={{ marginTop: '1.25rem' }}>
           <div className="fasting-meta-card">
-            <div className="fasting-meta-icon fasting-meta-icon--gold">🕋</div>
+            <div className="fasting-meta-icon fasting-meta-icon--gold">
+              <KaabaIcon size={22} />
+            </div>
             <div className="fasting-meta-info">
               <span className="eyebrow">Destination</span>
               <strong className="fasting-meta-time" style={{ fontSize: '0.95rem' }}>Makkah Al-Mukarramah</strong>
@@ -152,7 +155,9 @@ export default function QiblaPage({ location }) {
           </div>
 
           <div className="fasting-meta-card">
-            <div className="fasting-meta-icon">📍</div>
+            <div className="fasting-meta-icon">
+              <LocationIcon size={20} />
+            </div>
             <div className="fasting-meta-info">
               <span className="eyebrow">Distance</span>
               <strong className="fasting-meta-time" style={{ fontSize: '0.95rem' }}>{distanceKm.toLocaleString()} km</strong>

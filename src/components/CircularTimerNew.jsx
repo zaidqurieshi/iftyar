@@ -13,126 +13,67 @@ export default function CircularTimer({
   currentSeconds = 0,
   label = '',
 }) {
-  const radius = 105
-  const strokeWidth = 8
-  const circumference = 2 * Math.PI * radius
-
   // Calculate percentage of fasting elapsed
   const progress = useMemo(() => {
-    if (!totalSeconds || totalSeconds <= 0) return 0.65
+    if (!totalSeconds || totalSeconds <= 0) return 0.5
     const val = currentSeconds / totalSeconds
-    return Math.min(1, Math.max(0.02, val))
+    return Math.min(1, Math.max(0.01, val))
   }, [totalSeconds, currentSeconds])
 
-  const strokeDashoffset = circumference - progress * circumference
   const percentComplete = Math.round(progress * 100)
-
-  // Fasting or Night phase indicator
   const isIftarTarget = label.toLowerCase().includes('iftar')
 
   return (
-    <div className="circular-timer-container">
-      <div className="circular-timer__svg-wrap">
-        <svg
-          className="circular-timer__svg"
-          viewBox="0 0 260 260"
-          aria-hidden="true"
-        >
-          <defs>
-            <linearGradient id="timerRingGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#34d399" />
-              <stop offset="60%" stopColor="#10b981" />
-              <stop offset="100%" stopColor="#f6d268" />
-            </linearGradient>
-            <filter id="timerGlow" x="-20%" y="-20%" width="140%" height="140%">
-              <feGaussianBlur stdDeviation="5" result="blur" />
-              <feComposite in="SourceGraphic" in2="blur" operator="over" />
-            </filter>
-          </defs>
+    <div className="digital-countdown-wrap">
+      {/* Big Crisp Countdown Clock */}
+      <div className="countdown-digits" style={{ justifyContent: 'center', margin: '0.85rem 0' }}>
+        <div className="countdown-unit">
+          <span className="countdown-digit-box">{pad(hours)}</span>
+          <span className="countdown-unit-label">Hours</span>
+        </div>
 
-          {/* Background Track */}
-          <circle
-            cx="130"
-            cy="130"
-            r={radius}
-            fill="transparent"
-            stroke="rgba(52, 211, 153, 0.08)"
-            strokeWidth={strokeWidth}
+        <span className="countdown-separator">:</span>
+
+        <div className="countdown-unit">
+          <span className="countdown-digit-box">{pad(minutes)}</span>
+          <span className="countdown-unit-label">Minutes</span>
+        </div>
+
+        <span className="countdown-separator">:</span>
+
+        <div className="countdown-unit">
+          <AnimatePresence mode="popLayout" initial={false}>
+            <motion.span
+              key={pad(seconds)}
+              className="countdown-digit-box"
+              initial={{ y: -6, opacity: 0.6 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: 6, opacity: 0 }}
+              transition={{ duration: 0.2 }}
+            >
+              {pad(seconds)}
+            </motion.span>
+          </AnimatePresence>
+          <span className="countdown-unit-label">Seconds</span>
+        </div>
+      </div>
+
+      {/* Clean Linear Progress Bar (No Ring) */}
+      <div className="linear-progress-block">
+        <div className="linear-progress-bar-track">
+          <motion.div
+            className="linear-progress-bar-fill"
+            initial={{ width: 0 }}
+            animate={{ width: `${percentComplete}%` }}
+            transition={{ duration: 0.8, ease: 'easeOut' }}
           />
+        </div>
 
-          {/* Accent Guide Ring */}
-          <circle
-            cx="130"
-            cy="130"
-            r={radius - 12}
-            fill="transparent"
-            stroke="rgba(246, 210, 104, 0.05)"
-            strokeWidth="1"
-            strokeDasharray="4 6"
-          />
-
-          {/* Animated Progress Circle */}
-          <motion.circle
-            cx="130"
-            cy="130"
-            r={radius}
-            fill="transparent"
-            stroke="url(#timerRingGradient)"
-            strokeWidth={strokeWidth}
-            strokeLinecap="round"
-            strokeDasharray={circumference}
-            initial={{ strokeDashoffset: circumference }}
-            animate={{ strokeDashoffset }}
-            transition={{ duration: 1, ease: 'easeOut' }}
-            filter="url(#timerGlow)"
-          />
-        </svg>
-
-        {/* Center Countdown Display */}
-        <div className="circular-timer__center-content">
-          <div className="countdown-digits">
-            <div className="countdown-unit">
-              <span className="countdown-digit-box">{pad(hours)}</span>
-              <span className="countdown-unit-label">Hours</span>
-            </div>
-
-            <span className="countdown-separator">:</span>
-
-            <div className="countdown-unit">
-              <span className="countdown-digit-box">{pad(minutes)}</span>
-              <span className="countdown-unit-label">Mins</span>
-            </div>
-
-            <span className="countdown-separator">:</span>
-
-            <div className="countdown-unit">
-              <AnimatePresence mode="popLayout" initial={false}>
-                <motion.span
-                  key={pad(seconds)}
-                  className="countdown-digit-box"
-                  initial={{ y: -6, opacity: 0.6 }}
-                  animate={{ y: 0, opacity: 1 }}
-                  exit={{ y: 6, opacity: 0 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  {pad(seconds)}
-                </motion.span>
-              </AnimatePresence>
-              <span className="countdown-unit-label">Secs</span>
-            </div>
-          </div>
-
-          <div className="circular-timer__progress-label">
-            {isIftarTarget ? (
-              <span>✦ {percentComplete}% Fast Completed ✦</span>
-            ) : (
-              <span>✦ Counting Down ✦</span>
-            )}
-          </div>
+        <div className="linear-progress-meta">
+          <span>{isIftarTarget ? `${percentComplete}% of Fast Elapsed` : 'Counting Down'}</span>
+          <span>{label}</span>
         </div>
       </div>
     </div>
   )
 }
-
-

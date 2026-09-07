@@ -347,43 +347,18 @@
   animation: pulseDot 2s infinite ease-in-out;
 }
 
-.circular-timer-container {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0.5rem 0 1.25rem;
-}
-
-.circular-timer__svg-wrap {
-  position: relative;
-  width: 250px;
-  height: 250px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.circular-timer__svg {
+.digital-countdown-wrap {
   width: 100%;
-  height: 100%;
-  transform: rotate(-90deg);
-}
-
-.circular-timer__center-content {
-  position: absolute;
-  inset: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  pointer-events: none;
+  padding: 0.25rem 0 1rem;
 }
 
 .countdown-digits {
   display: flex;
   align-items: center;
-  gap: 0.2rem;
+  gap: 0.35rem;
   font-variant-numeric: tabular-nums;
   line-height: 1;
 }
@@ -395,38 +370,65 @@
 }
 
 .countdown-digit-box {
-  font-size: clamp(2rem, 6vw, 2.75rem);
+  font-size: clamp(2.4rem, 8vw, 3.5rem);
   font-weight: 700;
   font-family: var(--font-sans);
   letter-spacing: -0.02em;
   color: var(--text);
   min-width: 2.2ch;
   text-align: center;
-  text-shadow: 0 0 20px rgba(52, 211, 153, 0.3);
+  text-shadow: 0 0 24px rgba(52, 211, 153, 0.35);
 }
 
 .countdown-unit-label {
-  font-size: 0.64rem;
-  letter-spacing: 0.12em;
+  font-size: 0.66rem;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--text-muted);
   font-weight: 600;
-  margin-top: 0.2rem;
+  margin-top: 0.25rem;
 }
 
 .countdown-separator {
-  font-size: clamp(1.8rem, 5vw, 2.3rem);
+  font-size: clamp(2rem, 6vw, 2.8rem);
   font-weight: 300;
   color: var(--accent-strong);
-  opacity: 0.7;
-  padding-bottom: 0.8rem;
+  opacity: 0.6;
+  padding-bottom: 0.9rem;
 }
 
-.circular-timer__progress-label {
-  font-size: 0.78rem;
+.linear-progress-block {
+  width: 100%;
+  max-width: 22rem;
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.linear-progress-bar-track {
+  width: 100%;
+  height: 7px;
+  border-radius: 999px;
+  background: rgba(8, 26, 32, 0.8);
+  border: 1px solid rgba(52, 211, 153, 0.15);
+  overflow: hidden;
+}
+
+.linear-progress-bar-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: var(--accent-gradient);
+  box-shadow: 0 0 12px rgba(16, 185, 129, 0.5);
+}
+
+.linear-progress-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.75rem;
   color: var(--text-soft);
   font-weight: 500;
-  margin-top: 0.4rem;
 }
 
 /* Fasting Meta Row (Sehri / Iftar) */
@@ -1268,20 +1270,21 @@
 /* ───── Floating Bottom Nav ───── */
 .bottom-nav {
   position: fixed;
-  left: 50%;
+  left: 0;
+  right: 0;
   bottom: max(1rem, env(safe-area-inset-bottom));
-  transform: translateX(-50%);
+  margin: 0 auto;
   width: min(calc(100% - 1.5rem), 22rem);
   display: flex;
   justify-content: space-around;
   align-items: center;
-  padding: 0.4rem 0.5rem;
-  border-radius: 1.25rem;
-  background: rgba(7, 22, 27, 0.82);
-  border: 1px solid var(--glass-border);
-  backdrop-filter: blur(25px) saturate(140%);
-  -webkit-backdrop-filter: blur(25px) saturate(140%);
-  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.45), var(--shadow-inner);
+  padding: 0.45rem 0.5rem;
+  border-radius: 1.35rem;
+  background: rgba(7, 22, 27, 0.92);
+  border: 1px solid var(--glass-border-strong);
+  backdrop-filter: blur(28px) saturate(140%);
+  -webkit-backdrop-filter: blur(28px) saturate(140%);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.55), var(--shadow-inner);
   z-index: 50;
 }
 

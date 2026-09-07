@@ -469,13 +469,13 @@ export function getIftarSehriPlaceholder(lat, lng, now = new Date(), methodId = 
     iftarStatus: `Time remaining of Iftar: ${iftarCountdown}`,
     sehriStatus: `Time remaining for Sehri: ${sehriCountdown}`,
     message: method.source === 'iftarkar-table'
-      ? `Sehri and Iftar follow the official ${method.name} timetable (as published on iftarkar.com).`
+      ? `Sehri and Iftar follow the official ${method.name} timetable.`
       : 'Fasting times calculated using your selected prayer calculation method.',
   }
 }
 
 export function getPrayerSourceNote() {
-  return 'Organisation timetables are taken from iftarkar.com; other methods are computed with the Adhan library.'
+  return 'Organisation timetables are verified from published local schedules; other methods are computed with the Adhan library.'
 }
 
 export function generateRamadanCalendarEntries(lat, lng, baseDate = new Date(), methodId = DEFAULT_METHOD_ID, days = 30, timeZone) {

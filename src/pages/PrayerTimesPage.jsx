@@ -11,14 +11,23 @@ import {
 import { useMethodState } from '../hooks/useMethodState'
 import { getTimeZoneForCoordinates, formatHijri } from '../services/dateService'
 import { getPlaceLabelFromCoordinates } from '../services/locationService'
+import {
+  DawnIcon,
+  SunriseIcon,
+  SunIcon,
+  CloudSunIcon,
+  SunsetIcon,
+  MoonIcon,
+  PrayerIcon,
+} from '../components/Icons'
 
 const PRAYER_ICONS = {
-  fajr: '🌅',
-  sunrise: '☀️',
-  dhuhr: '🌤️',
-  asr: '⛅',
-  maghrib: '🌇',
-  isha: '🌙',
+  fajr: DawnIcon,
+  sunrise: SunriseIcon,
+  dhuhr: SunIcon,
+  asr: CloudSunIcon,
+  maghrib: SunsetIcon,
+  isha: MoonIcon,
 }
 
 const listContainerVariants = {
@@ -153,7 +162,7 @@ export default function PrayerTimesPage({ location }) {
           {schedule.map((item) => {
             const isNext = item.key === nextPrayer.key
             const isCurrent = item.key === currentPrayer.key
-            const icon = PRAYER_ICONS[item.key] || '🕌'
+            const IconComponent = PRAYER_ICONS[item.key] || PrayerIcon
 
             return (
               <motion.div
@@ -164,10 +173,12 @@ export default function PrayerTimesPage({ location }) {
                 }`}
               >
                 <div className="prayer-card-left">
-                  <div className="prayer-icon-box">{icon}</div>
+                  <div className="prayer-icon-box">
+                    <IconComponent size={20} />
+                  </div>
                   <div className="prayer-card-names">
                     <span className="prayer-card-name">{item.name}</span>
-                    {isNext && <span className="prayer-card-status-badge">Next Prayer ⏳</span>}
+                    {isNext && <span className="prayer-card-status-badge">Next Prayer ✦</span>}
                     {isCurrent && !isNext && <span className="prayer-card-status-badge">Current Window ✦</span>}
                   </div>
                 </div>
