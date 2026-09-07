@@ -94,7 +94,9 @@ console.log('6. Ramadan-only table + fallback OK')
 // 7. next-prayer and sehri/iftar flows work for table methods
 const now = new Date()
 const next = getNextPrayer(SRINAGAR.lat, SRINAGAR.lng, now, 'raheemiya')
+assert.ok(next && next.time.getTime() > now.getTime())
 const iftarSehri = getIftarSehriPlaceholder(SRINAGAR.lat, SRINAGAR.lng, now, 'raheemiya', 'Asia/Kolkata')
+assert.ok(!iftarSehri.message.includes('iftarkar.com'))
 assert.ok(iftarSehri.message.includes('timetable'))
 console.log('7. next prayer:', next.name, fmt(next), '| sehri', iftarSehri.sehriLabel, '| iftar', iftarSehri.iftarLabel)
 

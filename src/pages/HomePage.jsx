@@ -62,24 +62,35 @@ export default function HomePage({ location }) {
   const prayerMins = Math.floor((prayerRemainingSecs % 3600) / 60)
   const prayerSecs = prayerRemainingSecs % 60
 
-  // Determine active fasting target & elapsed times
-  let activeFastingTarget, activeFastingLabel, fastingTotalSeconds, fastingElapsedSeconds, isFastingNow
+  // Determine active fasting target & remaining percentage
+  let activeFastingTarget, activeFastingLabel, remainingPercent, isFastingNow
   if (now < iftarSehri.sehriTime) {
-    // Before Sehri
+    // Early morning before Sehri: countdown to today's Sehri
+    const yesterday = new Date(now)
+    yesterday.setDate(yesterday.getDate() - 1)
+    const yesterdayIftarSehri = getIftarSehriPlaceholder(
+      location.lat,
+      location.lng,
+      yesterday,
+      selectedMethod,
+      locationTimeZone
+    )
     activeFastingTarget = iftarSehri.sehriTime
     activeFastingLabel = `Sehri — ${iftarSehri.sehriLabel}`
-    fastingTotalSeconds = Math.max(0, Math.floor((iftarSehri.iftarTime - iftarSehri.sehriTime) / 1000))
-    fastingElapsedSeconds = 0
+    const totalMs = iftarSehri.sehriTime.getTime() - yesterdayIftarSehri.iftarTime.getTime()
+    const remainingMs = Math.max(0, iftarSehri.sehriTime.getTime() - now.getTime())
+    remainingPercent = totalMs > 0 ? (remainingMs / totalMs) * 100 : 0
     isFastingNow = false
   } else if (now < iftarSehri.iftarTime) {
-    // Between Sehri and Iftar: currently fasting!
+    // Between Sehri and Iftar: currently fasting! Countdown to Iftar
     activeFastingTarget = iftarSehri.iftarTime
     activeFastingLabel = `Iftar — ${iftarSehri.iftarLabel}`
-    fastingTotalSeconds = Math.max(1, Math.floor((iftarSehri.iftarTime - iftarSehri.sehriTime) / 1000))
-    fastingElapsedSeconds = Math.max(0, Math.floor((now - iftarSehri.sehriTime) / 1000))
+    const totalMs = iftarSehri.iftarTime.getTime() - iftarSehri.sehriTime.getTime()
+    const remainingMs = Math.max(0, iftarSehri.iftarTime.getTime() - now.getTime())
+    remainingPercent = totalMs > 0 ? (remainingMs / totalMs) * 100 : 0
     isFastingNow = true
   } else {
-    // After Iftar: counting down to tomorrow's Sehri
+    // Evening after Iftar: countdown to tomorrow's Sehri
     const tomorrow = new Date(now)
     tomorrow.setDate(tomorrow.getDate() + 1)
     const tomorrowSehri = getIftarSehriPlaceholder(
@@ -91,8 +102,9 @@ export default function HomePage({ location }) {
     )
     activeFastingTarget = tomorrowSehri.sehriTime
     activeFastingLabel = `Sehri — ${tomorrowSehri.sehriLabel}`
-    fastingTotalSeconds = Math.max(1, Math.floor((tomorrowSehri.iftarTime - tomorrowSehri.sehriTime) / 1000))
-    fastingElapsedSeconds = 0
+    const totalMs = tomorrowSehri.sehriTime.getTime() - iftarSehri.iftarTime.getTime()
+    const remainingMs = Math.max(0, tomorrowSehri.sehriTime.getTime() - now.getTime())
+    remainingPercent = totalMs > 0 ? (remainingMs / totalMs) * 100 : 0
     isFastingNow = false
   }
 
@@ -273,8 +285,7 @@ export default function HomePage({ location }) {
           hours={activeHours}
           minutes={activeMins}
           seconds={activeSecs}
-          totalSeconds={fastingTotalSeconds}
-          currentSeconds={fastingElapsedSeconds}
+          remainingPercent={remainingPercent}
           label={activeFastingLabel}
         />
 

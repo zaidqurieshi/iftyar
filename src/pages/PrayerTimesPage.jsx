@@ -42,14 +42,14 @@ const listContainerVariants = {
 }
 
 const itemVariants = {
-  initial: { opacity: 0, y: 15 },
-  animate: { opacity: 1, y: 0, transition: { type: 'spring', damping: 20, stiffness: 260 } },
+  initial: { opacity: 0, y: 12 },
+  animate: { opacity: 1, y: 0, transition: { duration: 0.35, ease: 'easeOut' } },
 }
 
 export default function PrayerTimesPage({ location }) {
   const [now, setNow] = useState(() => new Date())
-  const [locationLabel, setLocationLabel] = useState(location?.label || '')
   const [selectedMethod, setSelectedMethod] = useMethodState()
+  const [locationLabel, setLocationLabel] = useState(location.label || '')
 
   useEffect(() => {
     const timer = window.setInterval(() => setNow(new Date()), 1000)
@@ -57,8 +57,12 @@ export default function PrayerTimesPage({ location }) {
   }, [])
 
   useEffect(() => {
-    if (location.lat !== undefined && location.lng !== undefined) {
-      getPlaceLabelFromCoordinates(location.lat, location.lng).then(setLocationLabel)
+    let active = true
+    getPlaceLabelFromCoordinates(location.lat, location.lng).then((label) => {
+      if (active) setLocationLabel(label)
+    })
+    return () => {
+      active = false
     }
   }, [location.lat, location.lng])
 

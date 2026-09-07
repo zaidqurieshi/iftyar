@@ -29,4 +29,3 @@ export function formatHijri(date, timeZone, offsetDays = -2) {
   const year = parts.find((p) => p.type === 'year')?.value || ''
   return `${day} ${month} ${year} AH`
 }
-

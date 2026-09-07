@@ -1,5 +1,5 @@
 import { CalculationMethod, Coordinates, PrayerTimes, Madhab } from 'adhan'
-import iftarkarTimetables from '../data/iftarkar-timetables.json'
+import iftarkarTimetables from '../data/iftarkar-timetables.json' with { type: 'json' }
 
 export const DEFAULT_METHOD_ID = 'raheemiya'
 
