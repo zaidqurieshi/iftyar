@@ -1,10 +1,13 @@
 import { useEffect, useMemo, useState } from 'react'
+import { motion, AnimatePresence } from 'motion/react'
 import GlassCard from '../components/GlassCard'
 import HadithCard from '../components/HadithCard'
+import DuaCard from '../components/DuaCard'
 import CircularTimer from '../components/CircularTimerNew'
 import MethodSelector from '../components/MethodSelector'
 import {
   buildRamadanCalendarIcs,
+  buildGoogleCalendarUrl,
   formatPrayerTime,
   generateRamadanCalendarEntries,
   getIftarSehriPlaceholder,
@@ -15,15 +18,16 @@ import { useMethodState } from '../hooks/useMethodState'
 import { describeLocation, getPlaceLabelFromCoordinates } from '../services/locationService'
 import { formatHijri, getTimeZoneForCoordinates } from '../services/dateService'
 
-function HomePage({ location }) {
+export default function HomePage({ location }) {
   const [now, setNow] = useState(() => new Date())
   const [selectedMethod, setSelectedMethod] = useMethodState()
   const [calendarSource, setCalendarSource] = useState(CALENDAR_SOURCES[0].name)
   const [locationLabel, setLocationLabel] = useState(location.label || '')
   const [calendarMenuOpen, setCalendarMenuOpen] = useState(false)
+
   const locationTimeZone = useMemo(
     () => getTimeZoneForCoordinates(location.lat, location.lng),
-    [location.lat, location.lng],
+    [location.lat, location.lng]
   )
 
   useEffect(() => {
@@ -36,122 +40,99 @@ function HomePage({ location }) {
     getPlaceLabelFromCoordinates(location.lat, location.lng).then((label) => {
       if (active) setLocationLabel(label)
     })
-    return () => { active = false }
+    return () => {
+      active = false
+    }
   }, [location.lat, location.lng])
 
-  const nextPrayer = useMemo(() => getNextPrayer(location.lat, location.lng, now, selectedMethod), [location.lat, location.lng, now, selectedMethod])
-  const iftarSehri = useMemo(() => getIftarSehriPlaceholder(location.lat, location.lng, now, selectedMethod, locationTimeZone), [location.lat, location.lng, now, selectedMethod, locationTimeZone])
+  const nextPrayer = useMemo(
+    () => getNextPrayer(location.lat, location.lng, now, selectedMethod),
+    [location.lat, location.lng, now, selectedMethod]
+  )
+  const iftarSehri = useMemo(
+    () => getIftarSehriPlaceholder(location.lat, location.lng, now, selectedMethod, locationTimeZone),
+    [location.lat, location.lng, now, selectedMethod, locationTimeZone]
+  )
 
-  const remainingMs = Math.max(0, nextPrayer.time.getTime() - now.getTime())
-  const remainingSeconds = Math.floor(remainingMs / 1000)
-  const countdownHours = Math.floor(remainingSeconds / 3600)
-  const countdownMinutes = Math.floor((remainingSeconds % 3600) / 60)
-  const countdownSeconds = remainingSeconds % 60
+  // Next Prayer countdown
+  const prayerRemainingMs = Math.max(0, nextPrayer.time.getTime() - now.getTime())
+  const prayerRemainingSecs = Math.floor(prayerRemainingMs / 1000)
+  const prayerHours = Math.floor(prayerRemainingSecs / 3600)
+  const prayerMins = Math.floor((prayerRemainingSecs % 3600) / 60)
+  const prayerSecs = prayerRemainingSecs % 60
 
-  // Determine the current phase and appropriate target times
-  let activeFastingTarget, activeFastingLabel, fastingTotalSeconds, fastingElapsedSeconds;
+  // Determine active fasting target & elapsed times
+  let activeFastingTarget, activeFastingLabel, fastingTotalSeconds, fastingElapsedSeconds, isFastingNow
   if (now < iftarSehri.sehriTime) {
     // Before Sehri
-    activeFastingTarget = iftarSehri.sehriTime;
-    activeFastingLabel = `Sehri - ${iftarSehri.sehriLabel}`;
-    fastingTotalSeconds = Math.max(0, Math.floor((iftarSehri.iftarTime - iftarSehri.sehriTime) / 1000));
-    fastingElapsedSeconds = 0;
+    activeFastingTarget = iftarSehri.sehriTime
+    activeFastingLabel = `Sehri — ${iftarSehri.sehriLabel}`
+    fastingTotalSeconds = Math.max(0, Math.floor((iftarSehri.iftarTime - iftarSehri.sehriTime) / 1000))
+    fastingElapsedSeconds = 0
+    isFastingNow = false
   } else if (now < iftarSehri.iftarTime) {
-    // Between Sehri and Iftar
-    activeFastingTarget = iftarSehri.iftarTime;
-    activeFastingLabel = `Iftar - ${iftarSehri.iftarLabel}`;
-    fastingTotalSeconds = Math.max(0, Math.floor((iftarSehri.iftarTime - iftarSehri.sehriTime) / 1000));
-    fastingElapsedSeconds = Math.max(0, Math.floor((now - iftarSehri.sehriTime) / 1000));
+    // Between Sehri and Iftar: currently fasting!
+    activeFastingTarget = iftarSehri.iftarTime
+    activeFastingLabel = `Iftar — ${iftarSehri.iftarLabel}`
+    fastingTotalSeconds = Math.max(1, Math.floor((iftarSehri.iftarTime - iftarSehri.sehriTime) / 1000))
+    fastingElapsedSeconds = Math.max(0, Math.floor((now - iftarSehri.sehriTime) / 1000))
+    isFastingNow = true
   } else {
-    // After Iftar - start counting to next day's Sehri
-    const tomorrow = new Date(now);
-    tomorrow.setDate(tomorrow.getDate() + 1);
-    const tomorrowSehri = getIftarSehriPlaceholder(location.lat, location.lng, tomorrow, selectedMethod, locationTimeZone);
-    activeFastingTarget = tomorrowSehri.sehriTime;
-    activeFastingLabel = `Sehri - ${tomorrowSehri.sehriLabel}`;
-    fastingTotalSeconds = Math.max(0, Math.floor((tomorrowSehri.iftarTime - tomorrowSehri.sehriTime) / 1000));
-    fastingElapsedSeconds = 0;
+    // After Iftar: counting down to tomorrow's Sehri
+    const tomorrow = new Date(now)
+    tomorrow.setDate(tomorrow.getDate() + 1)
+    const tomorrowSehri = getIftarSehriPlaceholder(
+      location.lat,
+      location.lng,
+      tomorrow,
+      selectedMethod,
+      locationTimeZone
+    )
+    activeFastingTarget = tomorrowSehri.sehriTime
+    activeFastingLabel = `Sehri — ${tomorrowSehri.sehriLabel}`
+    fastingTotalSeconds = Math.max(1, Math.floor((tomorrowSehri.iftarTime - tomorrowSehri.sehriTime) / 1000))
+    fastingElapsedSeconds = 0
+    isFastingNow = false
   }
-  const activeCountdownMs = Math.max(0, activeFastingTarget.getTime() - now.getTime());
-  const activeCountdownSeconds = Math.floor(activeCountdownMs / 1000);
-  const activeCountdownHours = Math.floor(activeCountdownSeconds / 3600);
-  const activeCountdownMinutes = Math.floor((activeCountdownSeconds % 3600) / 60);
-  const activeCountdownSecondsOnly = activeCountdownSeconds % 60;
+
+  const activeCountdownMs = Math.max(0, activeFastingTarget.getTime() - now.getTime())
+  const activeCountdownSeconds = Math.floor(activeCountdownMs / 1000)
+  const activeHours = Math.floor(activeCountdownSeconds / 3600)
+  const activeMins = Math.floor((activeCountdownSeconds % 3600) / 60)
+  const activeSecs = activeCountdownSeconds % 60
 
   const displayLocation = locationLabel || location.label || describeLocation(location.lat, location.lng)
-  const selectedCalendarSource = CALENDAR_SOURCES.find((source) => source.name === calendarSource) || CALENDAR_SOURCES[0]
+  const selectedCalendarSource =
+    CALENDAR_SOURCES.find((source) => source.name === calendarSource) || CALENDAR_SOURCES[0]
+
   const calendarEntries = useMemo(
-    () => generateRamadanCalendarEntries(location.lat, location.lng, now, selectedCalendarSource.methodId, 30, locationTimeZone),
-    [location.lat, location.lng, now, selectedCalendarSource.methodId, locationTimeZone],
+    () =>
+      generateRamadanCalendarEntries(
+        location.lat,
+        location.lng,
+        now,
+        selectedCalendarSource.methodId,
+        30,
+        locationTimeZone
+      ),
+    [location.lat, location.lng, now, selectedCalendarSource.methodId, locationTimeZone]
   )
+
   const dateFormatter = new Intl.DateTimeFormat('en-US', {
     timeZone: locationTimeZone,
     weekday: 'long',
     month: 'long',
     day: 'numeric',
-    year: 'numeric',
   })
 
-  const handlePrintCalendar = () => {
-    const printWindow = window.open('', '_blank', 'width=1000,height=900')
-    if (!printWindow) {
-      return
-    }
-
-    const rows = calendarEntries
-      .map(
-        (entry) => `
-          <tr>
-            <td>${entry.dayLabel} ${entry.day}</td>
-            <td>${entry.monthLabel}</td>
-            <td>${entry.sehri}</td>
-            <td>${entry.iftar}</td>
-          </tr>`,
-      )
-      .join('')
-
-    printWindow.document.write(`
-      <html>
-        <head>
-          <title>Ramadan Calendar</title>
-          <style>
-            body { font-family: Arial, sans-serif; padding: 24px; color: #111; }
-            table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-            th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
-            th { background: #f2f2f2; }
-            h1 { margin-bottom: 0; }
-            .subtitle { color: #555; margin-bottom: 18px; }
-          </style>
-        </head>
-        <body>
-          <h1>Ramadan Calendar</h1>
-          <div class="subtitle">${displayLocation}</div>
-          <table>
-            <thead>
-              <tr>
-                <th>Day</th>
-                <th>Month</th>
-                <th>Sehri</th>
-                <th>Iftar</th>
-              </tr>
-            </thead>
-            <tbody>${rows}</tbody>
-          </table>
-        </body>
-      </html>
-    `)
-    printWindow.document.close()
-    printWindow.focus()
-    printWindow.print()
-  }
-
-  const isAppleDevice = /iPhone|iPad|Mac/i.test(navigator.userAgent) && !/Windows/i.test(navigator.userAgent)
+  const isAppleDevice =
+    typeof navigator !== 'undefined' &&
+    /iPhone|iPad|Mac/i.test(navigator.userAgent) &&
+    !/Windows/i.test(navigator.userAgent)
 
   const handleDownloadPdf = () => {
     const printWindow = window.open('', '_blank', 'width=1000,height=900')
-    if (!printWindow) {
-      return
-    }
+    if (!printWindow) return
 
     const rows = calendarEntries
       .map(
@@ -159,43 +140,43 @@ function HomePage({ location }) {
           <tr>
             <td>${entry.dayLabel} ${entry.day}</td>
             <td>${entry.monthLabel}</td>
-            <td>${entry.sehri}</td>
-            <td>${entry.iftar}</td>
-          </tr>`,
+            <td><strong>${entry.sehri}</strong></td>
+            <td><strong>${entry.iftar}</strong></td>
+          </tr>`
       )
       .join('')
 
-    // Include footer with Iftyar.com
-    const footerHtml = `<div style="margin-top: 30px; text-align: center; font-size: 0.9rem; color: #555;">Iftyar.com</div>`
-
     printWindow.document.write(`
+      <!doctype html>
       <html>
         <head>
-          <title>Ramadan Calendar</title>
+          <title>Ramadan Calendar — ${displayLocation}</title>
           <style>
-            body { font-family: Arial, sans-serif; padding: 28px; color: #111; }
-            table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-            th, td { border: 1px solid #dadde2; padding: 10px; text-align: left; }
-            th { background: #eff6ef; }
-            h1 { margin: 0 0 8px; }
-            .subtitle { color: #4a4a4a; margin-bottom: 18px; }
+            body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; padding: 32px; color: #0f2329; background: #fff; }
+            h1 { margin: 0 0 4px; font-size: 26px; color: #092e26; }
+            .subtitle { color: #4e6b63; margin-bottom: 24px; font-size: 15px; }
+            table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+            th, td { border: 1px solid #d0deda; padding: 10px 14px; text-align: left; font-size: 14px; }
+            th { background: #eaf5f0; color: #0d4638; font-weight: 600; }
+            tr:nth-child(even) td { background: #fbfdfc; }
+            .footer { margin-top: 30px; text-align: center; font-size: 13px; color: #739088; }
           </style>
         </head>
         <body>
-          <h1>Ramadan Calendar</h1>
-          <div class="subtitle">${displayLocation}</div>
+          <h1>Ramadan Timetable</h1>
+          <div class="subtitle">${displayLocation} • Source: ${selectedCalendarSource.name}</div>
           <table>
             <thead>
               <tr>
                 <th>Day</th>
-                <th>Month</th>
-                <th>Sehri</th>
-                <th>Iftar</th>
+                <th>Date</th>
+                <th>Sehri (Ends)</th>
+                <th>Iftar (Begins)</th>
               </tr>
             </thead>
             <tbody>${rows}</tbody>
           </table>
-          ${footerHtml}
+          <div class="footer">Generated by Iftyar (https://iftyar.com)</div>
         </body>
       </html>
     `)
@@ -205,22 +186,8 @@ function HomePage({ location }) {
     setCalendarMenuOpen(false)
   }
 
-  // Share PDF via WhatsApp (using Web Share API if available)
-  // Helper to create a minimal PDF with plain text content
-  const buildMinimalPdf = (entries) => {
-    // Simple PDF structure (very basic, enough for most viewers)
-    const header = `%PDF-1.4\n1 0 obj << /Type /Catalog /Pages 2 0 R >> endobj\n2 0 obj << /Type /Pages /Count 1 /Kids [3 0 R] >> endobj\n3 0 obj << /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 4 0 R /Resources << >> >> endobj\n4 0 obj << /Length 0 >> stream\nBT\n/F1 12 Tf\n100 750 Td (Ramadan Calendar) Tj\nET\n`;
-    const lines = entries.map((e, i) => `(${i + 1}) ${e.dayLabel} ${e.day} ${e.monthLabel} Sehri:${e.sehri} Iftar:${e.iftar}`).join(' ');
-    const content = `BT /F1 10 Tf 100 730 Td (${lines}) Tj ET\n`;
-    const footer = `\nendstream\nendobj\nxref\n0 5\n0000000000 65535 f \n0000000010 00000 n \n0000000060 00000 n \n0000000110 00000 n \n0000000220 00000 n \ntrailer << /Size 5 /Root 1 0 R >>\nstartxref\n330\n%%EOF`;
-    const pdfString = header + content + footer;
-    return new Blob([pdfString], { type: 'application/pdf' });
-  };
-
-
-
   const handleAddToCalendar = () => {
-    const title = `Ramadan Calendar - ${displayLocation}`
+    const title = `Ramadan Calendar — ${displayLocation}`
     const calendarText = buildRamadanCalendarIcs(calendarEntries, title)
 
     if (isAppleDevice) {
@@ -243,121 +210,177 @@ function HomePage({ location }) {
 
   return (
     <div className="page-stack">
-      <GlassCard className="hero-card">
+      {/* Hero Location & Date Banner */}
+      <GlassCard className="hero-card" static>
         <div className="hero-card__header">
           <div>
-            <p className="eyebrow">Location</p>
-            <h2>{displayLocation}</h2>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', marginBottom: '0.2rem' }}>
+              <span className="location-pill__dot" />
+              <span className="eyebrow eyebrow--gold">Location</span>
+            </div>
+            <h2 className="hero-card__title">{displayLocation}</h2>
           </div>
-          <span className="chip">{dateFormatter.format(now)}</span>
+          <span className="chip chip--gold">{dateFormatter.format(now)}</span>
         </div>
 
         <div className="hero-card__meta">
-          <div>
-            <p className="eyebrow">Gregorian</p>
-            <p className="meta-value">{dateFormatter.format(now)}</p>
+          <div className="meta-box">
+            <span className="eyebrow">Gregorian Date</span>
+            <span className="meta-value">{dateFormatter.format(now)}</span>
           </div>
-          <div>
-            <p className="eyebrow">Hijri</p>
-            <p className="meta-value">{formatHijri(now, locationTimeZone)}</p>
+          <div className="meta-box">
+            <span className="eyebrow">Hijri Date</span>
+            <span className="meta-value">{formatHijri(now, locationTimeZone)}</span>
           </div>
         </div>
 
-        <div className="next-prayer">
-          <p className="eyebrow">Next prayer</p>
-          <div className="next-prayer__row">
-            <div>
-              <h3>{nextPrayer.name}</h3>
-              <p>{formatPrayerTime(nextPrayer.time, nextPrayer.displayTimeZone || locationTimeZone)}</p>
-            </div>
-            <div className="countdown" aria-live="polite">
-              <span>{String(countdownHours).padStart(2, '0')}</span>
+        {/* Next Prayer Spotlight */}
+        <div className="next-prayer-spotlight" style={{ marginTop: '1.25rem' }}>
+          <div className="next-prayer-info">
+            <span className="eyebrow eyebrow--emerald">Next Prayer</span>
+            <h3 className="next-prayer-title">{nextPrayer.name}</h3>
+            <span className="next-prayer-time-sub">
+              {formatPrayerTime(nextPrayer.time, nextPrayer.displayTimeZone || locationTimeZone)}
+            </span>
+          </div>
+
+          <div className="next-prayer-countdown-wrap">
+            <span className="eyebrow" style={{ textAlign: 'right' }}>Starts In</span>
+            <div className="next-prayer-countdown">
+              <span>{String(prayerHours).padStart(2, '0')}</span>
               <span>:</span>
-              <span>{String(countdownMinutes).padStart(2, '0')}</span>
+              <span>{String(prayerMins).padStart(2, '0')}</span>
               <span>:</span>
-              <span>{String(countdownSeconds).padStart(2, '0')}</span>
+              <span>{String(prayerSecs).padStart(2, '0')}</span>
             </div>
           </div>
         </div>
       </GlassCard>
+
+      {/* Fasting Countdown Centerpiece Card */}
+      <GlassCard className="panel-card fasting-hero-card" static>
+        <div
+          className={`fasting-phase-badge ${
+            isFastingNow ? 'fasting-phase-badge--fasting' : 'fasting-phase-badge--night'
+          }`}
+        >
+          <span className="pulse-indicator" />
+          <span>{isFastingNow ? 'Fasting in Progress' : 'Night Rest & Sehri Countdown'}</span>
+        </div>
+
+        <CircularTimer
+          hours={activeHours}
+          minutes={activeMins}
+          seconds={activeSecs}
+          totalSeconds={fastingTotalSeconds}
+          currentSeconds={fastingElapsedSeconds}
+          label={activeFastingLabel}
+        />
+
+        {/* Sehri & Iftar Glances */}
+        <div className="fasting-meta-grid">
+          <div className={`fasting-meta-card ${!isFastingNow ? 'fasting-meta-card--highlight' : ''}`}>
+            <div className="fasting-meta-icon fasting-meta-icon--gold">🌅</div>
+            <div className="fasting-meta-info">
+              <span className="eyebrow">Sehri Ends</span>
+              <strong className="fasting-meta-time">{iftarSehri.sehriLabel}</strong>
+            </div>
+          </div>
+
+          <div className={`fasting-meta-card ${isFastingNow ? 'fasting-meta-card--highlight' : ''}`}>
+            <div className="fasting-meta-icon">🌇</div>
+            <div className="fasting-meta-info">
+              <span className="eyebrow">Iftar Begins</span>
+              <strong className="fasting-meta-time">{iftarSehri.iftarLabel}</strong>
+            </div>
+          </div>
+        </div>
+
+        {iftarSehri.message && (
+          <div className="fasting-message-banner">
+            <span>✦ {iftarSehri.message} ✦</span>
+          </div>
+        )}
+      </GlassCard>
+
+      {/* Calculation Method Selector */}
       <MethodSelector selectedMethod={selectedMethod} onMethodChange={setSelectedMethod} />
 
-      <GlassCard className="panel-card">
-        <div className="section-head">
-          
-        </div>
+      {/* Daily Ramadan Supplications */}
+      <DuaCard />
 
-        <div className="ramadan-timer-wrap">
-          <CircularTimer
-            
-            hours={activeCountdownHours}
-            minutes={activeCountdownMinutes}
-            seconds={activeCountdownSecondsOnly}
-            totalSeconds={fastingTotalSeconds}
-            currentSeconds={fastingElapsedSeconds}
-            label={activeFastingLabel}
-          />
-
-          <div className="ramadan-timer__details">
-            <div>
-              <span>Iftar</span>
-              <strong>{iftarSehri.iftarLabel}</strong>
-            </div>
-            <div>
-              <span>Sehri</span>
-              <strong>{iftarSehri.sehriLabel}</strong>
-            </div>
-          </div>
-        </div>
-
-        <p className="supporting-copy">{iftarSehri.message}</p>
-      </GlassCard>
-
+      {/* Daily Prophetic Hadith Wisdom */}
       <HadithCard />
 
-      <GlassCard className="panel-card">
-        <div className="ramadan-calendar">
-          <label className="ramadan-calendar__selector-wrap">
-            <span className="ramadan-calendar__label">Calendar source</span>
+      {/* Ramadan Timetable Download & Calendar Sync */}
+      <GlassCard className="panel-card" static>
+        <div className="hero-card__header" style={{ marginBottom: '1rem' }}>
+          <div>
+            <span className="eyebrow eyebrow--gold">30-Day Timetable</span>
+            <h2 style={{ fontSize: '1.4rem' }}>Ramadan Calendar</h2>
+          </div>
+          <span className="chip">Export & Sync</span>
+        </div>
+
+        <div className="calendar-export-wrap">
+          <label className="calendar-select-label">
+            <span className="eyebrow">Select Timetable Source</span>
             <select
-              className="ramadan-calendar__selector"
+              className="calendar-select"
               value={calendarSource}
-              onChange={(event) => setCalendarSource(event.target.value)}
+              onChange={(e) => setCalendarSource(e.target.value)}
             >
               {CALENDAR_SOURCES.map((source) => (
-                <option key={source.name} value={source.name}>{source.name}</option>
+                <option key={source.name} value={source.name}>
+                  {source.name}
+                </option>
               ))}
             </select>
           </label>
 
-          <div className="ramadan-calendar__action-wrap">
-            <button
-              type="button"
-              className="ramadan-calendar__button"
-              onClick={() => setCalendarMenuOpen((open) => !open)}
-            >
-              <span className="ramadan-calendar__icon" aria-hidden="true">📅</span>
-              <span>Get Ramadan Calendar</span>
-            </button>
+          <button
+            type="button"
+            className="calendar-action-btn"
+            onClick={() => setCalendarMenuOpen((open) => !open)}
+          >
+            <span>📅</span>
+            <span>Get Ramadan Timetable</span>
+            <span style={{ fontSize: '0.75rem', opacity: 0.8 }}>
+              {calendarMenuOpen ? '▲' : '▼'}
+            </span>
+          </button>
 
-            <div className={`ramadan-calendar__menu ${calendarMenuOpen ? 'ramadan-calendar__menu--open' : ''}`}>
-              <button type="button" className="ramadan-calendar__menu-item" onClick={handleDownloadPdf}>
-                Download PDF
-              </button>
-              <button type="button" className="ramadan-calendar__menu-item" onClick={handleAddToCalendar}>
-                Add to Calendar
-              </button>
-                {/* Begin removed WhatsApp share block
-               <button type="button" className="ramadan-calendar__menu-item" onClick={handleShareWhatsApp}>
-                 Share via WhatsApp
-               </button>
-                */}
-            </div>
-          </div>
+          <AnimatePresence>
+            {calendarMenuOpen && (
+              <motion.div
+                className="calendar-dropdown-menu"
+                initial={{ opacity: 0, y: -8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -8 }}
+                transition={{ duration: 0.2 }}
+              >
+                <button
+                  type="button"
+                  className="calendar-menu-item"
+                  onClick={handleDownloadPdf}
+                >
+                  <span>📄</span>
+                  <span>Print or Download PDF Timetable</span>
+                </button>
+
+                <button
+                  type="button"
+                  className="calendar-menu-item"
+                  onClick={handleAddToCalendar}
+                >
+                  <span>🗓️</span>
+                  <span>{isAppleDevice ? 'Download Apple Calendar (.ics)' : 'Add to Google Calendar'}</span>
+                </button>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </GlassCard>
     </div>
   )
 }
-
-export default HomePage
