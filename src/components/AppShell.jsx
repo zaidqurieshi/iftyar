@@ -40,7 +40,7 @@ const pageVariants = {
   },
 }
 
-export default function AppShell() {
+export default function AppShell({ userLocation, onRefreshLocation, isDetecting }) {
   const location = useLocation()
   const outlet = useOutlet()
 
@@ -102,10 +102,21 @@ export default function AppShell() {
           </Link>
 
           <div className="topbar-actions">
-            <Link to="/prayer-times" className="location-pill">
-              <span className="location-pill__dot" />
-              <span>Live Times</span>
-            </Link>
+            <button
+              type="button"
+              className="location-pill"
+              onClick={onRefreshLocation}
+              title={`Location: ${userLocation?.label || 'Detecting...'}${userLocation?.isVpn ? ' (Connected via VPN)' : ''}. Click to refresh.`}
+              aria-label="Location status and reload"
+            >
+              <span className={`location-pill__dot ${userLocation?.isVpn ? 'location-pill__dot--vpn' : ''}`} />
+              <span className="location-pill__label">
+                {isDetecting
+                  ? 'Detecting...'
+                  : userLocation?.city || userLocation?.label?.split(',')[0] || 'Location'}
+              </span>
+              {userLocation?.isVpn && <span className="location-pill__vpn-tag">VPN</span>}
+            </button>
           </div>
         </motion.header>
 

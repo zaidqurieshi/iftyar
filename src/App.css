@@ -131,15 +131,23 @@
   border: 1px solid var(--glass-border);
   backdrop-filter: blur(12px);
   color: var(--text-soft);
+  font-family: inherit;
   font-size: 0.78rem;
   font-weight: 500;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-  transition: border-color 0.2s, background-color 0.2s;
+  cursor: pointer;
+  outline: none;
+  transition: border-color 0.2s, background-color 0.2s, transform 0.15s;
 }
 
 .location-pill:hover {
   border-color: var(--glass-border-strong);
   color: var(--text);
+  background: rgba(18, 48, 57, 0.85);
+}
+
+.location-pill:active {
+  transform: scale(0.98);
 }
 
 .location-pill__dot {
@@ -149,6 +157,24 @@
   background: var(--accent-strong);
   box-shadow: 0 0 8px var(--accent-strong);
   animation: pulseDot 2s infinite ease-in-out;
+}
+
+.location-pill__dot--vpn {
+  background: #38bdf8;
+  box-shadow: 0 0 8px #38bdf8;
+}
+
+.location-pill__vpn-tag {
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 0.1rem 0.35rem;
+  border-radius: 4px;
+  background: rgba(56, 189, 248, 0.18);
+  color: #38bdf8;
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  line-height: 1;
 }
 
 @keyframes pulseDot {

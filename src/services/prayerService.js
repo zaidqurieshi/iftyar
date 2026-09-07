@@ -313,11 +313,42 @@ function buildTableSchedule(method, lat, lng, date) {
 // but dispatches between iftarkar.com timetables and Adhan-based methods.
 // ---------------------------------------------------------------------------
 
+export function isTableMethodApplicable(methodId, lat, lng) {
+  if (typeof lat !== 'number' || typeof lng !== 'number') return true
+
+  // Kashmir tables: raheemiya, etk, ahlehadees, tsajk, ajksa
+  const kashmirMethods = ['raheemiya', 'etk', 'ahlehadees', 'tsajk', 'ajksa']
+  if (kashmirMethods.includes(methodId)) {
+    return lat >= 31 && lat <= 38 && lng >= 72 && lng <= 81
+  }
+  if (methodId === 'blr_juk') {
+    return lat >= 11 && lat <= 15 && lng >= 75 && lng <= 79
+  }
+  if (methodId === 'mumbai_jaset') {
+    return lat >= 17 && lat <= 21 && lng >= 71 && lng <= 75
+  }
+  if (methodId === 'faridabad_haryana') {
+    return lat >= 27 && lat <= 30 && lng >= 76 && lng <= 79
+  }
+  return true
+}
+
 export function getPrayerSchedule(lat, lng, selectedDate = new Date(), methodId = DEFAULT_METHOD_ID) {
   const method = getCalculationMethodInfo(methodId)
 
   if (method.source === 'iftarkar-table') {
-    return buildTableSchedule(method, lat, lng, selectedDate)
+    if (isTableMethodApplicable(method.id, lat, lng)) {
+      return buildTableSchedule(method, lat, lng, selectedDate)
+    }
+    // Location is outside table region (e.g. VPN or international): compute solar prayer times for location
+    return buildAdhanSchedule(
+      lat,
+      lng,
+      selectedDate,
+      method.fallbackAdhanMethod || 'muslimWorldLeague',
+      method.fallbackMadhab || null,
+      false
+    )
   }
 
   return buildAdhanSchedule(lat, lng, selectedDate, method.adhanMethodId, null, true)
@@ -591,4 +622,64 @@ export function calculatePrayerCountdownSeconds(lat, lng, now = new Date(), meth
 export function getPrayerItem(lat, lng, key, date = new Date()) {
   return getPrayerByKey(lat, lng, key, date)
 }
+
+/**
+ * Returns the recommended prayer calculation method based on geographical coordinates.
+ */
+export function getDefaultMethodForCoordinates(lat, lng, countryCode = '') {
+  if (typeof lat !== 'number' || typeof lng !== 'number') {
+    return DEFAULT_METHOD_ID
+  }
+
+  // Kashmir / Northern India region: Srinagar timetable (Raheemiya)
+  if (lat >= 31 && lat <= 38 && lng >= 72 && lng <= 81) {
+    return 'raheemiya'
+  }
+
+  // Bangalore region
+  if (lat >= 11 && lat <= 15 && lng >= 75 && lng <= 79) {
+    return 'blr_juk'
+  }
+
+  // Mumbai region
+  if (lat >= 17 && lat <= 21 && lng >= 71 && lng <= 75) {
+    return 'mumbai_jaset'
+  }
+
+  const cc = (countryCode || '').toUpperCase()
+
+  // Rest of India / South Asia
+  if (cc === 'IN' || (lat >= 8 && lat <= 36 && lng >= 68 && lng <= 90)) {
+    return 'raheemiya'
+  }
+
+  // North America (US / Canada)
+  if (cc === 'US' || cc === 'CA' || (lat >= 24 && lat <= 70 && lng >= -168 && lng <= -52)) {
+    return 'northAmerica'
+  }
+
+  // UAE / Oman / Qatar
+  if (cc === 'AE' || cc === 'OM' || cc === 'QA') {
+    return 'dubai'
+  }
+
+  // Saudi Arabia / Kuwait / Bahrain
+  if (cc === 'SA' || cc === 'KW' || cc === 'BH') {
+    return 'uummAlQura'
+  }
+
+  // Egypt / North Africa / Levant
+  if (['EG', 'LY', 'SD', 'SY', 'IQ', 'LB', 'JO'].includes(cc)) {
+    return 'egyptian'
+  }
+
+  // Pakistan / Afghanistan
+  if (cc === 'PK' || cc === 'AF') {
+    return 'karachi'
+  }
+
+  // Europe & International fallback
+  return 'muslimWorldLeague'
+}
+
 

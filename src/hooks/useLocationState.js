@@ -1,8 +1,8 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback, useRef } from 'react'
 import {
   defaultLocation,
   normalizeLocation,
-  requestCurrentLocation,
+  detectUserLocation,
 } from '../services/locationService'
 
 const STORAGE_KEY = 'iftyar.location'
@@ -14,7 +14,6 @@ export function useLocationState() {
     }
 
     const saved = window.localStorage.getItem(STORAGE_KEY)
-
     if (!saved) {
       return defaultLocation
     }
@@ -25,84 +24,62 @@ export function useLocationState() {
       return defaultLocation
     }
   })
-  const [status, setStatus] = useState('idle')
-  const [error, setError] = useState('')
 
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(location))
+  const [status, setStatus] = useState('idle') // 'idle' | 'detecting' | 'ready' | 'error'
+  const isFetchingRef = useRef(false)
+
+  const refreshLocation = useCallback(async () => {
+    if (isFetchingRef.current) return
+    isFetchingRef.current = true
+    setStatus('detecting')
+
+    try {
+      const detected = await detectUserLocation()
+      const normalized = normalizeLocation(detected)
+      setLocation(normalized)
+
+      if (typeof window !== 'undefined') {
+        window.localStorage.setItem(STORAGE_KEY, JSON.stringify(normalized))
+      }
+      setStatus('ready')
+      return normalized
+    } catch {
+      setStatus('error')
+      return location
+    } finally {
+      isFetchingRef.current = false
     }
   }, [location])
 
+  // Automatically fetch location on mount
   useEffect(() => {
-    let active = true
+    refreshLocation()
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
-    const initializeLocation = async () => {
-      setStatus('loading')
-      setError('')
+  // Automatically refresh location when network status changes or window regains focus (e.g. VPN toggled)
+  useEffect(() => {
+    if (typeof window === 'undefined') return
 
-      try {
-        const result = await requestCurrentLocation()
-        if (!active) return
-
-        const normalized = normalizeLocation(result)
-        setLocation(normalized)
-        setStatus('ready')
-      } catch (geoError) {
-        if (!active) return
-
-        const fallback = normalizeLocation(defaultLocation)
-        setLocation(fallback)
-        setStatus('manual')
-        setError(geoError?.message || 'Location permission was unavailable.')
-      }
+    const handleOnlineOrFocus = () => {
+      // Debounce slightly to allow VPN tunnel to initialize
+      setTimeout(() => {
+        refreshLocation()
+      }, 500)
     }
 
-    initializeLocation()
+    window.addEventListener('online', handleOnlineOrFocus)
+    window.addEventListener('focus', handleOnlineOrFocus)
 
     return () => {
-      active = false
+      window.removeEventListener('online', handleOnlineOrFocus)
+      window.removeEventListener('focus', handleOnlineOrFocus)
     }
-  }, [])
-
-  const requestBrowserLocation = async () => {
-    setStatus('loading')
-    setError('')
-
-    try {
-      const result = await requestCurrentLocation()
-      const normalized = normalizeLocation(result)
-      setLocation(normalized)
-      setStatus('ready')
-      return normalized
-    } catch (geoError) {
-      const fallback = normalizeLocation(defaultLocation)
-      setLocation(fallback)
-      setStatus('manual')
-      setError(geoError?.message || 'Location permission was unavailable.')
-      return fallback
-    }
-  }
-
-  const setManualLocation = ({ lat, lng, label }) => {
-    const nextLocation = normalizeLocation({
-      lat,
-      lng,
-      label,
-      source: 'manual',
-    })
-
-    setLocation(nextLocation)
-    setStatus('manual')
-    setError('')
-    return nextLocation
-  }
+  }, [refreshLocation])
 
   return {
     location,
     status,
-    error,
-    requestBrowserLocation,
-    setManualLocation,
+    isDetecting: status === 'detecting',
+    refreshLocation,
   }
 }

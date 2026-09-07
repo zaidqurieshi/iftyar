@@ -10,7 +10,6 @@ import {
 } from '../services/prayerService'
 import { useMethodState } from '../hooks/useMethodState'
 import { getTimeZoneForCoordinates, formatHijri } from '../services/dateService'
-import { getPlaceLabelFromCoordinates } from '../services/locationService'
 import {
   DawnIcon,
   SunriseIcon,
@@ -48,23 +47,13 @@ const itemVariants = {
 
 export default function PrayerTimesPage({ location }) {
   const [now, setNow] = useState(() => new Date())
-  const [selectedMethod, setSelectedMethod] = useMethodState()
-  const [locationLabel, setLocationLabel] = useState(location.label || '')
+  const [selectedMethod, setSelectedMethod] = useMethodState(location)
+  const locationLabel = location?.label || 'Prayer Times'
 
   useEffect(() => {
     const timer = window.setInterval(() => setNow(new Date()), 1000)
     return () => window.clearInterval(timer)
   }, [])
-
-  useEffect(() => {
-    let active = true
-    getPlaceLabelFromCoordinates(location.lat, location.lng).then((label) => {
-      if (active) setLocationLabel(label)
-    })
-    return () => {
-      active = false
-    }
-  }, [location.lat, location.lng])
 
   const schedule = useMemo(
     () => getPrayerSchedule(location.lat, location.lng, now, selectedMethod),
@@ -79,8 +68,8 @@ export default function PrayerTimesPage({ location }) {
     [location.lat, location.lng, now, selectedMethod]
   )
   const locationTimeZone = useMemo(
-    () => getTimeZoneForCoordinates(location.lat, location.lng),
-    [location.lat, location.lng]
+    () => location?.timeZone || getTimeZoneForCoordinates(location.lat, location.lng),
+    [location.lat, location.lng, location.timeZone]
   )
 
   const remainingMs = Math.max(0, nextPrayer.time.getTime() - now.getTime())

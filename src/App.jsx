@@ -8,11 +8,11 @@ import { useLocationState } from './hooks/useLocationState'
 import './App.css'
 
 function App() {
-  const { location } = useLocationState()
+  const { location, refreshLocation, isDetecting } = useLocationState()
 
   return (
     <Routes>
-      <Route element={<AppShell />}>
+      <Route element={<AppShell userLocation={location} onRefreshLocation={refreshLocation} isDetecting={isDetecting} />}>
         <Route index element={<HomePage location={location} />} />
         <Route path="/prayer-times" element={<PrayerTimesPage location={location} />} />
         <Route path="/zikr" element={<ZikrPage location={location} />} />

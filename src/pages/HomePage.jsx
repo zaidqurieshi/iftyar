@@ -15,36 +15,26 @@ import {
   CALENDAR_SOURCES,
 } from '../services/prayerService'
 import { useMethodState } from '../hooks/useMethodState'
-import { describeLocation, getPlaceLabelFromCoordinates } from '../services/locationService'
+import { describeLocation } from '../services/locationService'
 import { formatHijri, getTimeZoneForCoordinates } from '../services/dateService'
 import { SunriseIcon, SunsetIcon } from '../components/Icons'
 
 export default function HomePage({ location }) {
   const [now, setNow] = useState(() => new Date())
-  const [selectedMethod, setSelectedMethod] = useMethodState()
+  const [selectedMethod, setSelectedMethod] = useMethodState(location)
   const [calendarSource, setCalendarSource] = useState(CALENDAR_SOURCES[0].name)
-  const [locationLabel, setLocationLabel] = useState(location.label || '')
   const [calendarMenuOpen, setCalendarMenuOpen] = useState(false)
+  const locationLabel = location?.label || (location?.lat != null && location?.lng != null ? describeLocation(location.lat, location.lng) : '')
 
   const locationTimeZone = useMemo(
-    () => getTimeZoneForCoordinates(location.lat, location.lng),
-    [location.lat, location.lng]
+    () => location?.timeZone || getTimeZoneForCoordinates(location.lat, location.lng),
+    [location.lat, location.lng, location.timeZone]
   )
 
   useEffect(() => {
     const timer = window.setInterval(() => setNow(new Date()), 1000)
     return () => window.clearInterval(timer)
   }, [])
-
-  useEffect(() => {
-    let active = true
-    getPlaceLabelFromCoordinates(location.lat, location.lng).then((label) => {
-      if (active) setLocationLabel(label)
-    })
-    return () => {
-      active = false
-    }
-  }, [location.lat, location.lng])
 
   const nextPrayer = useMemo(
     () => getNextPrayer(location.lat, location.lng, now, selectedMethod),
