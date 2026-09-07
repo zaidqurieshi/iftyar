@@ -164,6 +164,12 @@
   box-shadow: 0 0 8px #38bdf8;
 }
 
+.location-pill__icon {
+  color: var(--accent-strong);
+  flex-shrink: 0;
+  opacity: 0.9;
+}
+
 .location-pill__vpn-tag {
   font-size: 0.65rem;
   font-weight: 700;

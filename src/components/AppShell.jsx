@@ -1,5 +1,6 @@
 import { motion, AnimatePresence } from 'motion/react'
 import { useLocation, useOutlet, Link } from 'react-router-dom'
+import { LocationIcon } from './Icons'
 import BottomNav from './BottomNav'
 
 const topbarVariants = {
@@ -105,14 +106,15 @@ export default function AppShell({ userLocation, onRefreshLocation, isDetecting 
             <button
               type="button"
               className="location-pill"
-              onClick={onRefreshLocation}
-              title={`Location: ${userLocation?.label || 'Detecting...'}${userLocation?.isVpn ? ' (Connected via VPN)' : ''}. Click to refresh.`}
+              onClick={() => onRefreshLocation && onRefreshLocation(true)}
+              title={`Location: ${userLocation?.label || 'Detecting...'}${userLocation?.isVpn ? ' (Connected via VPN)' : ''}. Click to pinpoint location.`}
               aria-label="Location status and reload"
             >
               <span className={`location-pill__dot ${userLocation?.isVpn ? 'location-pill__dot--vpn' : ''}`} />
+              <LocationIcon size={12} className="location-pill__icon" />
               <span className="location-pill__label">
                 {isDetecting
-                  ? 'Detecting...'
+                  ? 'Locating...'
                   : userLocation?.city || userLocation?.label?.split(',')[0] || 'Location'}
               </span>
               {userLocation?.isVpn && <span className="location-pill__vpn-tag">VPN</span>}

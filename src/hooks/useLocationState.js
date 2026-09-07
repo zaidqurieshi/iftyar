@@ -28,8 +28,8 @@ export function useLocationState() {
   const [status, setStatus] = useState('idle') // 'idle' | 'detecting' | 'ready' | 'error'
   const isFetchingRef = useRef(false)
 
-  const refreshLocation = useCallback(async () => {
-    if (isFetchingRef.current) return
+  const refreshLocation = useCallback(async (force = false) => {
+    if (isFetchingRef.current && !force) return
     isFetchingRef.current = true
     setStatus('detecting')
 
