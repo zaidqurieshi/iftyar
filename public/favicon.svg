@@ -1,70 +1,38 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
   <defs>
-    <!-- Background Gradient -->
-    <radialGradient id="bgGrad" cx="38%" cy="30%" r="75%">
-      <stop offset="0%" stop-color="#0c2f38" />
-      <stop offset="60%" stop-color="#06181e" />
-      <stop offset="100%" stop-color="#030c0f" />
+    <radialGradient id="favBg" cx="45%" cy="40%" r="65%">
+      <stop offset="0%" stop-color="#0c3830" />
+      <stop offset="100%" stop-color="#020d0b" />
     </radialGradient>
-
-    <!-- Gold Foil Gradient for Crescent -->
-    <linearGradient id="goldCrescent" x1="15%" y1="10%" x2="85%" y2="90%">
-      <stop offset="0%" stop-color="#fff4cc" />
-      <stop offset="30%" stop-color="#f6d268" />
-      <stop offset="70%" stop-color="#d97706" />
-      <stop offset="100%" stop-color="#92400e" />
+    <linearGradient id="favGold" x1="10%" y1="10%" x2="90%" y2="90%">
+      <stop offset="0%" stop-color="#fffbe8" />
+      <stop offset="35%" stop-color="#fde047" />
+      <stop offset="70%" stop-color="#f59e0b" />
+      <stop offset="100%" stop-color="#b45309" />
     </linearGradient>
-
-    <!-- Emerald Glow Gradient for Star -->
-    <linearGradient id="emeraldStar" x1="0%" y1="0%" x2="100%" y2="100%">
+    <linearGradient id="favEmerald" x1="0%" y1="0%" x2="100%" y2="100%">
       <stop offset="0%" stop-color="#a7f3d0" />
-      <stop offset="50%" stop-color="#34d399" />
       <stop offset="100%" stop-color="#059669" />
     </linearGradient>
-
-    <!-- Outer Gold Border Gradient -->
-    <linearGradient id="borderGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#f6d268" stop-opacity="0.6" />
-      <stop offset="50%" stop-color="#34d399" stop-opacity="0.2" />
-      <stop offset="100%" stop-color="#d97706" stop-opacity="0.5" />
-    </linearGradient>
-
-    <!-- Soft Glow Filter -->
-    <filter id="goldGlow" x="-20%" y="-20%" width="140%" height="140%">
-      <feGaussianBlur stdDeviation="12" result="blur" />
-      <feComposite in="SourceGraphic" in2="blur" operator="over" />
-    </filter>
-
-    <filter id="emeraldGlow" x="-30%" y="-30%" width="160%" height="160%">
-      <feGaussianBlur stdDeviation="16" result="blur" />
-      <feComposite in="SourceGraphic" in2="blur" operator="over" />
-    </filter>
   </defs>
 
-  <!-- Squircle / Circle Dark Base -->
-  <rect x="8" y="8" width="496" height="496" rx="128" fill="url(#bgGrad)" stroke="url(#borderGrad)" stroke-width="4" />
+  <!-- Squircle Base for Browser Tabs -->
+  <rect width="64" height="64" rx="14" fill="url(#favBg)" />
 
-  <!-- Ambient Light Orbs -->
-  <circle cx="230" cy="270" r="140" fill="#10b981" opacity="0.1" filter="blur(40px)" />
-  <circle cx="310" cy="220" r="100" fill="#f6d268" opacity="0.12" filter="blur(30px)" />
-
-  <!-- Inner Subtle Accent Ring -->
-  <circle cx="256" cy="256" r="215" fill="none" stroke="rgba(52, 211, 153, 0.12)" stroke-width="1.5" stroke-dasharray="4 8" />
-
-  <!-- Crescent Moon (Hilal) -->
-  <path
-    d="M 276,108 C 362.156,108 432,177.844 432,264 C 432,350.156 362.156,420 276,420 C 197.67,420 132.88,362.24 121.54,286.3 C 145.42,305.86 175.76,317.6 208.8,317.6 C 290.42,317.6 356.6,251.42 356.6,169.8 C 356.6,145.8 350.8,123.1 340.5,103.2 C 320.1,106.3 297.8,108 276,108 Z"
-    fill="url(#goldCrescent)"
-    filter="url(#goldGlow)"
-  />
-
-  <!-- 8-Pointed Star (Khatim / Rub el Hizb) -->
-  <polygon
-    points="320.00,162.00 328.42,189.67 353.94,176.06 340.33,201.58 368.00,210.00 340.33,218.42 353.94,243.94 328.42,230.33 320.00,258.00 311.58,230.33 286.06,243.94 299.67,218.42 272.00,210.00 299.67,201.58 286.06,176.06 311.58,189.67"
-    fill="url(#emeraldStar)"
-    filter="url(#emeraldGlow)"
-  />
-
-  <!-- Center Jewel of Star -->
-  <circle cx="320" cy="210" r="10" fill="#fff" opacity="0.95" />
+  <!-- Crescent scaled down cleanly: center ~ 31, 32 -->
+  <g transform="translate(32, 32) scale(0.115) translate(-256, -256)">
+    <path
+      d="M 384.35 269.43 A 140 140 0 1 0 278.32 120.02 A 114 114 0 1 1 384.35 269.43 Z"
+      fill="url(#favGold)"
+    />
+    <polygon
+      points="306.00,180.00 314.80,202.75 337.11,192.89 327.25,215.20 350.00,224.00 327.25,232.80 337.11,255.11 314.80,245.25 306.00,268.00 297.20,245.25 274.89,255.11 284.75,232.80 262.00,224.00 284.75,215.20 274.89,192.89 297.20,202.75"
+      fill="url(#favGold)"
+    />
+    <polygon
+      points="306.00,199.00 310.97,211.99 323.68,206.32 318.01,219.03 331.00,224.00 318.01,228.97 323.68,241.68 310.97,236.01 306.00,249.00 301.03,236.01 288.32,241.68 293.99,228.97 281.00,224.00 293.99,219.03 288.32,206.32 301.03,211.99"
+      fill="url(#favEmerald)"
+    />
+    <circle cx="306" cy="224" r="8" fill="#ffffff" />
+  </g>
 </svg>

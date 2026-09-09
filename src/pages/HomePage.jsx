@@ -15,7 +15,6 @@ import {
   CALENDAR_SOURCES,
 } from '../services/prayerService'
 import { useMethodState } from '../hooks/useMethodState'
-import { describeLocation } from '../services/locationService'
 import { formatHijri, getTimeZoneForCoordinates } from '../services/dateService'
 import { SunriseIcon, SunsetIcon } from '../components/Icons'
 
@@ -24,7 +23,6 @@ export default function HomePage({ location }) {
   const [selectedMethod, setSelectedMethod] = useMethodState(location)
   const [calendarSource, setCalendarSource] = useState(CALENDAR_SOURCES[0].name)
   const [calendarMenuOpen, setCalendarMenuOpen] = useState(false)
-  const locationLabel = location?.label || (location?.lat != null && location?.lng != null ? describeLocation(location.lat, location.lng) : '')
 
   const locationTimeZone = useMemo(
     () => location?.timeZone || getTimeZoneForCoordinates(location.lat, location.lng),
@@ -104,7 +102,6 @@ export default function HomePage({ location }) {
   const activeMins = Math.floor((activeCountdownSeconds % 3600) / 60)
   const activeSecs = activeCountdownSeconds % 60
 
-  const displayLocation = locationLabel || location.label || describeLocation(location.lat, location.lng)
   const selectedCalendarSource =
     CALENDAR_SOURCES.find((source) => source.name === calendarSource) || CALENDAR_SOURCES[0]
 
@@ -153,7 +150,7 @@ export default function HomePage({ location }) {
       <!doctype html>
       <html>
         <head>
-          <title>Ramadan Calendar — ${displayLocation}</title>
+          <title>Ramadan Calendar 1447 AH</title>
           <style>
             body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; padding: 32px; color: #0f2329; background: #fff; }
             h1 { margin: 0 0 4px; font-size: 26px; color: #092e26; }
@@ -167,7 +164,7 @@ export default function HomePage({ location }) {
         </head>
         <body>
           <h1>Ramadan Timetable</h1>
-          <div class="subtitle">${displayLocation} • Source: ${selectedCalendarSource.name}</div>
+          <div class="subtitle">Ramadan Calendar 1447 AH • Source: ${selectedCalendarSource.name}</div>
           <table>
             <thead>
               <tr>
@@ -190,7 +187,7 @@ export default function HomePage({ location }) {
   }
 
   const handleAddToCalendar = () => {
-    const title = `Ramadan Calendar — ${displayLocation}`
+    const title = 'Ramadan Calendar 1447 AH'
     const calendarText = buildRamadanCalendarIcs(calendarEntries, title)
 
     if (isAppleDevice) {
@@ -213,15 +210,15 @@ export default function HomePage({ location }) {
 
   return (
     <div className="page-stack">
-      {/* Hero Location & Date Banner */}
+      {/* Hero Header & Date Banner */}
       <GlassCard className="hero-card" static>
         <div className="hero-card__header">
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', marginBottom: '0.2rem' }}>
               <span className="location-pill__dot" />
-              <span className="eyebrow eyebrow--gold">Location</span>
+              <span className="eyebrow eyebrow--gold">Ramadan 1447 AH</span>
             </div>
-            <h2 className="hero-card__title">{displayLocation}</h2>
+            <h2 className="hero-card__title">Sehri & Iftar Schedule</h2>
           </div>
           <span className="chip chip--gold">{dateFormatter.format(now)}</span>
         </div>

@@ -143,7 +143,7 @@ export default function QiblaPage({ location }) {
             <h2 style={{ fontSize: '1.6rem' }}>Qibla Direction</h2>
           </div>
           <span className="chip chip--gold">
-            {location?.label || 'Your Location'}
+            Makkah: {distanceKm.toLocaleString()} km
           </span>
         </div>
 

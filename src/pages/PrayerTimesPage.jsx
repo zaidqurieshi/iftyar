@@ -48,7 +48,6 @@ const itemVariants = {
 export default function PrayerTimesPage({ location }) {
   const [now, setNow] = useState(() => new Date())
   const [selectedMethod, setSelectedMethod] = useMethodState(location)
-  const locationLabel = location?.label || 'Prayer Times'
 
   useEffect(() => {
     const timer = window.setInterval(() => setNow(new Date()), 1000)
@@ -91,8 +90,11 @@ export default function PrayerTimesPage({ location }) {
       <GlassCard className="hero-card" static>
         <div className="hero-card__header">
           <div>
-            <span className="eyebrow eyebrow--gold">Daily Prayer Schedule</span>
-            <h2 className="hero-card__title">{locationLabel || location.label || 'Prayer Times'}</h2>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', marginBottom: '0.2rem' }}>
+              <span className="location-pill__dot" />
+              <span className="eyebrow eyebrow--gold">Daily Schedule</span>
+            </div>
+            <h2 className="hero-card__title">Prayer Times</h2>
           </div>
           <span className="chip chip--gold">{dateFormatter.format(now)}</span>
         </div>

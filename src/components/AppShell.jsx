@@ -1,6 +1,5 @@
 import { motion, AnimatePresence } from 'motion/react'
 import { useLocation, useOutlet, Link } from 'react-router-dom'
-import { LocationIcon } from './Icons'
 import BottomNav from './BottomNav'
 
 const topbarVariants = {
@@ -41,7 +40,7 @@ const pageVariants = {
   },
 }
 
-export default function AppShell({ userLocation, onRefreshLocation, isDetecting }) {
+export default function AppShell() {
   const location = useLocation()
   const outlet = useOutlet()
 
@@ -103,22 +102,10 @@ export default function AppShell({ userLocation, onRefreshLocation, isDetecting 
           </Link>
 
           <div className="topbar-actions">
-            <button
-              type="button"
-              className="location-pill"
-              onClick={() => onRefreshLocation && onRefreshLocation(true)}
-              title={`Location: ${userLocation?.label || 'Detecting...'}${userLocation?.isVpn ? ' (Connected via VPN)' : ''}. Click to pinpoint location.`}
-              aria-label="Location status and reload"
-            >
-              <span className={`location-pill__dot ${userLocation?.isVpn ? 'location-pill__dot--vpn' : ''}`} />
-              <LocationIcon size={12} className="location-pill__icon" />
-              <span className="location-pill__label">
-                {isDetecting
-                  ? 'Locating...'
-                  : userLocation?.city || userLocation?.label?.split(',')[0] || 'Location'}
-              </span>
-              {userLocation?.isVpn && <span className="location-pill__vpn-tag">VPN</span>}
-            </button>
+            <span className="live-status-badge" title="Ramadan 1447 AH">
+              <span className="live-status-badge__dot" />
+              <span>1447 AH</span>
+            </span>
           </div>
         </motion.header>
 

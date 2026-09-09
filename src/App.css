@@ -183,6 +183,31 @@
   line-height: 1;
 }
 
+.live-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.35rem 0.85rem;
+  border-radius: 999px;
+  background: rgba(13, 37, 44, 0.7);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(12px);
+  color: var(--gold-strong);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.live-status-badge__dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--accent-strong);
+  box-shadow: 0 0 8px var(--accent-strong);
+  animation: pulseDot 2s infinite ease-in-out;
+}
+
 @keyframes pulseDot {
   0%, 100% { opacity: 1; transform: scale(1); }
   50% { opacity: 0.4; transform: scale(0.85); }
@@ -928,6 +953,19 @@
   font-size: 0.78rem;
   font-weight: 600;
   color: var(--gold-strong);
+}
+
+.hadith-category-badge {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: var(--accent-strong);
+  background: rgba(52, 211, 153, 0.1);
+  border: 1px solid rgba(52, 211, 153, 0.22);
+  padding: 0.15rem 0.55rem;
+  border-radius: 999px;
+  letter-spacing: 0.02em;
 }
 
 .hadith-action-btns {

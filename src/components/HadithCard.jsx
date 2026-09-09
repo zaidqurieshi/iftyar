@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react'
 import { motion, AnimatePresence } from 'motion/react'
 import GlassCard from './GlassCard'
-import { getRandomHadith } from '../data/hadithCollection'
+import { getRandomHadith, HADITH_COLLECTION } from '../data/hadithCollection'
 
 const IFTYAR_URL = 'https://iftyar.com'
 
@@ -101,7 +101,7 @@ export default function HadithCard() {
     <GlassCard className="panel-card" static>
       <div className="hero-card__header" style={{ marginBottom: '0.85rem' }}>
         <div>
-          <span className="eyebrow eyebrow--gold">Daily Wisdom</span>
+          <span className="eyebrow eyebrow--gold">Daily Wisdom ({hadith.id} of {HADITH_COLLECTION.length})</span>
           <h2 style={{ fontSize: '1.4rem' }}>Prophetic Reminder</h2>
         </div>
 
@@ -138,7 +138,12 @@ export default function HadithCard() {
       </AnimatePresence>
 
       <div className="hadith-card-footer">
-        <span className="hadith-source-badge">✦ {hadith.source}</span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', flexWrap: 'wrap' }}>
+          <span className="hadith-source-badge">✦ {hadith.source}</span>
+          {hadith.category && (
+            <span className="hadith-category-badge">{hadith.category}</span>
+          )}
+        </div>
 
         <div className="hadith-action-btns">
           <motion.button
