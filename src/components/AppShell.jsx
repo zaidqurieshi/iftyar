@@ -102,9 +102,9 @@ export default function AppShell() {
           </Link>
 
           <div className="topbar-actions">
-            <span className="live-status-badge" title="Ramadan 1447 AH">
+            <span className="live-status-badge" title="1448 AH">
               <span className="live-status-badge__dot" />
-              <span>1447 AH</span>
+              <span>1448 AH</span>
             </span>
           </div>
         </motion.header>

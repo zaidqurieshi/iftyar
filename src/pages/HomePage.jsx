@@ -150,7 +150,7 @@ export default function HomePage({ location }) {
       <!doctype html>
       <html>
         <head>
-          <title>Ramadan Calendar 1447 AH</title>
+          <title>Ramadan Calendar 1448 AH</title>
           <style>
             body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; padding: 32px; color: #0f2329; background: #fff; }
             h1 { margin: 0 0 4px; font-size: 26px; color: #092e26; }
@@ -164,7 +164,7 @@ export default function HomePage({ location }) {
         </head>
         <body>
           <h1>Ramadan Timetable</h1>
-          <div class="subtitle">Ramadan Calendar 1447 AH • Source: ${selectedCalendarSource.name}</div>
+          <div class="subtitle">Ramadan Calendar 1448 AH • Source: ${selectedCalendarSource.name}</div>
           <table>
             <thead>
               <tr>
@@ -187,7 +187,7 @@ export default function HomePage({ location }) {
   }
 
   const handleAddToCalendar = () => {
-    const title = 'Ramadan Calendar 1447 AH'
+    const title = 'Ramadan Calendar 1448 AH'
     const calendarText = buildRamadanCalendarIcs(calendarEntries, title)
 
     if (isAppleDevice) {
@@ -216,9 +216,9 @@ export default function HomePage({ location }) {
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', marginBottom: '0.2rem' }}>
               <span className="location-pill__dot" />
-              <span className="eyebrow eyebrow--gold">Ramadan 1447 AH</span>
+              <span className="eyebrow eyebrow--gold">1448 AH</span>
             </div>
-            <h2 className="hero-card__title">Sehri & Iftar Schedule</h2>
+            <h2 className="hero-card__title">Live Timings</h2>
           </div>
           <span className="chip chip--gold">{dateFormatter.format(now)}</span>
         </div>

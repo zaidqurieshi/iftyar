@@ -421,7 +421,7 @@ export function formatCountdownToText(dateValue, now = new Date()) {
 }
 
 export function getHijriPlaceholder() {
-  return '1447 AH • placeholder'
+  return '1448 AH • placeholder'
 }
 
 export function getPrayerStateLabel(lat, lng, now = new Date(), methodId = DEFAULT_METHOD_ID) {
