@@ -214,10 +214,6 @@ export default function HomePage({ location }) {
       <GlassCard className="hero-card" static>
         <div className="hero-card__header">
           <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', marginBottom: '0.2rem' }}>
-              <span className="location-pill__dot" />
-              <span className="eyebrow eyebrow--gold">Ramadan 1447 AH</span>
-            </div>
             <h2 className="hero-card__title">Sehri & Iftar Schedule</h2>
           </div>
           <span className="chip chip--gold">{dateFormatter.format(now)}</span>

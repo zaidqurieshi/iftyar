@@ -100,13 +100,6 @@ export default function AppShell() {
               <span className="brand-subtitle">Ramadan & Prayer</span>
             </div>
           </Link>
-
-          <div className="topbar-actions">
-            <span className="live-status-badge" title="Ramadan 1447 AH">
-              <span className="live-status-badge__dot" />
-              <span>1447 AH</span>
-            </span>
-          </div>
         </motion.header>
 
         {/* Main Content Viewport with Spring Page Transitions */}
@@ -135,15 +128,6 @@ export default function AppShell() {
           animate="animate"
         >
           <span>✦ Made by Sentinel ✦</span>
-          <span>•</span>
-          <a
-            href="https://iftyar.com"
-            target="_blank"
-            rel="noreferrer"
-            className="footer-link"
-          >
-            Iftyar.com
-          </a>
         </motion.footer>
       </div>
 
