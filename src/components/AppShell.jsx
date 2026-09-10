@@ -89,11 +89,15 @@ export default function AppShell() {
           <Link to="/" className="brand-block" aria-label="Iftyar Home">
             <motion.span
               className="brand-block__mark"
-              whileHover={{ scale: 1.08, rotate: 4 }}
+              whileHover={{ scale: 1.08 }}
               whileTap={{ scale: 0.94 }}
               transition={{ type: 'spring', stiffness: 350, damping: 20 }}
             >
-              ☽
+              <svg width="20" height="20" viewBox="0 0 512 512" fill="none">
+                <path d="M 176 170 A 80 80 0 0 1 336 170 Z" fill="#090a0f" />
+                <path d="M 130 170 L 382 170 L 382 410 L 130 410 Z" fill="#090a0f" />
+                <path d="M 176 170 L 336 170 L 336 380 L 176 380 Z" fill="#ffd60a" />
+              </svg>
             </motion.span>
             <div className="brand-title-wrap">
               <h1 className="brand-title">Iftyar</h1>

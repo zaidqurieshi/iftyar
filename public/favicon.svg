@@ -1,38 +1,9 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
-  <defs>
-    <radialGradient id="favBg" cx="45%" cy="40%" r="65%">
-      <stop offset="0%" stop-color="#0c3830" />
-      <stop offset="100%" stop-color="#020d0b" />
-    </radialGradient>
-    <linearGradient id="favGold" x1="10%" y1="10%" x2="90%" y2="90%">
-      <stop offset="0%" stop-color="#fffbe8" />
-      <stop offset="35%" stop-color="#fde047" />
-      <stop offset="70%" stop-color="#f59e0b" />
-      <stop offset="100%" stop-color="#b45309" />
-    </linearGradient>
-    <linearGradient id="favEmerald" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#a7f3d0" />
-      <stop offset="100%" stop-color="#059669" />
-    </linearGradient>
-  </defs>
-
-  <!-- Squircle Base for Browser Tabs -->
-  <rect width="64" height="64" rx="14" fill="url(#favBg)" />
-
-  <!-- Crescent scaled down cleanly: center ~ 31, 32 -->
-  <g transform="translate(32, 32) scale(0.115) translate(-256, -256)">
-    <path
-      d="M 384.35 269.43 A 140 140 0 1 0 278.32 120.02 A 114 114 0 1 1 384.35 269.43 Z"
-      fill="url(#favGold)"
-    />
-    <polygon
-      points="306.00,180.00 314.80,202.75 337.11,192.89 327.25,215.20 350.00,224.00 327.25,232.80 337.11,255.11 314.80,245.25 306.00,268.00 297.20,245.25 274.89,255.11 284.75,232.80 262.00,224.00 284.75,215.20 274.89,192.89 297.20,202.75"
-      fill="url(#favGold)"
-    />
-    <polygon
-      points="306.00,199.00 310.97,211.99 323.68,206.32 318.01,219.03 331.00,224.00 318.01,228.97 323.68,241.68 310.97,236.01 306.00,249.00 301.03,236.01 288.32,241.68 293.99,228.97 281.00,224.00 293.99,219.03 288.32,206.32 301.03,211.99"
-      fill="url(#favEmerald)"
-    />
-    <circle cx="306" cy="224" r="8" fill="#ffffff" />
-  </g>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <rect width="512" height="512" fill="#344930" rx="96"/>
+  <!-- Arch Dome top -->
+  <path d="M 176 170 A 80 80 0 0 1 336 170 Z" fill="#ffffff" />
+  <!-- Arch Outer Frame -->
+  <path d="M 130 170 L 382 170 L 382 410 L 130 410 Z" fill="#ffffff" />
+  <!-- Arch Inner Cutout -->
+  <path d="M 176 170 L 336 170 L 336 380 L 176 380 Z" fill="#344930" />
 </svg>
