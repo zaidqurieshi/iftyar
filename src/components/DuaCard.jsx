@@ -38,7 +38,7 @@ const DUAS_DATA = [
 ]
 
 export default function DuaCard() {
-  const [openKey, setOpenKey] = useState('sehri')
+  const [openKey, setOpenKey] = useState(null)
   const [copiedKey, setCopiedKey] = useState(null)
 
   const toggleSection = (key) => {
@@ -47,7 +47,7 @@ export default function DuaCard() {
 
   const handleCopy = async (dua, e) => {
     e.stopPropagation()
-    const textToCopy = `${dua.title}\n\n${dua.arabic}\n\n${dua.transliteration}\n\n${dua.english}\n\nVia Iftyar (https://iftyar.com)`
+    const textToCopy = `${dua.title}\n\n${dua.arabic}\n\n${dua.transliteration}\n\n${dua.english}`
     try {
       await navigator.clipboard.writeText(textToCopy)
       setCopiedKey(dua.key)

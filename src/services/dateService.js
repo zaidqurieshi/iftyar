@@ -11,6 +11,7 @@ export function getTimeZoneForCoordinates(lat, lng) {
 /**
  * Formats the given date into the Hijri calendar.
  * Regional moon sightings (e.g. South Asia / Kashmir) typically lag the astronomical
+ * Umm al-Qura calculation by 2 days, so an offset is applied by default (-2 days).
  * Umm al-Qura calculation by 2 days, so an offset is applied by default (-2 days)
  * to match local sightings (e.g. 25th Rabi al-Awwal 1448 AH).
  */

@@ -1,60 +1,53 @@
 :root {
-  --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-sans: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'SF Pro', 'Helvetica Neue', Helvetica, Arial, sans-serif;
   --font-serif: 'RoxboroughCF', 'Amiri', Georgia, serif;
   --font-arabic: 'Amiri', 'Noto Naskh Arabic', Georgia, serif;
 
   font-family: var(--font-sans);
-  line-height: 1.6;
+  line-height: 1.5;
   font-weight: 400;
-  color: #e6f6ee;
-  background: #051216;
+  color: #f5f5f7;
+  background-color: #000000;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color-scheme: dark;
 
-  /* ───── Celestial Emerald & Radiant Gold Palette ───── */
-  --bg-deep: #051216;
-  --bg-mid: #081a1f;
-  --bg-raised: #0d252c;
-  --bg-surface: #102e37;
-
-  --panel: rgba(13, 37, 44, 0.65);
-  --panel-strong: rgba(16, 46, 55, 0.85);
-  --panel-light: rgba(19, 54, 65, 0.45);
+  /* ───── Apple Obsidian & San Francisco Translucent Palette ───── */
+  --bg-deep: #090a0f;
+  --bg-surface: #12151e;
   
-  --glass: rgba(13, 37, 44, 0.55);
-  --glass-strong: rgba(16, 46, 55, 0.75);
-  --glass-border: rgba(52, 211, 153, 0.15);
-  --glass-border-strong: rgba(52, 211, 153, 0.32);
-  --glass-border-gold: rgba(246, 210, 104, 0.28);
+  --glass-bg: rgba(255, 255, 255, 0.04);
+  --glass-bg-hover: rgba(255, 255, 255, 0.07);
+  --glass-bg-strong: rgba(255, 255, 255, 0.09);
+  --glass-card: rgba(22, 26, 36, 0.65);
+  
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --glass-border-strong: rgba(255, 255, 255, 0.2);
+  --glass-border-gold: rgba(255, 214, 10, 0.25);
+  --glass-border-emerald: rgba(48, 209, 88, 0.25);
 
-  --text: #f0fdf4;
-  --text-soft: #c6e9d8;
-  --text-muted: #7fa894;
-  --text-dim: #4d7a64;
+  --text: #f5f5f7;
+  --text-soft: #8e8e93;
+  --text-muted: #6e6e73;
+  --text-dim: #48484a;
 
-  --accent: #10b981;
-  --accent-strong: #34d399;
-  --accent-glow: rgba(52, 211, 153, 0.28);
-  --accent-gradient: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  --accent: #30d158;
+  --accent-strong: #30d158;
+  --accent-glow: rgba(48, 209, 88, 0.25);
 
-  --gold: #d4af37;
-  --gold-strong: #f6d268;
-  --gold-soft: #faebba;
-  --gold-glow: rgba(246, 210, 104, 0.28);
-  --gold-gradient: linear-gradient(135deg, #fceda2 0%, #e2b747 50%, #b8860b 100%);
+  --gold: #ffd60a;
+  --gold-strong: #ffd60a;
+  --gold-soft: #ffe766;
+  --gold-glow: rgba(255, 214, 10, 0.25);
 
-  --sapphire: #38bdf8;
-  --sapphire-glow: rgba(56, 189, 248, 0.25);
+  --sapphire: #64d2ff;
 
-  --shadow: 0 20px 45px rgba(2, 8, 10, 0.5);
-  --shadow-strong: 0 30px 65px rgba(1, 5, 7, 0.65);
-  --shadow-card: 0 14px 36px rgba(0, 0, 0, 0.38);
-  --shadow-inner: inset 0 1px 1px rgba(255, 255, 255, 0.08);
-  --shadow-glow-emerald: 0 0 35px rgba(52, 211, 153, 0.22);
-  --shadow-glow-gold: 0 0 35px rgba(246, 210, 104, 0.22);
+  --shadow-card: 0 12px 32px rgba(0, 0, 0, 0.45);
+  --shadow-inner: inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  --shadow-glow-emerald: 0 0 24px rgba(48, 209, 88, 0.18);
+  --shadow-glow-gold: 0 0 24px rgba(255, 214, 10, 0.18);
 }
 
 /* ───── Box reset & base ───── */
@@ -77,10 +70,10 @@ body {
   min-height: 100vh;
   background-color: var(--bg-deep);
   background-image:
-    radial-gradient(ellipse 60% 40% at 20% -10%, rgba(16, 185, 129, 0.18), transparent 70%),
-    radial-gradient(ellipse 50% 35% at 85% 15%, rgba(246, 210, 104, 0.12), transparent 60%),
-    radial-gradient(ellipse 70% 50% at 50% 110%, rgba(56, 189, 248, 0.1), transparent 75%),
-    linear-gradient(160deg, #040e11 0%, #07191e 40%, #0a252d 100%);
+    radial-gradient(ellipse 65% 45% at 50% -10%, rgba(48, 209, 88, 0.12), transparent 70%),
+    radial-gradient(ellipse 50% 35% at 90% 20%, rgba(255, 214, 10, 0.08), transparent 60%),
+    radial-gradient(ellipse 60% 40% at 10% 80%, rgba(100, 210, 255, 0.07), transparent 70%),
+    linear-gradient(180deg, #07080c 0%, #0d1017 50%, #090a0f 100%);
   background-attachment: fixed;
   color: var(--text);
   -webkit-font-smoothing: antialiased;
@@ -135,9 +128,9 @@ a {
 
 /* ───── Typography Reset ───── */
 h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-serif);
-  font-weight: 500;
-  letter-spacing: -0.02em;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  letter-spacing: -0.022em;
   color: var(--text);
 }
 
@@ -156,21 +149,21 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 ::-webkit-scrollbar-track {
-  background: rgba(5, 18, 22, 0.6);
+  background: rgba(0, 0, 0, 0.3);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(52, 211, 153, 0.2);
+  background: rgba(255, 255, 255, 0.18);
   border-radius: 999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(52, 211, 153, 0.4);
+  background: rgba(255, 255, 255, 0.35);
 }
 
 /* Selection */
 ::selection {
-  background: rgba(16, 185, 129, 0.35);
+  background: rgba(48, 209, 88, 0.35);
   color: #fff;
 }
 

@@ -12,21 +12,21 @@ function drawHadithImage(hadith) {
   const context = canvas.getContext('2d')
 
   // Background
-  context.fillStyle = '#051216'
+  context.fillStyle = '#0b0e14'
   context.fillRect(0, 0, canvas.width, canvas.height)
 
   // Gold accent line
-  context.fillStyle = '#d4af37'
+  context.fillStyle = '#ffd60a'
   context.fillRect(70, 70, 1060, 4)
 
   // Title
-  context.fillStyle = '#f6d268'
+  context.fillStyle = '#ffd60a'
   context.font = '600 44px Georgia, serif'
   context.fillText('Daily Hadith Reminder', 70, 150)
 
   // Hadith text
   context.font = '38px Georgia, serif'
-  context.fillStyle = '#f0fdf4'
+  context.fillStyle = '#f5f5f7'
 
   const words = hadith.text.split(' ')
   const lines = []
@@ -45,12 +45,8 @@ function drawHadithImage(hadith) {
 
   // Source & Footer
   context.font = '28px Arial, sans-serif'
-  context.fillStyle = '#34d399'
-  context.fillText(`— ${hadith.source}`, 70, 550)
-
-  context.fillStyle = '#d4af37'
-  context.font = '700 28px Arial, sans-serif'
-  context.fillText('Iftyar.com', 70, 615)
+  context.fillStyle = '#30d158'
+  context.fillText(`— ${hadith.source}`, 70, 560)
 
   return canvas.toDataURL('image/png')
 }
@@ -75,11 +71,11 @@ export default function HadithCard() {
     try {
       const response = await fetch(imageUrl)
       const blob = await response.blob()
-      const file = new File([blob], 'iftyar-hadith.png', { type: 'image/png' })
+      const file = new File([blob], 'hadith-reminder.png', { type: 'image/png' })
 
       if (navigator.share && (!navigator.canShare || navigator.canShare({ files: [file] }))) {
         await navigator.share({
-          title: 'Hadith — Iftyar',
+          title: 'Hadith Reminder',
           text: `"${hadith.text}" — ${hadith.source}`,
           files: [file],
         })
@@ -91,7 +87,7 @@ export default function HadithCard() {
     }
 
     const shareUrl = `https://wa.me/?text=${encodeURIComponent(
-      `"${hadith.text}"\n— ${hadith.source}\n\nRead more on Iftyar: ${IFTYAR_URL}`
+      `"${hadith.text}"\n— ${hadith.source}`
     )}`
     window.open(shareUrl, '_blank', 'noopener,noreferrer')
     setShareStatus('Opened WhatsApp')

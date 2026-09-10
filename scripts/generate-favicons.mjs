@@ -240,11 +240,11 @@ const ogCardSvg = `
   </g>
 
   <!-- Right Side Content -->
-  <!-- Badge: Ramadan 1448 AH -->
+  <!-- Badge: Ramadan 1447 AH -->
   <g transform="translate(490, 140)">
     <rect x="0" y="0" width="260" height="38" rx="19" fill="rgba(52, 211, 153, 0.12)" stroke="rgba(52, 211, 153, 0.35)" stroke-width="1.5" />
     <text x="130" y="24" text-anchor="middle" fill="#34d399" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="700" letter-spacing="0.14em">
-      ✦ RAMADAN 1448 AH
+      ✦ RAMADAN 1447 AH
     </text>
   </g>
 
