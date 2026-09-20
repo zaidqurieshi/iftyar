@@ -80,8 +80,9 @@ export default function PrayerTimesPage({ location }) {
   const dateFormatter = new Intl.DateTimeFormat('en-US', {
     timeZone: locationTimeZone,
     weekday: 'long',
-    month: 'short',
+    month: 'long',
     day: 'numeric',
+    year: 'numeric',
   })
 
   return (
@@ -127,8 +128,8 @@ export default function PrayerTimesPage({ location }) {
           </div>
 
           <div className="next-prayer-countdown-wrap">
-            <span className="eyebrow eyebrow--slate" style={{ textAlign: 'right' }}>Countdown</span>
-            <div className="next-prayer-countdown">
+            <span className="eyebrow eyebrow--slate" style={{ textAlign: 'right', color: '#ffffff' }}>Countdown</span>
+            <div className="next-prayer-countdown" style={{ color: '#ffffff' }}>
               <span>{String(countdownHours).padStart(2, '0')}</span>
               <span style={{ opacity: 0.6 }}>:</span>
               <span>{String(countdownMinutes).padStart(2, '0')}</span>

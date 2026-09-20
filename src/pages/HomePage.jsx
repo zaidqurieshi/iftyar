@@ -123,6 +123,7 @@ export default function HomePage({ location }) {
     weekday: 'long',
     month: 'long',
     day: 'numeric',
+    year: 'numeric',
   })
 
   const isAppleDevice =
@@ -210,14 +211,10 @@ export default function HomePage({ location }) {
 
   return (
     <div className="page-stack">
-      {/* Feature Pill & Hero Headline from image */}
+      {/* Hero Headline */}
       <div className="hero-banner-wrap">
-        <div className="feature-pill">
-          <span className="feature-pill__dot" />
-          <span>Minimalist &amp; Offline Habit Builder</span>
-        </div>
         <h1 className="hero-headline">
-          Follow your daily <span className="text-gradient-emerald-gold">prayers with ease.</span>
+          <span className="text-gradient-emerald-gold">Kashmir Prayer Timings</span>
         </h1>
       </div>
 
@@ -262,8 +259,8 @@ export default function HomePage({ location }) {
           </div>
 
           <div className="next-prayer-countdown-wrap">
-            <span className="eyebrow eyebrow--slate" style={{ textAlign: 'right' }}>Starts In</span>
-            <div className="next-prayer-countdown">
+            <span className="eyebrow eyebrow--slate" style={{ textAlign: 'right', color: '#ffffff' }}>Starts In</span>
+            <div className="next-prayer-countdown" style={{ color: '#ffffff' }}>
               <span>{String(prayerHours).padStart(2, '0')}</span>
               <span style={{ opacity: 0.6 }}>:</span>
               <span>{String(prayerMins).padStart(2, '0')}</span>
