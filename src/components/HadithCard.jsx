@@ -44,6 +44,8 @@ function drawHadithImage(hadith) {
   // Source & Footer
   context.font = '28px Arial, sans-serif'
   context.fillStyle = '#7b9669'
+  context.fillText(`— ${hadith.source} • Meeqat`, 70, 560)
+  context.fillText(`— ${hadith.source} • Iftyar`, 70, 560)
   context.fillText(`— ${hadith.source}`, 70, 560)
 
   return canvas.toDataURL('image/png')
@@ -85,6 +87,8 @@ export default function HadithCard() {
     }
 
     const shareUrl = `https://wa.me/?text=${encodeURIComponent(
+      `"${hadith.text}"\n— ${hadith.source}\n\nShared via Meeqat (https://meeqat.vercel.app)`
+      `"${hadith.text}"\n— ${hadith.source}\n\nShared via Iftyar (https://iftyar.vercel.app)`
       `"${hadith.text}"\n— ${hadith.source}`
     )}`
     window.open(shareUrl, '_blank', 'noopener,noreferrer')
@@ -96,6 +100,7 @@ export default function HadithCard() {
       <div className="hero-card__header" style={{ marginBottom: '0.85rem' }}>
         <div>
           <span className="eyebrow eyebrow--gold">Daily Wisdom ({hadith.id} of {HADITH_COLLECTION.length})</span>
+          <span className="eyebrow eyebrow--sage">Daily Wisdom ({hadith.id} of {HADITH_COLLECTION.length})</span>
           <h2 style={{ fontSize: '1.4rem' }}>Prophetic Reminder</h2>
         </div>
 

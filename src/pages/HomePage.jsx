@@ -211,29 +211,16 @@ export default function HomePage({ location }) {
 
   return (
     <div className="page-stack">
-      {/* Hero Headline */}
-      <div className="hero-banner-wrap">
-        <h1 className="hero-headline">
-          <span className="text-gradient-emerald-gold">Kashmir Prayer Timings</span>
-        </h1>
-      </div>
-
-      {/* Modern Agency Hero Section (Unboxed, clean hierarchy) */}
+      {/* Hero: Headline + Date Bar + Next Prayer */}
       <section className="hero-section">
-        <div className="hero-section__header">
-          <div className="hero-section__title-wrap">
-            <div className="hero-section__badge-row">
-              <span className="chip chip--slate">
-                <span className="location-pill__dot" />
-                Live Timings
-              </span>
-            </div>
-            <h2 className="hero-section__title">Live Timings</h2>
-          </div>
-          <span className="chip chip--gold">{dateFormatter.format(now)}</span>
+        {/* Page headline */}
+        <div className="hero-headline-wrap">
+          <h1 className="hero-headline">
+            <span className="text-gradient-emerald-gold">Kashmir Prayer Timings</span>
+          </h1>
         </div>
 
-        {/* Unboxed Date Bar with delicate divider */}
+        {/* Date bar */}
         <div className="hero-dates-bar">
           <div className="hero-date-cell">
             <span className="eyebrow eyebrow--slate">Gregorian Date</span>
@@ -248,7 +235,7 @@ export default function HomePage({ location }) {
           </div>
         </div>
 
-        {/* Standalone Next Prayer Spotlight Card */}
+        {/* Next Prayer Spotlight */}
         <div className="next-prayer-spotlight">
           <div className="next-prayer-info">
             <span className="eyebrow eyebrow--emerald">Next Prayer</span>
@@ -333,7 +320,7 @@ export default function HomePage({ location }) {
       <GlassCard className="panel-card" static>
         <div className="hero-card__header" style={{ marginBottom: '1.1rem' }}>
           <div>
-            <span className="eyebrow eyebrow--gold">30-Day Timetable</span>
+            <span className="eyebrow eyebrow--sage">30-Day Timetable</span>
             <h2 style={{ fontSize: '1.4rem' }}>Ramadan Calendar</h2>
           </div>
           <span className="chip chip--slate">Export &amp; Sync</span>

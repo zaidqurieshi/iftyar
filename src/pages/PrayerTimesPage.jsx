@@ -87,7 +87,7 @@ export default function PrayerTimesPage({ location }) {
 
   return (
     <div className="page-stack">
-      {/* Modern Agency Hero Section (Unboxed, clean hierarchy) */}
+      {/* Hero Section */}
       <section className="hero-section">
         <div className="hero-section__header">
           <div className="hero-section__title-wrap">
@@ -99,10 +99,10 @@ export default function PrayerTimesPage({ location }) {
             </div>
             <h1 className="hero-section__title">Prayer Times</h1>
           </div>
-          <span className="chip chip--gold">{dateFormatter.format(now)}</span>
+          <span className="chip chip--sage">{dateFormatter.format(now)}</span>
         </div>
 
-        {/* Unboxed Date Bar with delicate divider */}
+        {/* Date Bar */}
         <div className="hero-dates-bar">
           <div className="hero-date-cell">
             <span className="eyebrow eyebrow--slate">Gregorian Date</span>
@@ -117,7 +117,7 @@ export default function PrayerTimesPage({ location }) {
           </div>
         </div>
 
-        {/* Standalone Next Prayer Spotlight Card */}
+        {/* Next Prayer Spotlight */}
         <div className="next-prayer-spotlight">
           <div className="next-prayer-info">
             <span className="eyebrow eyebrow--emerald">Up Next</span>

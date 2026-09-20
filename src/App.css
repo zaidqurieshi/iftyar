@@ -11,7 +11,7 @@
 /* ───── App Shell & Container ───── */
 .app-shell {
   min-height: 100vh;
-  padding: 1rem 1.25rem 6rem;
+  padding: 1.5rem 1.25rem 6rem;
   position: relative;
   z-index: 1;
 }
@@ -261,8 +261,10 @@
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
+  padding: 0.3rem 0.8rem;
   padding: 0.32rem 0.82rem;
   border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.08);
   background: rgba(230, 230, 230, 0.08);
   border: 1px solid var(--glass-border);
   color: var(--text);
@@ -273,18 +275,28 @@
   -webkit-backdrop-filter: blur(12px);
 }
 
-.chip--gold,
-.chip--sage {
+.chip--gold {
   background: rgba(245, 158, 11, 0.14);
   border-color: var(--glass-border-gold);
   color: var(--gold);
 }
 
-.chip--emerald,
+.chip--sage {
+  background: rgba(186, 200, 177, 0.14);
+  border-color: var(--glass-border-gold);
+  color: var(--color-sage);
+}
+
+.chip--emerald {
+  background: rgba(123, 150, 105, 0.15);
+  border-color: var(--glass-border-emerald);
+  color: var(--accent);
+}
+
 .chip--jade {
   background: rgba(34, 197, 94, 0.15);
   border-color: var(--glass-border-emerald);
-  color: var(--accent);
+  color: var(--color-jade);
 }
 
 /* ───── Hero Card Header & Meta ───── */
@@ -295,6 +307,9 @@
 }
 
 .chip--forest {
+  background: rgba(64, 78, 59, 0.35);
+  border-color: rgba(123, 150, 105, 0.25);
+  color: var(--color-sage);
   background: rgba(21, 128, 61, 0.25);
   border-color: rgba(34, 197, 94, 0.25);
   color: #a7f3d0;
@@ -308,6 +323,22 @@
   width: 100%;
   padding: 0.35rem 0 0.25rem;
 }
+
+/* ───── Hero Headline ───── */
+.hero-headline-wrap {
+  text-align: center;
+  padding: 0.5rem 0 0.25rem;
+}
+
+.hero-headline {
+  font-family: var(--font-brand);
+  font-size: clamp(1.75rem, 6vw, 2.5rem);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.15;
+  margin: 0;
+}
+
 
 .hero-section__header {
   display: flex;
@@ -680,9 +711,12 @@
 .next-prayer-countdown {
   display: inline-flex;
   align-items: center;
+  gap: 0.2rem;
   gap: 0.25rem;
   font-size: clamp(1.5rem, 5vw, 2.1rem);
   font-weight: 700;
+  color: var(--accent);
+  color: var(--color-jade);
   color: #ffffff;
   font-variant-numeric: tabular-nums;
   letter-spacing: 0.03em;
@@ -1070,9 +1104,13 @@
   align-items: center;
   justify-content: space-between;
   flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
   gap: 0.85rem;
   padding: 0.75rem 1rem;
   border-radius: 0.85rem;
+  background: linear-gradient(135deg, rgba(64, 78, 59, 0.25) 0%, rgba(20, 26, 18, 0.6) 100%);
+  border: 1px solid rgba(108, 132, 128, 0.22);
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid var(--glass-border);
 }
@@ -1097,29 +1135,43 @@
 }
 
 .calendar-select {
+  padding: 0.45rem 0.9rem;
   appearance: none;
   -webkit-appearance: none;
   padding: 0.45rem 2rem 0.45rem 0.9rem;
   border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--glass-border);
+  color: var(--text);
+  font-size: 0.9rem;
+  background-color: rgba(20, 26, 18, 0.95);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23bac8b1' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
   background-color: #111813;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2334d399' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 0.75rem center;
+  border: 1px solid rgba(186, 200, 177, 0.24);
   border: 1px solid rgba(34, 197, 94, 0.28);
   color: var(--color-pebble);
   font-size: 0.85rem;
   font-weight: 500;
   outline: none;
+  transition: border-color 0.2s;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .calendar-select:hover {
+  border-color: var(--color-sage);
+  background-color: rgba(28, 38, 26, 0.95);
   border-color: var(--color-emerald-light);
   background-color: #152217;
 }
 
 .calendar-select:focus {
+  border-color: var(--accent);
+  border-color: var(--color-jade);
+  box-shadow: 0 0 0 2px rgba(123, 150, 105, 0.25);
   border-color: var(--color-emerald);
   box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.25);
 }
@@ -1132,11 +1184,14 @@
   width: 100%;
   padding: 0.95rem 1.25rem;
   border-radius: 9999px;
+  background: linear-gradient(135deg, #bac8b1 0%, #7b9669 100%);
+  color: #121711;
   background: linear-gradient(135deg, var(--color-emerald-light) 0%, var(--color-emerald) 100%);
   color: #070b08;
   font-size: 0.95rem;
   font-weight: 700;
   letter-spacing: 0.02em;
+  box-shadow: 0 8px 20px rgba(123, 150, 105, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.4);
   box-shadow: 0 8px 20px rgba(34, 197, 94, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.4);
   transition: all 0.2s ease;
   cursor: pointer;
@@ -1144,6 +1199,7 @@
 
 .calendar-action-btn:hover {
   transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(123, 150, 105, 0.4);
   box-shadow: 0 12px 28px rgba(34, 197, 94, 0.45);
 }
 
@@ -1153,6 +1209,8 @@
   gap: 0.45rem;
   padding: 0.5rem;
   border-radius: 0.95rem;
+  background: #161e14;
+  border: 1px solid rgba(186, 200, 177, 0.18);
   background: #111813;
   border: 1px solid rgba(34, 197, 94, 0.24);
   box-shadow: 0 16px 40px rgba(0, 0, 0, 0.55);
@@ -1164,17 +1222,24 @@
   gap: 0.75rem;
   padding: 0.85rem 1.1rem;
   border-radius: 0.85rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--glass-border);
   background: rgba(255, 255, 255, 0.04);
   border: 1px solid rgba(34, 197, 94, 0.15);
+  color: var(--text);
+  font-size: 0.88rem;
   color: #ffffff;
   font-size: 0.9rem;
   font-weight: 600;
   text-align: left;
+  transition: all 0.2s;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .calendar-menu-item:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: var(--glass-border-strong);
   background: rgba(34, 197, 94, 0.1);
   border-color: rgba(34, 197, 94, 0.35);
 }
@@ -1396,12 +1461,14 @@
   border-color: var(--glass-border-strong);
 }
 
+/* ───── Qibla Compass Page ───── */
 /* ───── Qibla Sensory Compass (matching reference image) ───── */
 .qibla-card {
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
+  padding: 2.25rem 1.5rem;
   padding: 2.25rem 1.5rem 2rem;
   border-radius: 1.75rem;
   border: 1px solid rgba(34, 197, 94, 0.25);
@@ -1435,6 +1502,9 @@
 
 .compass-dial-wrap {
   position: relative;
+  width: 260px;
+  height: 260px;
+  margin: 1.5rem 0;
   width: 270px;
   height: 270px;
   margin: 0.5rem auto 1.5rem;
@@ -1447,6 +1517,9 @@
   position: absolute;
   inset: 0;
   border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, rgba(255, 255, 255, 0.04) 0%, #151c13 75%);
+  border: 1px solid rgba(123, 150, 105, 0.3);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.55), inset 0 1px 2px rgba(255, 255, 255, 0.1);
   background: radial-gradient(circle at 40% 35%, #121c14 0%, #080d09 85%);
   border: 1.5px solid rgba(34, 197, 94, 0.22);
   box-shadow:
@@ -1455,20 +1528,57 @@
     inset 0 1px 2px rgba(255, 255, 255, 0.08);
 }
 
+.compass-center-pin {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #bac8b1;
+  border: 2px solid #121711;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+  z-index: 5;
+}
+
 .qibla-center-badge {
   position: absolute;
   width: 38px;
   height: 38px;
   border-radius: 50%;
+  background: linear-gradient(135deg, #bac8b1 0%, #7b9669 100%);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  z-index: 5;
+}
+
+/* ───── Kaaba Dial Target Marker (Always visible & highlighted when matched) ───── */
+.kaaba-dial-marker {
+  position: absolute;
+  top: 2px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: rgba(19, 26, 18, 0.95);
+  border: 1.5px solid rgba(108, 132, 128, 0.45);
   background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
   border: 2px solid rgba(254, 240, 138, 0.6);
   display: flex;
   align-items: center;
   justify-content: center;
+  color: var(--color-sage);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.55);
   color: #ffffff;
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5), 0 0 10px rgba(245, 158, 11, 0.4);
   z-index: 10;
+  transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
   transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.kaaba-dial-marker--matched {
+  background: rgba(29, 43, 26, 0.98);
+  border: 2px solid var(--color-jade);
+  color: #ffffff;
+  transform: translateX(-50%) scale(1.22);
 }
 
 .qibla-center-badge--matched {
@@ -1478,6 +1588,14 @@
     0 0 24px rgba(250, 204, 21, 0.95),
     0 0 45px rgba(34, 197, 94, 0.75),
     0 0 65px rgba(250, 204, 21, 0.5);
+}
+
+.kaaba-pulse-halo {
+  position: absolute;
+  inset: -6px;
+  border-radius: 50%;
+  border: 2px solid var(--color-jade);
+  pointer-events: none;
 }
 
 .qibla-status-btn {
@@ -1513,6 +1631,28 @@
 .qibla-status-btn--aligned:hover {
   background: linear-gradient(135deg, #34d399 0%, #16a34a 100%);
   color: #ffffff;
+}
+
+.qibla-readout {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2rem;
+  margin-top: 0.5rem;
+}
+
+.qibla-bearing-num {
+  font-size: 2.5rem;
+  font-weight: 700;
+  font-family: var(--font-sans);
+  color: var(--gold);
+  letter-spacing: -0.03em;
+}
+
+.qibla-direction-label {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-soft);
 }
 
 .qibla-footnote {

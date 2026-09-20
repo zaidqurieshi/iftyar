@@ -1,15 +1,7 @@
+import { useEffect } from 'react'
 import { motion, AnimatePresence } from 'motion/react'
-import { useLocation, useOutlet, Link } from 'react-router-dom'
+import { useLocation, useOutlet } from 'react-router-dom'
 import BottomNav from './BottomNav'
-
-const topbarVariants = {
-  initial: { opacity: 0, y: -20 },
-  animate: {
-    opacity: 1,
-    y: 0,
-    transition: { type: 'spring', damping: 22, stiffness: 240 },
-  },
-}
 
 const footerVariants = {
   initial: { opacity: 0, y: 15 },
@@ -43,6 +35,11 @@ const pageVariants = {
 export default function AppShell() {
   const location = useLocation()
   const outlet = useOutlet()
+
+  // Scroll to top instantly on every route change
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'instant' })
+  }, [location.pathname])
 
   return (
     <div className="app-shell">
@@ -78,34 +75,6 @@ export default function AppShell() {
       </div>
 
       <div className="app-shell__inner">
-        {/* Topbar Header */}
-        <motion.header
-          className="topbar"
-          aria-label="Iftyar Navigation Header"
-          variants={topbarVariants}
-          initial="initial"
-          animate="animate"
-        >
-          <Link to="/" className="brand-block" aria-label="Iftyar Home">
-            <motion.span
-              className="brand-block__mark"
-              whileHover={{ scale: 1.08 }}
-              whileTap={{ scale: 0.94 }}
-              transition={{ type: 'spring', stiffness: 350, damping: 20 }}
-            >
-              <svg width="20" height="20" viewBox="0 0 512 512" fill="none">
-                <path d="M 176 170 A 80 80 0 0 1 336 170 Z" fill="#121711" />
-                <path d="M 130 170 L 382 170 L 382 410 L 130 410 Z" fill="#121711" />
-                <path d="M 176 170 L 336 170 L 336 380 L 176 380 Z" fill="#34d399" />
-              </svg>
-            </motion.span>
-            <div className="brand-title-wrap">
-              <h1 className="brand-title">Iftyar</h1>
-              <span className="brand-subtitle">Ramadan & Prayer</span>
-            </div>
-          </Link>
-        </motion.header>
-
         {/* Main Content Viewport with Spring Page Transitions */}
         <main className="main-content">
           <AnimatePresence mode="wait">
