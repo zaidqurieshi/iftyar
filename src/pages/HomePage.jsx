@@ -53,7 +53,6 @@ export default function HomePage({ location }) {
   // Determine active fasting target & remaining percentage
   let activeFastingTarget, activeFastingLabel, remainingPercent, isFastingNow
   if (now < iftarSehri.sehriTime) {
-    // Early morning before Sehri: countdown to today's Sehri
     const yesterday = new Date(now)
     yesterday.setDate(yesterday.getDate() - 1)
     const yesterdayIftarSehri = getIftarSehriPlaceholder(
@@ -70,7 +69,6 @@ export default function HomePage({ location }) {
     remainingPercent = totalMs > 0 ? (remainingMs / totalMs) * 100 : 0
     isFastingNow = false
   } else if (now < iftarSehri.iftarTime) {
-    // Between Sehri and Iftar: currently fasting! Countdown to Iftar
     activeFastingTarget = iftarSehri.iftarTime
     activeFastingLabel = `Iftar — ${iftarSehri.iftarLabel}`
     const totalMs = iftarSehri.iftarTime.getTime() - iftarSehri.sehriTime.getTime()
@@ -78,7 +76,6 @@ export default function HomePage({ location }) {
     remainingPercent = totalMs > 0 ? (remainingMs / totalMs) * 100 : 0
     isFastingNow = true
   } else {
-    // Evening after Iftar: countdown to tomorrow's Sehri
     const tomorrow = new Date(now)
     tomorrow.setDate(tomorrow.getDate() + 1)
     const tomorrowSehri = getIftarSehriPlaceholder(
@@ -211,10 +208,17 @@ export default function HomePage({ location }) {
 
   return (
     <div className="page-stack">
-      {/* Hero: Headline + Date Bar + Next Prayer */}
+      {/* Hero Section */}
       <section className="hero-section">
-        {/* Page headline */}
+        {/* Logo + Brand headline */}
         <div className="hero-headline-wrap">
+          <div className="hero-logo-mark">
+            <svg width="36" height="36" viewBox="0 0 512 512" fill="none">
+              <path d="M 176 170 A 80 80 0 0 1 336 170 Z" fill="#121711" />
+              <path d="M 130 170 L 382 170 L 382 410 L 130 410 Z" fill="#121711" />
+              <path d="M 176 170 L 336 170 L 336 380 L 176 380 Z" fill="#34d399" />
+            </svg>
+          </div>
           <h1 className="hero-headline">
             <span className="text-gradient-emerald-gold">Kashmir Prayer Timings</span>
           </h1>

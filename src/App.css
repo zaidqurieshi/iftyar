@@ -328,6 +328,21 @@
 .hero-headline-wrap {
   text-align: center;
   padding: 0.5rem 0 0.25rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.hero-logo-mark {
+  width: 3rem;
+  height: 3rem;
+  border-radius: 0.85rem;
+  background: linear-gradient(140deg, #bac8b1 0%, #7b9669 60%, #404e3b 100%);
+  border: 1px solid rgba(230, 230, 230, 0.25);
+  box-shadow: 0 4px 16px rgba(123, 150, 105, 0.35), inset 0 1px 1px rgba(255, 255, 255, 0.4);
+  display: grid;
+  place-items: center;
 }
 
 .hero-headline {
