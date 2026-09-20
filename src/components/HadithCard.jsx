@@ -3,8 +3,6 @@ import { motion, AnimatePresence } from 'motion/react'
 import GlassCard from './GlassCard'
 import { getRandomHadith, HADITH_COLLECTION } from '../data/hadithCollection'
 
-const IFTYAR_URL = 'https://iftyar.com'
-
 function drawHadithImage(hadith) {
   const canvas = document.createElement('canvas')
   canvas.width = 1200
@@ -12,21 +10,21 @@ function drawHadithImage(hadith) {
   const context = canvas.getContext('2d')
 
   // Background
-  context.fillStyle = '#0b0e14'
+  context.fillStyle = '#121711'
   context.fillRect(0, 0, canvas.width, canvas.height)
 
-  // Gold accent line
-  context.fillStyle = '#ffd60a'
+  // Jade accent line
+  context.fillStyle = '#bac8b1'
   context.fillRect(70, 70, 1060, 4)
 
   // Title
-  context.fillStyle = '#ffd60a'
+  context.fillStyle = '#bac8b1'
   context.font = '600 44px Georgia, serif'
   context.fillText('Daily Hadith Reminder', 70, 150)
 
   // Hadith text
   context.font = '38px Georgia, serif'
-  context.fillStyle = '#f5f5f7'
+  context.fillStyle = '#e6e6e6'
 
   const words = hadith.text.split(' ')
   const lines = []
@@ -45,8 +43,9 @@ function drawHadithImage(hadith) {
 
   // Source & Footer
   context.font = '28px Arial, sans-serif'
-  context.fillStyle = '#30d158'
-  context.fillText(`— ${hadith.source}`, 70, 560)
+  context.fillStyle = '#7b9669'
+  context.fillText(`— ${hadith.source} • Meeqat`, 70, 560)
+  context.fillText(`— ${hadith.source} • Iftyar`, 70, 560)
 
   return canvas.toDataURL('image/png')
 }
@@ -87,7 +86,8 @@ export default function HadithCard() {
     }
 
     const shareUrl = `https://wa.me/?text=${encodeURIComponent(
-      `"${hadith.text}"\n— ${hadith.source}`
+      `"${hadith.text}"\n— ${hadith.source}\n\nShared via Meeqat (https://meeqat.vercel.app)`
+      `"${hadith.text}"\n— ${hadith.source}\n\nShared via Iftyar (https://iftyar.vercel.app)`
     )}`
     window.open(shareUrl, '_blank', 'noopener,noreferrer')
     setShareStatus('Opened WhatsApp')
@@ -98,6 +98,7 @@ export default function HadithCard() {
       <div className="hero-card__header" style={{ marginBottom: '0.85rem' }}>
         <div>
           <span className="eyebrow eyebrow--gold">Daily Wisdom ({hadith.id} of {HADITH_COLLECTION.length})</span>
+          <span className="eyebrow eyebrow--sage">Daily Wisdom ({hadith.id} of {HADITH_COLLECTION.length})</span>
           <h2 style={{ fontSize: '1.4rem' }}>Prophetic Reminder</h2>
         </div>
 

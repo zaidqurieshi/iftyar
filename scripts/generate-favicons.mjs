@@ -46,35 +46,35 @@ const starInnerPoints = getEightPointStarPolygon(306, 224, 25, 13)
 const masterAppIconSvg = `
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
   <defs>
-    <!-- Rich Obsidian-Emerald Radial Background -->
+    <!-- Jade Pebble Morning Radial Background -->
     <radialGradient id="bgGlow" cx="48%" cy="42%" r="68%">
-      <stop offset="0%" stop-color="#0c3830" />
-      <stop offset="45%" stop-color="#06201b" />
-      <stop offset="80%" stop-color="#03120f" />
-      <stop offset="100%" stop-color="#010806" />
+      <stop offset="0%" stop-color="#1e271c" />
+      <stop offset="45%" stop-color="#141b12" />
+      <stop offset="80%" stop-color="#0e130d" />
+      <stop offset="100%" stop-color="#080c07" />
     </radialGradient>
 
-    <!-- Luxury Gold Foil Gradient -->
+    <!-- Pale Sage Mist & Jade Foil Gradient -->
     <linearGradient id="goldGradient" x1="15%" y1="10%" x2="85%" y2="90%">
-      <stop offset="0%" stop-color="#fffbe8" />
-      <stop offset="22%" stop-color="#fde047" />
-      <stop offset="55%" stop-color="#f59e0b" />
-      <stop offset="82%" stop-color="#d97706" />
-      <stop offset="100%" stop-color="#78350f" />
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="25%" stop-color="#e6e6e6" />
+      <stop offset="60%" stop-color="#bac8b1" />
+      <stop offset="85%" stop-color="#7b9669" />
+      <stop offset="100%" stop-color="#404e3b" />
     </linearGradient>
 
-    <!-- Emerald Gem Core Gradient -->
+    <!-- Deep Jade Gem Core Gradient -->
     <linearGradient id="emeraldCore" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#6ee7b7" />
-      <stop offset="50%" stop-color="#10b981" />
-      <stop offset="100%" stop-color="#047857" />
+      <stop offset="0%" stop-color="#bac8b1" />
+      <stop offset="50%" stop-color="#7b9669" />
+      <stop offset="100%" stop-color="#404e3b" />
     </linearGradient>
 
     <!-- Specular Highlight for Star -->
     <radialGradient id="starHighlight" cx="40%" cy="40%" r="50%">
       <stop offset="0%" stop-color="#ffffff" stop-opacity="0.95" />
-      <stop offset="60%" stop-color="#a7f3d0" stop-opacity="0.6" />
-      <stop offset="100%" stop-color="#10b981" stop-opacity="0" />
+      <stop offset="60%" stop-color="#bac8b1" stop-opacity="0.6" />
+      <stop offset="100%" stop-color="#7b9669" stop-opacity="0" />
     </radialGradient>
 
     <!-- Drop Shadows for 3D elevation -->
@@ -91,20 +91,20 @@ const masterAppIconSvg = `
   <rect width="512" height="512" fill="url(#bgGlow)" />
 
   <!-- Sacred Geometry Watermark: Concentric Rings -->
-  <circle cx="256" cy="256" r="236" fill="none" stroke="#f6d268" stroke-width="1.5" stroke-opacity="0.08" />
-  <circle cx="256" cy="256" r="216" fill="none" stroke="#34d399" stroke-width="1" stroke-opacity="0.06" stroke-dasharray="3 6" />
-  <circle cx="256" cy="256" r="176" fill="none" stroke="#f6d268" stroke-width="1" stroke-opacity="0.07" />
+  <circle cx="256" cy="256" r="236" fill="none" stroke="#bac8b1" stroke-width="1.5" stroke-opacity="0.08" />
+  <circle cx="256" cy="256" r="216" fill="none" stroke="#7b9669" stroke-width="1" stroke-opacity="0.06" stroke-dasharray="3 6" />
+  <circle cx="256" cy="256" r="176" fill="none" stroke="#bac8b1" stroke-width="1" stroke-opacity="0.07" />
 
   <!-- Subtle 8-Fold Sacred Geometry Star in Background -->
-  <g opacity="0.04" stroke="#f6d268" stroke-width="1.5" fill="none">
+  <g opacity="0.05" stroke="#bac8b1" stroke-width="1.5" fill="none">
     <rect x="96" y="96" width="320" height="320" rx="4" />
     <rect x="96" y="96" width="320" height="320" rx="4" transform="rotate(45 256 256)" />
   </g>
 
-  <!-- Central Ambient Golden Glow -->
-  <circle cx="270" cy="250" r="140" fill="#f59e0b" opacity="0.12" filter="blur(35px)" />
+  <!-- Central Ambient Jade Glow -->
+  <circle cx="270" cy="250" r="140" fill="#7b9669" opacity="0.12" filter="blur(35px)" />
 
-  <!-- 3D Sculptured Golden Crescent Moon (Hilal) -->
+  <!-- 3D Sculptured Pale Sage Crescent Moon (Hilal) -->
   <path
     d="${crescentPath}"
     fill="url(#goldGradient)"
@@ -115,20 +115,20 @@ const masterAppIconSvg = `
   <path
     d="${crescentPath}"
     fill="none"
-    stroke="#fffbe8"
+    stroke="#ffffff"
     stroke-width="1.5"
     stroke-opacity="0.35"
   />
 
   <!-- 8-Pointed Islamic Star (Rub el Hizb) -->
   <g filter="url(#shadowStar)">
-    <!-- Outer Gold Faceted Star -->
+    <!-- Outer Jade Foil Star -->
     <polygon
       points="${starOuterPoints}"
       fill="url(#goldGradient)"
     />
 
-    <!-- Inner Emerald Gemstone Facet -->
+    <!-- Inner Jade Core Facet -->
     <polygon
       points="${starInnerPoints}"
       fill="url(#emeraldCore)"
@@ -145,18 +145,18 @@ const faviconSvg = `
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
   <defs>
     <radialGradient id="favBg" cx="45%" cy="40%" r="65%">
-      <stop offset="0%" stop-color="#0c3830" />
-      <stop offset="100%" stop-color="#020d0b" />
+      <stop offset="0%" stop-color="#1e271c" />
+      <stop offset="100%" stop-color="#0c100b" />
     </radialGradient>
     <linearGradient id="favGold" x1="10%" y1="10%" x2="90%" y2="90%">
-      <stop offset="0%" stop-color="#fffbe8" />
-      <stop offset="35%" stop-color="#fde047" />
-      <stop offset="70%" stop-color="#f59e0b" />
-      <stop offset="100%" stop-color="#b45309" />
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="35%" stop-color="#e6e6e6" />
+      <stop offset="70%" stop-color="#bac8b1" />
+      <stop offset="100%" stop-color="#7b9669" />
     </linearGradient>
     <linearGradient id="favEmerald" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#a7f3d0" />
-      <stop offset="100%" stop-color="#059669" />
+      <stop offset="0%" stop-color="#bac8b1" />
+      <stop offset="100%" stop-color="#404e3b" />
     </linearGradient>
   </defs>
 
@@ -187,28 +187,28 @@ const ogCardSvg = `
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
   <defs>
     <radialGradient id="ogBg" cx="30%" cy="35%" r="75%">
-      <stop offset="0%" stop-color="#0c3a32" />
-      <stop offset="50%" stop-color="#051c18" />
-      <stop offset="100%" stop-color="#020a08" />
+      <stop offset="0%" stop-color="#1e271c" />
+      <stop offset="50%" stop-color="#141b12" />
+      <stop offset="100%" stop-color="#0c100b" />
     </radialGradient>
 
     <linearGradient id="ogGold" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#fffbe8" />
-      <stop offset="25%" stop-color="#fde047" />
-      <stop offset="60%" stop-color="#f59e0b" />
-      <stop offset="100%" stop-color="#b45309" />
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="25%" stop-color="#e6e6e6" />
+      <stop offset="60%" stop-color="#bac8b1" />
+      <stop offset="100%" stop-color="#7b9669" />
     </linearGradient>
 
     <linearGradient id="ogEmerald" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#a7f3d0" />
-      <stop offset="50%" stop-color="#34d399" />
-      <stop offset="100%" stop-color="#059669" />
+      <stop offset="0%" stop-color="#bac8b1" />
+      <stop offset="50%" stop-color="#7b9669" />
+      <stop offset="100%" stop-color="#404e3b" />
     </linearGradient>
 
     <linearGradient id="ogBorder" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#f6d268" stop-opacity="0.4" />
-      <stop offset="50%" stop-color="#34d399" stop-opacity="0.15" />
-      <stop offset="100%" stop-color="#d97706" stop-opacity="0.35" />
+      <stop offset="0%" stop-color="#bac8b1" stop-opacity="0.35" />
+      <stop offset="50%" stop-color="#7b9669" stop-opacity="0.2" />
+      <stop offset="100%" stop-color="#404e3b" stop-opacity="0.35" />
     </linearGradient>
   </defs>
 
@@ -219,8 +219,8 @@ const ogCardSvg = `
   <rect x="24" y="24" width="1152" height="582" rx="28" fill="none" stroke="url(#ogBorder)" stroke-width="2" />
 
   <!-- Ambient Glow -->
-  <circle cx="280" cy="315" r="180" fill="#f59e0b" opacity="0.12" filter="blur(50px)" />
-  <circle cx="220" cy="315" r="160" fill="#10b981" opacity="0.1" filter="blur(60px)" />
+  <circle cx="280" cy="315" r="180" fill="#7b9669" opacity="0.15" filter="blur(50px)" />
+  <circle cx="220" cy="315" r="160" fill="#bac8b1" opacity="0.1" filter="blur(60px)" />
 
   <!-- Left Icon Emblem: Crescent & Star -->
   <g transform="translate(10, 80) scale(0.92)">
@@ -240,69 +240,69 @@ const ogCardSvg = `
   </g>
 
   <!-- Right Side Content -->
-  <!-- Badge: Ramadan 1447 AH -->
+  <!-- Badge: 1448 AH -->
   <g transform="translate(490, 140)">
-    <rect x="0" y="0" width="260" height="38" rx="19" fill="rgba(52, 211, 153, 0.12)" stroke="rgba(52, 211, 153, 0.35)" stroke-width="1.5" />
-    <text x="130" y="24" text-anchor="middle" fill="#34d399" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="700" letter-spacing="0.14em">
-      ✦ RAMADAN 1447 AH
+    <rect x="0" y="0" width="230" height="38" rx="19" fill="rgba(123, 150, 105, 0.16)" stroke="rgba(186, 200, 177, 0.35)" stroke-width="1.5" />
+    <text x="115" y="24" text-anchor="middle" fill="#bac8b1" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="700" letter-spacing="0.14em">
+      ✦ 1448 AH • LIVE
     </text>
   </g>
 
   <!-- Main Title: Iftyar -->
-  <text x="490" y="260" fill="url(#ogGold)" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="88" font-weight="800" letter-spacing="-0.03em">
+  <text x="490" y="260" fill="url(#ogGold)" font-family="'Mark Pro Bold', 'Mark Pro', -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif" font-size="88" font-weight="800" letter-spacing="-0.03em">
     Iftyar
   </text>
 
   <!-- Arabic Calligraphy -->
-  <text x="760" y="252" fill="rgba(246, 210, 104, 0.6)" font-family="'Amiri', 'Traditional Arabic', serif" font-size="52" font-weight="700">
+  <text x="760" y="252" fill="rgba(186, 200, 177, 0.7)" font-family="'Amiri', 'Traditional Arabic', serif" font-size="54" font-weight="700">
     إِفْطَار
   </text>
 
   <!-- Subtitle -->
-  <text x="490" y="325" fill="#e6edf3" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="26" font-weight="600" letter-spacing="-0.01em">
-    Ramadan Countdown &amp; Prophetic Wisdom
+  <text x="490" y="325" fill="#e6e6e6" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="26" font-weight="600" letter-spacing="-0.01em">
+    Prayer Times, Fasting &amp; Prophetic Wisdom
   </text>
 
-  <text x="490" y="375" fill="#94a3b8" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="19" font-weight="400">
-    Live Sehri &amp; Iftar countdown, local timetables, Qibla direction,
+  <text x="490" y="375" fill="#bac8b1" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="19" font-weight="400">
+    Accurate local timetables (Raheemiya &amp; Ahle Hadees),
   </text>
-  <text x="490" y="405" fill="#94a3b8" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="19" font-weight="400">
-    and 370+ authentic daily Prophetic reminders.
+  <text x="490" y="405" fill="#bac8b1" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="19" font-weight="400">
+    live countdowns, Qibla compass, and authentic daily Hadiths.
   </text>
 
   <!-- Highlight Badges -->
   <g transform="translate(490, 460)">
     <g transform="translate(0, 0)">
-      <rect x="0" y="0" width="180" height="42" rx="10" fill="rgba(15, 35, 41, 0.7)" stroke="rgba(246, 210, 104, 0.25)" stroke-width="1" />
-      <text x="90" y="26" text-anchor="middle" fill="#f6d268" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="14" font-weight="600">
-        ⏱️ Live Countdown
+      <rect x="0" y="0" width="180" height="42" rx="10" fill="rgba(26, 35, 24, 0.85)" stroke="rgba(186, 200, 177, 0.25)" stroke-width="1" />
+      <text x="90" y="26" text-anchor="middle" fill="#bac8b1" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="14" font-weight="600">
+        ⏱️ Live Timings
       </text>
     </g>
 
     <g transform="translate(195, 0)">
-      <rect x="0" y="0" width="180" height="42" rx="10" fill="rgba(15, 35, 41, 0.7)" stroke="rgba(52, 211, 153, 0.25)" stroke-width="1" />
-      <text x="90" y="26" text-anchor="middle" fill="#34d399" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="14" font-weight="600">
-        🧭 Qibla Direction
+      <rect x="0" y="0" width="180" height="42" rx="10" fill="rgba(26, 35, 24, 0.85)" stroke="rgba(123, 150, 105, 0.35)" stroke-width="1" />
+      <text x="90" y="26" text-anchor="middle" fill="#7b9669" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="14" font-weight="600">
+        🧭 Qibla Compass
       </text>
     </g>
 
     <g transform="translate(390, 0)">
-      <rect x="0" y="0" width="195" height="42" rx="10" fill="rgba(15, 35, 41, 0.7)" stroke="rgba(246, 210, 104, 0.25)" stroke-width="1" />
-      <text x="97" y="26" text-anchor="middle" fill="#f6d268" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="14" font-weight="600">
-        📖 370+ Reminders
+      <rect x="0" y="0" width="195" height="42" rx="10" fill="rgba(26, 35, 24, 0.85)" stroke="rgba(186, 200, 177, 0.25)" stroke-width="1" />
+      <text x="97" y="26" text-anchor="middle" fill="#bac8b1" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="14" font-weight="600">
+        📖 370+ Hadiths
       </text>
     </g>
   </g>
 
   <!-- URL Branding -->
-  <text x="1110" y="555" text-anchor="end" fill="rgba(255,255,255,0.4)" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="15" font-weight="500">
-    iftyar.com
+  <text x="1110" y="555" text-anchor="end" fill="rgba(230,230,230,0.6)" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="16" font-weight="600" letter-spacing="0.02em">
+    iftyar.vercel.app
   </text>
 </svg>
 `
 
 async function generateAll() {
-  console.log('Generating high-end professional icons and favicons...')
+  console.log('Generating Iftyar OpenGraph preview image (preserving existing favicons)...')
 
   // 1. Write favicon.svg
   const svgFaviconPath = path.join(publicDir, 'favicon.svg')
@@ -360,14 +360,13 @@ async function generateAll() {
   console.log('✓ Wrote favicon.ico')
 
   // 9. og-image.png (1200x630 share preview)
+  // og-image.png (1200x630 share preview for WhatsApp / Twitter / OpenGraph)
   const ogBuffer = Buffer.from(ogCardSvg)
   await sharp(ogBuffer)
     .resize(1200, 630)
     .png({ quality: 95 })
     .toFile(path.join(publicDir, 'og-image.png'))
   console.log('✓ Wrote og-image.png (1200x630)')
-
-  console.log('\nAll icons, favicons & share preview generated with professional polish! ✨')
 }
 
 generateAll().catch((err) => {

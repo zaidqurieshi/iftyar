@@ -46,7 +46,7 @@ export default function AppShell() {
 
   return (
     <div className="app-shell">
-      {/* Ambient Floating Motion Glow Orbs */}
+      {/* Ambient Floating Motion Glow Orbs (hidden via CSS for agency look) */}
       <div className="ambient-bg" aria-hidden="true">
         <motion.div
           className="ambient-orb ambient-orb--emerald"
@@ -94,9 +94,9 @@ export default function AppShell() {
               transition={{ type: 'spring', stiffness: 350, damping: 20 }}
             >
               <svg width="20" height="20" viewBox="0 0 512 512" fill="none">
-                <path d="M 176 170 A 80 80 0 0 1 336 170 Z" fill="#090a0f" />
-                <path d="M 130 170 L 382 170 L 382 410 L 130 410 Z" fill="#090a0f" />
-                <path d="M 176 170 L 336 170 L 336 380 L 176 380 Z" fill="#ffd60a" />
+                <path d="M 176 170 A 80 80 0 0 1 336 170 Z" fill="#121711" />
+                <path d="M 130 170 L 382 170 L 382 410 L 130 410 Z" fill="#121711" />
+                <path d="M 176 170 L 336 170 L 336 380 L 176 380 Z" fill="#34d399" />
               </svg>
             </motion.span>
             <div className="brand-title-wrap">

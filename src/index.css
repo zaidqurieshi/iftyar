@@ -1,53 +1,139 @@
+@font-face {
+  font-family: 'Mark Pro Bold';
+  src: local('Mark Pro Bold'), local('MarkPro-Bold'), local('Mark Pro-Bold'), local('Mark Pro');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Mark Pro';
+  src: local('Mark Pro'), local('MarkPro');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
 :root {
   --font-sans: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'SF Pro', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  --font-brand: 'Mark Pro Bold', 'Mark Pro', -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', Arial, sans-serif;
   --font-serif: 'RoxboroughCF', 'Amiri', Georgia, serif;
   --font-arabic: 'Amiri', 'Noto Naskh Arabic', Georgia, serif;
 
   font-family: var(--font-sans);
   line-height: 1.5;
   font-weight: 400;
-  color: #f5f5f7;
-  background-color: #000000;
+  color: #e6e6e6;
+  background-color: #0e130d;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color-scheme: dark;
 
-  /* ───── Apple Obsidian & San Francisco Translucent Palette ───── */
-  --bg-deep: #090a0f;
-  --bg-surface: #12151e;
+  /* ───── Jade Pebble Morning Palette — Modern Agency System ───── */
+  /* #404E3B — Deep Forest Jade (base environment, dark card tints & shadows) */
+  /* #404E3B — Forest Jade (base environment, dark card tints & shadows) */
+  /* #7B9669 — Jade Green (primary vital accent, active elements & focus states) */
+  /* #BAC8B1 — Pale Sage Mist (refined highlight, dates, badges & borders) */
+  /* #BAC8B1 — Pale Sage (refined highlight, dates, badges & borders) */
+  /* #6C8480 — Slate Eucalyptus (secondary accent & atmospheric cool depth) */
+  /* #E6E6E6 — Pebble Gray (clean typography & crisp contrast) */
+  /* ───── Iftyar Emerald & Gold Studio Theme ───── */
+  --color-emerald: #22c55e;
+  --color-emerald-light: #34d399;
+  --color-emerald-dark: #15803d;
+  --color-gold: #facc15;
+  --color-amber: #f59e0b;
+  --color-pebble: #f3f4f6;
+
+  --bg-deep: #0e130d;
+  --bg-surface: #141a12;
+  --bg-surface-elevated: #182016;
+  --glass-card: #141a12;
+  --color-forest: #404e3b;
+  --color-jade: #7b9669;
+  --color-sage: #bac8b1;
+  --color-slate: #6c8480;
+  --color-pebble: #e6e6e6;
+
+  --bg-deep: #0c110b;
+  --bg-surface: #131a12;
+  --bg-surface-elevated: #182217;
+  --glass-card: #131a12;
+  --bg-deep: #070b08;
+  --bg-surface: #0e1610;
+  --bg-surface-elevated: #131f16;
+  --glass-card: #0e1610;
   
-  --glass-bg: rgba(255, 255, 255, 0.04);
-  --glass-bg-hover: rgba(255, 255, 255, 0.07);
-  --glass-bg-strong: rgba(255, 255, 255, 0.09);
-  --glass-card: rgba(22, 26, 36, 0.65);
+  --glass-bg: rgba(230, 230, 230, 0.025);
+  --glass-bg-hover: rgba(230, 230, 230, 0.05);
+  --glass-bg-strong: rgba(230, 230, 230, 0.08);
+  --glass-bg: rgba(255, 255, 255, 0.025);
+  --glass-bg-hover: rgba(255, 255, 255, 0.05);
+  --glass-bg-strong: rgba(255, 255, 255, 0.08);
   
-  --glass-border: rgba(255, 255, 255, 0.1);
-  --glass-border-strong: rgba(255, 255, 255, 0.2);
-  --glass-border-gold: rgba(255, 214, 10, 0.25);
-  --glass-border-emerald: rgba(48, 209, 88, 0.25);
+  --glass-border: rgba(186, 200, 177, 0.1);
+  --glass-border-strong: rgba(186, 200, 177, 0.18);
+  --glass-border-gold: rgba(186, 200, 177, 0.22);
+  --glass-border-emerald: rgba(123, 150, 105, 0.25);
+  --glass-border: rgba(186, 200, 177, 0.12);
+  --glass-border-strong: rgba(186, 200, 177, 0.22);
+  --glass-border-gold: rgba(186, 200, 177, 0.28);
+  --glass-border-emerald: rgba(123, 150, 105, 0.32);
+  --glass-border-slate: rgba(108, 132, 128, 0.3);
+  --glass-border-forest: rgba(64, 78, 59, 0.4);
+  --glass-border: rgba(34, 197, 94, 0.16);
+  --glass-border-strong: rgba(34, 197, 94, 0.28);
+  --glass-border-emerald: rgba(34, 197, 94, 0.38);
+  --glass-border-gold: rgba(245, 158, 11, 0.32);
 
-  --text: #f5f5f7;
-  --text-soft: #8e8e93;
-  --text-muted: #6e6e73;
-  --text-dim: #48484a;
+  --text: #e6e6e6;
+  --text-soft: #bac8b1;
+  --text-muted: #859880;
+  --text-dim: #546450;
+  --text-slate: #8da4a1;
+  --text: #f3f4f6;
+  --text-soft: #a7f3d0;
+  --text-muted: #86efac;
+  --text-dim: #059669;
+  --text-slate: #94a3b8;
 
-  --accent: #30d158;
-  --accent-strong: #30d158;
-  --accent-glow: rgba(48, 209, 88, 0.25);
+  --accent: #7b9669;
+  --accent-strong: #8fa97e;
+  --accent-glow: rgba(123, 150, 105, 0.15);
+  --accent-glow: rgba(123, 150, 105, 0.22);
+  --accent: #22c55e;
+  --accent-strong: #34d399;
+  --accent-glow: rgba(34, 197, 94, 0.25);
 
-  --gold: #ffd60a;
-  --gold-strong: #ffd60a;
-  --gold-soft: #ffe766;
-  --gold-glow: rgba(255, 214, 10, 0.25);
+  --gold: #bac8b1;
+  --gold-strong: #bac8b1;
+  --gold-soft: #d8e2d4;
+  --gold-glow: rgba(186, 200, 177, 0.15);
+  --gold-strong: #c8d4c1;
+  --gold-soft: #dbe3d6;
+  --gold-glow: rgba(186, 200, 177, 0.18);
+  --gold: #facc15;
+  --gold-strong: #f59e0b;
+  --gold-soft: #fef08a;
+  --gold-glow: rgba(245, 158, 11, 0.22);
 
-  --sapphire: #64d2ff;
+  --sapphire: #6c8480;
+  --slate: #6c8480;
+  --forest: #404e3b;
+  --pebble: #e6e6e6;
 
-  --shadow-card: 0 12px 32px rgba(0, 0, 0, 0.45);
-  --shadow-inner: inset 0 1px 0 rgba(255, 255, 255, 0.12);
-  --shadow-glow-emerald: 0 0 24px rgba(48, 209, 88, 0.18);
-  --shadow-glow-gold: 0 0 24px rgba(255, 214, 10, 0.18);
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.28), 0 8px 24px -4px rgba(0, 0, 0, 0.38);
+  --shadow-inner: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  --shadow-glow-emerald: none;
+  --shadow-glow-gold: none;
+  --shadow-glow-emerald: 0 0 20px rgba(123, 150, 105, 0.25);
+  --shadow-glow-gold: 0 0 20px rgba(186, 200, 177, 0.2);
+  --shadow-card: 0 4px 20px -2px rgba(0, 0, 0, 0.5), 0 0 1px 1px rgba(34, 197, 94, 0.12);
+  --shadow-inner: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  --shadow-glow-emerald: 0 0 24px rgba(34, 197, 94, 0.3);
+  --shadow-glow-gold: 0 0 24px rgba(245, 158, 11, 0.25);
 }
 
 /* ───── Box reset & base ───── */
@@ -68,12 +154,13 @@ body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
-  background-color: var(--bg-deep);
+  background-color: #070b08;
   background-image:
-    radial-gradient(ellipse 65% 45% at 50% -10%, rgba(48, 209, 88, 0.12), transparent 70%),
-    radial-gradient(ellipse 50% 35% at 90% 20%, rgba(255, 214, 10, 0.08), transparent 60%),
-    radial-gradient(ellipse 60% 40% at 10% 80%, rgba(100, 210, 255, 0.07), transparent 70%),
-    linear-gradient(180deg, #07080c 0%, #0d1017 50%, #090a0f 100%);
+    radial-gradient(ellipse 70% 50% at 50% -10%, rgba(34, 197, 94, 0.18), transparent 70%),
+    radial-gradient(ellipse 50% 35% at 90% 20%, rgba(245, 158, 11, 0.1), transparent 60%),
+    linear-gradient(rgba(34, 197, 94, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(34, 197, 94, 0.035) 1px, transparent 1px);
+  background-size: 100% 100%, 100% 100%, 36px 36px, 36px 36px;
   background-attachment: fixed;
   color: var(--text);
   -webkit-font-smoothing: antialiased;
@@ -163,7 +250,7 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Selection */
 ::selection {
-  background: rgba(48, 209, 88, 0.35);
+  background: rgba(123, 150, 105, 0.45);
   color: #fff;
 }
 

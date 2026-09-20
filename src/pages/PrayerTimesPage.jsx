@@ -86,32 +86,38 @@ export default function PrayerTimesPage({ location }) {
 
   return (
     <div className="page-stack">
-      {/* Header Spotlight Card */}
-      <GlassCard className="hero-card" static>
-        <div className="hero-card__header">
-          <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', marginBottom: '0.2rem' }}>
-              <span className="location-pill__dot" />
-              <span className="eyebrow eyebrow--gold">Daily Schedule</span>
+      {/* Modern Agency Hero Section (Unboxed, clean hierarchy) */}
+      <section className="hero-section">
+        <div className="hero-section__header">
+          <div className="hero-section__title-wrap">
+            <div className="hero-section__badge-row">
+              <span className="chip chip--slate">
+                <span className="location-pill__dot" />
+                Daily Schedule
+              </span>
             </div>
-            <h2 className="hero-card__title">Prayer Times</h2>
+            <h1 className="hero-section__title">Prayer Times</h1>
           </div>
           <span className="chip chip--gold">{dateFormatter.format(now)}</span>
         </div>
 
-        <div className="hero-card__meta">
-          <div className="meta-box">
-            <span className="eyebrow">Gregorian Date</span>
-            <span className="meta-value">{dateFormatter.format(now)}</span>
+        {/* Unboxed Date Bar with delicate divider */}
+        <div className="hero-dates-bar">
+          <div className="hero-date-cell">
+            <span className="eyebrow eyebrow--slate">Gregorian Date</span>
+            <span className="hero-date-value">{dateFormatter.format(now)}</span>
           </div>
-          <div className="meta-box">
-            <span className="eyebrow">Hijri Date</span>
-            <span className="meta-value">{formatHijri(now, locationTimeZone)}</span>
+          <div className="hero-date-divider" />
+          <div className="hero-date-cell" style={{ textAlign: 'right' }}>
+            <span className="eyebrow eyebrow--slate">Hijri Date</span>
+            <span className="hero-date-value" style={{ color: 'var(--color-emerald-light)' }}>
+              {formatHijri(now, locationTimeZone)}
+            </span>
           </div>
         </div>
 
-        {/* Next Prayer Spotlight */}
-        <div className="next-prayer-spotlight" style={{ marginTop: '1.25rem' }}>
+        {/* Standalone Next Prayer Spotlight Card */}
+        <div className="next-prayer-spotlight">
           <div className="next-prayer-info">
             <span className="eyebrow eyebrow--emerald">Up Next</span>
             <h3 className="next-prayer-title">{nextPrayer.name}</h3>
@@ -121,17 +127,17 @@ export default function PrayerTimesPage({ location }) {
           </div>
 
           <div className="next-prayer-countdown-wrap">
-            <span className="eyebrow" style={{ textAlign: 'right' }}>Countdown</span>
+            <span className="eyebrow eyebrow--slate" style={{ textAlign: 'right' }}>Countdown</span>
             <div className="next-prayer-countdown">
               <span>{String(countdownHours).padStart(2, '0')}</span>
-              <span>:</span>
+              <span style={{ opacity: 0.6 }}>:</span>
               <span>{String(countdownMinutes).padStart(2, '0')}</span>
-              <span>:</span>
+              <span style={{ opacity: 0.6 }}>:</span>
               <span>{String(countdownSeconds).padStart(2, '0')}</span>
             </div>
           </div>
         </div>
-      </GlassCard>
+      </section>
 
       {/* Calculation Method Selector */}
       <MethodSelector selectedMethod={selectedMethod} onMethodChange={setSelectedMethod} />

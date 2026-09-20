@@ -7,13 +7,15 @@ import {
 
 const STORAGE_KEY = 'iftyar.calculationMethod'
 const MANUAL_KEY = 'iftyar.calculationMethodManual'
+const LEGACY_STORAGE_KEY = 'meeqat.calculationMethod'
+const LEGACY_MANUAL_KEY = 'meeqat.calculationMethodManual'
 
 function readStoredMethodId() {
   if (typeof window === 'undefined') {
     return DEFAULT_METHOD_ID
   }
 
-  const saved = window.localStorage.getItem(STORAGE_KEY)
+  const saved = window.localStorage.getItem(STORAGE_KEY) || window.localStorage.getItem(LEGACY_STORAGE_KEY)
   if (saved && CALCULATION_METHODS.some((method) => method.id === saved)) {
     return saved
   }
@@ -32,7 +34,7 @@ export function useMethodState(location = null) {
   useEffect(() => {
     if (!location || typeof window === 'undefined') return
 
-    const isManual = window.localStorage.getItem(MANUAL_KEY) === 'true'
+    const isManual = window.localStorage.getItem(MANUAL_KEY) === 'true' || window.localStorage.getItem(LEGACY_MANUAL_KEY) === 'true'
     if (!isManual && typeof location.lat === 'number' && typeof location.lng === 'number') {
       const recommended = getDefaultMethodForCoordinates(location.lat, location.lng, location.countryCode)
       if (recommended && recommended !== methodId) {

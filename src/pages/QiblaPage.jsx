@@ -1,12 +1,37 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
-import { motion, AnimatePresence } from 'motion/react'
+import { motion } from 'motion/react'
 import GlassCard from '../components/GlassCard'
 import { getQiblaDisplay } from '../services/qiblaService'
-import { KaabaIcon, LocationIcon, CompassIcon } from '../components/Icons'
+import { KaabaIcon, LocationIcon } from '../components/Icons'
+
+function SensoryKaabaIcon({ size = 20 }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      {/* Central dome with minarets matching reference */}
+      <path d="M12 3c-2.2 2-3 4.2-3 6h6c0-1.8-.8-4-3-6Z" fill="currentColor" />
+      <path d="M9 9v11h6V9" />
+      <path d="M6 10v10" />
+      <path d="M18 10v10" />
+      <path d="M5 10h2" />
+      <path d="M17 10h2" />
+      <path d="M11 20v-3a1 1 0 0 1 2 0v3" />
+    </svg>
+  )
+}
 
 export default function QiblaPage({ location }) {
   const [deviceHeading, setDeviceHeading] = useState(null)
-  const [hasSensorActive, setHasSensorActive] = useState(false)
+  const [, setHasSensorActive] = useState(false)
+  const [simulatedAligned, setSimulatedAligned] = useState(false)
   const [permissionState, setPermissionState] = useState(() => {
     if (typeof window === 'undefined') return 'unknown'
     if (
@@ -46,7 +71,6 @@ export default function QiblaPage({ location }) {
   useEffect(() => {
     if (typeof window === 'undefined') return
 
-    // On iOS 13+, orientation requires user gesture via requestCompassPermission
     if (
       typeof DeviceOrientationEvent !== 'undefined' &&
       typeof DeviceOrientationEvent.requestPermission === 'function'
@@ -80,28 +104,32 @@ export default function QiblaPage({ location }) {
         if (response === 'granted') {
           setPermissionState('granted')
           window.addEventListener('deviceorientation', handleOrientation, true)
+          return true
         } else {
           setPermissionState('denied')
-          setErrorMessage('Compass permission was denied. Please allow motion & orientation access in your device settings.')
+          setErrorMessage('Compass permission denied. Motion access needed.')
+          return false
         }
       } else {
-        // Fallback or Android manual trigger
         if ('ondeviceorientationabsolute' in window) {
           window.addEventListener('deviceorientationabsolute', handleOrientation, true)
         }
         window.addEventListener('deviceorientation', handleOrientation, true)
         setPermissionState('granted')
+        return true
       }
     } catch (err) {
       setErrorMessage(err?.message || 'Failed to initialize device compass.')
       setPermissionState('denied')
+      return false
     }
   }
 
-  // Calculate whether currently facing Kaaba (within ±5 degrees)
+  // Calculate whether facing Kaaba (within ±5 degrees or simulated)
   const isFacingKaaba =
-    deviceHeading !== null &&
-    (qibla.relativeHeading <= 5 || qibla.relativeHeading >= 355)
+    simulatedAligned ||
+    (deviceHeading !== null &&
+      (qibla.relativeHeading <= 5 || qibla.relativeHeading >= 355))
 
   // Trigger gentle haptic when aligned
   useEffect(() => {
@@ -116,11 +144,29 @@ export default function QiblaPage({ location }) {
     }
   }, [isFacingKaaba])
 
+  const handleAlignClick = async () => {
+    if (permissionState === 'prompt') {
+      const granted = await requestCompassPermission()
+      if (!granted) {
+        setSimulatedAligned((prev) => !prev)
+      }
+    } else {
+      setSimulatedAligned((prev) => !prev)
+    }
+  }
+
   // Needles and dials rotation
-  // Outer compass rose rotates with -deviceHeading so 'N' points towards physical North
-  const dialRotation = deviceHeading !== null ? -deviceHeading : 0
-  // Needle points towards Kaaba: relativeHeading on live compass, or bearing if static
-  const needleRotation = deviceHeading !== null ? qibla.relativeHeading : qibla.bearing
+  const dialRotation = simulatedAligned
+    ? -qibla.bearing
+    : deviceHeading !== null
+      ? -deviceHeading
+      : 0
+
+  const needleRotation = simulatedAligned
+    ? 0
+    : deviceHeading !== null
+      ? qibla.relativeHeading
+      : qibla.bearing
 
   // Distance to Mecca in km
   const meccaLat = 21.422487
@@ -136,83 +182,34 @@ export default function QiblaPage({ location }) {
 
   return (
     <div className="page-stack">
-      <GlassCard className="panel-card qibla-card">
-        <div className="hero-card__header" style={{ width: '100%', marginBottom: '0.5rem' }}>
-          <div>
-            <span className="eyebrow eyebrow--gold">Kaaba Finder</span>
-            <h2 style={{ fontSize: '1.6rem' }}>Qibla Direction</h2>
-          </div>
-          <span className="chip chip--gold">
-            Makkah: {distanceKm.toLocaleString()} km
-          </span>
+      <GlassCard className="panel-card qibla-card" static>
+        {/* Sensory Compass Header (matching reference image) */}
+        <div className="qibla-header">
+          <span className="qibla-eyebrow">QIBLA</span>
+          <h2 className="qibla-title">Sensory Compass</h2>
         </div>
 
-        <p style={{ color: 'var(--text-soft)', fontSize: '0.88rem', margin: '0.5rem 0 1rem' }}>
-          {hasSensorActive
-            ? 'Rotate your phone until the golden arrow points straight up.'
-            : `Face ${qibla.direction} (${Math.round(qibla.bearing)}°) towards Makkah al-Mukarramah.`}
-        </p>
-
-        {/* Alignment Status Banner */}
-        <div style={{ height: '36px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <AnimatePresence mode="wait">
-            {isFacingKaaba ? (
-              <motion.div
-                key="aligned"
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.9 }}
-                className="chip chip--emerald"
-                style={{
-                  padding: '0.35rem 0.9rem',
-                  fontSize: '0.85rem',
-                  fontWeight: 600,
-                  boxShadow: '0 0 16px rgba(52, 211, 153, 0.4)',
-                }}
-              >
-                ✦ Facing Kaaba ✦
-              </motion.div>
-            ) : hasSensorActive ? (
-              <motion.span
-                key="heading"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                style={{ fontSize: '0.82rem', color: 'var(--text-muted)' }}
-              >
-                Device Heading: {deviceHeading}° ({qibla.direction})
-              </motion.span>
-            ) : null}
-          </AnimatePresence>
-        </div>
-
-        {/* Animated Compass Dial */}
+        {/* Compass Dial Wrap */}
         <div className="compass-dial-wrap">
           <div className="compass-outer-rim" />
 
           {/* Compass Dial Degree Ring (Rotates so N aligns with physical North) */}
           <motion.svg
-            width="260"
-            height="260"
-            viewBox="0 0 260 260"
+            width="270"
+            height="270"
+            viewBox="0 0 270 270"
             style={{ position: 'absolute', inset: 0 }}
             animate={{ rotate: dialRotation }}
             transition={{ type: 'spring', damping: 20, stiffness: 100 }}
           >
-            <defs>
-              <linearGradient id="qiblaRingGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stopColor="#34d399" stopOpacity="0.4" />
-                <stop offset="100%" stopColor="#f6d268" stopOpacity="0.2" />
-              </linearGradient>
-            </defs>
-
-            <circle cx="130" cy="130" r="115" fill="none" stroke="url(#qiblaRingGrad)" strokeWidth="1" />
-            <circle cx="130" cy="130" r="95" fill="none" stroke="rgba(52, 211, 153, 0.08)" strokeWidth="1" strokeDasharray="3 5" />
+            <circle cx="135" cy="135" r="122" fill="none" stroke="rgba(34, 197, 94, 0.22)" strokeWidth="1" />
+            <circle cx="135" cy="135" r="98" fill="none" stroke="rgba(34, 197, 94, 0.16)" strokeWidth="1" strokeDasharray="3 4" />
 
             {/* Cardinal Markers */}
-            <text x="130" y="28" textAnchor="middle" fill="#34d399" fontSize="12" fontWeight="700" letterSpacing="0.1em">N</text>
-            <text x="238" y="134" textAnchor="middle" fill="var(--text-muted)" fontSize="11" fontWeight="600">E</text>
-            <text x="130" y="244" textAnchor="middle" fill="var(--text-muted)" fontSize="11" fontWeight="600">S</text>
-            <text x="22" y="134" textAnchor="middle" fill="var(--text-muted)" fontSize="11" fontWeight="600">W</text>
+            <text x="135" y="28" textAnchor="middle" fill="#22c55e" fontSize="13" fontWeight="700">N</text>
+            <text x="246" y="139" textAnchor="middle" fill="#64748b" fontSize="12" fontWeight="600">E</text>
+            <text x="135" y="250" textAnchor="middle" fill="#64748b" fontSize="12" fontWeight="600">S</text>
+            <text x="24" y="139" textAnchor="middle" fill="#64748b" fontSize="12" fontWeight="600">W</text>
           </motion.svg>
 
           {/* Compass Needle (Rotates to Qibla Pointer) */}
@@ -224,66 +221,91 @@ export default function QiblaPage({ location }) {
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
+              pointerEvents: 'none',
             }}
             animate={{ rotate: needleRotation }}
             transition={{ type: 'spring', damping: 22, stiffness: 120 }}
           >
-            {/* Pointer to Kaaba */}
-            <svg width="260" height="260" viewBox="0 0 260 260">
-              {/* North / Kaaba Arrow (Golden) */}
-              <polygon
-                points="130,22 140,120 130,110 120,120"
-                fill="url(#goldGradNeedle)"
-                filter={isFacingKaaba ? 'drop-shadow(0 0 14px rgba(246, 210, 104, 0.9))' : 'drop-shadow(0 0 8px rgba(246, 210, 104, 0.6))'}
-              />
-              {/* South Counter-weight (Dark Emerald) */}
-              <polygon
-                points="130,238 138,140 130,150 122,140"
-                fill="rgba(52, 211, 153, 0.35)"
-              />
+            <svg width="270" height="270" viewBox="0 0 270 270">
               <defs>
-                <linearGradient id="goldGradNeedle" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stopColor="#faebba" />
-                  <stop offset="50%" stopColor="#f6d268" />
-                  <stop offset="100%" stopColor="#b8860b" />
+                <linearGradient id="emeraldBeamGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                  <stop offset="0%" stopColor="#4ade80" />
+                  <stop offset="100%" stopColor="#16a34a" />
                 </linearGradient>
+                <linearGradient id="tailBeamGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                  <stop offset="0%" stopColor="rgba(34, 197, 94, 0.35)" />
+                  <stop offset="100%" stopColor="rgba(10, 25, 15, 0.05)" />
+                </linearGradient>
+                <filter id="emeraldGlow" x="-50%" y="-50%" width="200%" height="200%">
+                  <feGaussianBlur stdDeviation="4" result="coloredBlur" />
+                  <feMerge>
+                    <feMergeNode in="coloredBlur" />
+                    <feMergeNode in="SourceGraphic" />
+                  </feMerge>
+                </filter>
               </defs>
+
+              {/* Glowing Emerald North/Qibla Pointer Beam */}
+              <rect
+                x="131"
+                y="36"
+                width="8"
+                height="99"
+                rx="4"
+                fill="url(#emeraldBeamGrad)"
+                filter="url(#emeraldGlow)"
+              />
+
+              {/* Dark Translucent Counter-weight Tail */}
+              <rect
+                x="131"
+                y="135"
+                width="8"
+                height="72"
+                rx="4"
+                fill="url(#tailBeamGrad)"
+              />
             </svg>
           </motion.div>
 
-          {/* Center Hub Pin */}
-          <div className="compass-center-pin" />
+          {/* Center Amber/Gold Badge with Kaaba/Mosque Icon (ALWAYS visible, illuminates when matched) */}
+          <motion.div
+            className={`qibla-center-badge ${isFacingKaaba ? 'qibla-center-badge--matched' : ''}`}
+            animate={{
+              scale: isFacingKaaba ? [1, 1.1, 1] : 1,
+            }}
+            transition={{
+              repeat: isFacingKaaba ? Infinity : 0,
+              duration: 1.6,
+              ease: 'easeInOut',
+            }}
+          >
+            <SensoryKaabaIcon size={19} />
+          </motion.div>
         </div>
 
-        {/* Readout Metrics */}
-        <div className="qibla-readout">
-          <span className="qibla-bearing-num">{Math.round(qibla.bearing)}°</span>
-          <span className="qibla-direction-label">
-            Bearing towards Kaaba ({qibla.direction})
-          </span>
-        </div>
+        {/* Alignment Action / Status Button */}
+        <button
+          type="button"
+          className={`qibla-status-btn ${isFacingKaaba ? 'qibla-status-btn--aligned' : ''}`}
+          onClick={handleAlignClick}
+        >
+          {isFacingKaaba ? 'FACING KAABA' : 'TURN TO ALIGN'}
+        </button>
 
-        {/* Activate / Calibrate Button (shown when sensor not yet reading or iOS needs tap) */}
-        {!hasSensorActive && (
-          <div style={{ marginTop: '1.25rem', width: '100%', maxWidth: '20rem' }}>
-            <button
-              type="button"
-              className="calendar-action-btn"
-              style={{ width: '100%', justifyContent: 'center' }}
-              onClick={requestCompassPermission}
-            >
-              <CompassIcon size={18} />
-              <span>{permissionState === 'prompt' ? 'Enable Live Compass' : 'Calibrate Device Compass'}</span>
-            </button>
-            {errorMessage && (
-              <p style={{ fontSize: '0.78rem', color: '#f87171', marginTop: '0.5rem' }}>
-                {errorMessage}
-              </p>
-            )}
-          </div>
+        {/* Footnote */}
+        <p className="qibla-footnote">
+          Simulates the magnetometer. Vibrates gently on your phone when perfectly aligned.
+        </p>
+
+        {errorMessage && (
+          <p style={{ fontSize: '0.78rem', color: '#f87171', marginTop: '0.5rem' }}>
+            {errorMessage}
+          </p>
         )}
 
-        <div className="fasting-meta-grid" style={{ marginTop: '1.5rem' }}>
+        {/* Informational Readouts */}
+        <div className="fasting-meta-grid" style={{ marginTop: '2rem', width: '100%' }}>
           <div className="fasting-meta-card">
             <div className="fasting-meta-icon fasting-meta-icon--gold">
               <KaabaIcon size={22} />
@@ -299,8 +321,10 @@ export default function QiblaPage({ location }) {
               <LocationIcon size={20} />
             </div>
             <div className="fasting-meta-info">
-              <span className="eyebrow">Distance</span>
-              <strong className="fasting-meta-time" style={{ fontSize: '0.95rem' }}>{distanceKm.toLocaleString()} km</strong>
+              <span className="eyebrow">Distance &amp; Bearing</span>
+              <strong className="fasting-meta-time" style={{ fontSize: '0.95rem' }}>
+                {distanceKm.toLocaleString()} km • {Math.round(qibla.bearing)}° ({qibla.direction})
+              </strong>
             </div>
           </div>
         </div>

@@ -39,9 +39,7 @@ const ADHAN_METHOD_FACTORIES = {
   tehran: CalculationMethod.Tehran,
 }
 
-// Fiqah / fallback configuration for every organisation timetable published
-// on iftarkar.com. The `fallback*` fields are only used when a requested date
-// is not covered by the published table (the four Ramadan-only calendars).
+// Fiqah / fallback configuration for Raheemiya and Ahle Hadees
 const TABLE_METHOD_DEFS = {
   raheemiya: {
     school: 'Fiqah Hanafiya',
@@ -49,49 +47,14 @@ const TABLE_METHOD_DEFS = {
     fallbackAdhanMethod: 'karachi',
     fallbackMadhab: Madhab.Hanafi,
   },
-  etk: {
-    school: 'Fiqah Jaffaria',
-    region: 'Jammu & Kashmir — Srinagar',
-    fallbackAdhanMethod: 'tehran',
-  },
   ahlehadees: {
     school: 'Fiqah Ahle Hadees',
     region: 'Jammu & Kashmir — Srinagar',
     fallbackAdhanMethod: 'muslimWorldLeague',
   },
-  tsajk: {
-    school: 'Fiqah Hanafiya',
-    region: 'Jammu & Kashmir — Anantnag',
-    fallbackAdhanMethod: 'karachi',
-    fallbackMadhab: Madhab.Hanafi,
-  },
-  ajksa: {
-    school: 'Fiqah Jaffaria',
-    region: 'Jammu & Kashmir — Ramadan calendar',
-    fallbackAdhanMethod: 'tehran',
-  },
-  blr_juk: {
-    school: 'Fiqah Hanafi',
-    region: 'Bangalore, Karnataka — Ramadan calendar',
-    fallbackAdhanMethod: 'karachi',
-    fallbackMadhab: Madhab.Hanafi,
-  },
-  mumbai_jaset: {
-    school: 'Fiqah Hanafi',
-    region: 'Mumbai, Maharashtra — Ramadan calendar',
-    fallbackAdhanMethod: 'karachi',
-    fallbackMadhab: Madhab.Hanafi,
-  },
-  faridabad_haryana: {
-    school: 'Fiqah Hanafi',
-    region: 'Faridabad, Haryana — Ramadan calendar',
-    fallbackAdhanMethod: 'karachi',
-    fallbackMadhab: Madhab.Hanafi,
-  },
 }
 
-// The four Ramadan-only tables don't ship a `header` column list — derive one
-// from the first published row, ordered chronologically by wall-clock time.
+// Derive a column header list from the first published row
 function deriveHeader(timings) {
   const firstEntry = Object.values(timings)[0]
   return Object.keys(firstEntry)
@@ -125,53 +88,8 @@ const TABLE_METHODS = Object.keys(TABLE_METHOD_DEFS).map((id) => {
   }
 })
 
-const STANDARD_METHODS = [
-  {
-    id: 'muslimWorldLeague',
-    name: 'Muslim World League',
-    school: 'Fiqah Shafii',
-    region: 'Europe, Far East, parts of US',
-  },
-  {
-    id: 'egyptian',
-    name: 'Egyptian General Authority',
-    school: 'Fiqah Shafii',
-    region: 'Egypt, Africa, Syria, Iraq, Lebanon',
-  },
-  {
-    id: 'karachi',
-    name: 'University of Islamic Sciences',
-    school: 'Fiqah Hanafi',
-    region: 'Karachi, Pakistan & India',
-  },
-  {
-    id: 'uummAlQura',
-    name: 'Umm Al-Qura University',
-    school: 'Fiqah Hanbali',
-    region: 'Makkah, Saudi Arabia',
-  },
-  {
-    id: 'dubai',
-    name: 'Dubai Method',
-    school: 'Fiqah Maliki',
-    region: 'Dubai, UAE',
-  },
-  {
-    id: 'northAmerica',
-    name: 'Islamic Society of North America',
-    school: 'Fiqah Hanafi',
-    region: 'North America',
-  },
-].map((method) => ({
-  ...method,
-  description: `${method.name} — computed astronomically with the Adhan library.`,
-  source: 'adhan',
-  adhanMethodId: method.id,
-}))
-
-// All calculation methods: the eight organisation timetables published on
-// iftarkar.com, followed by the standard astronomical methods.
-export const CALCULATION_METHODS = [...TABLE_METHODS, ...STANDARD_METHODS]
+// Only Raheemiya and Ahle Hadees are supported
+export const CALCULATION_METHODS = TABLE_METHODS
 
 export const CALENDAR_SOURCES = TABLE_METHODS.map((method) => ({
   name: method.name,
@@ -316,19 +234,10 @@ function buildTableSchedule(method, lat, lng, date) {
 export function isTableMethodApplicable(methodId, lat, lng) {
   if (typeof lat !== 'number' || typeof lng !== 'number') return true
 
-  // Kashmir tables: raheemiya, etk, ahlehadees, tsajk, ajksa
-  const kashmirMethods = ['raheemiya', 'etk', 'ahlehadees', 'tsajk', 'ajksa']
+  // Kashmir tables: raheemiya, ahlehadees
+  const kashmirMethods = ['raheemiya', 'ahlehadees']
   if (kashmirMethods.includes(methodId)) {
     return lat >= 31 && lat <= 38 && lng >= 72 && lng <= 81
-  }
-  if (methodId === 'blr_juk') {
-    return lat >= 11 && lat <= 15 && lng >= 75 && lng <= 79
-  }
-  if (methodId === 'mumbai_jaset') {
-    return lat >= 17 && lat <= 21 && lng >= 71 && lng <= 75
-  }
-  if (methodId === 'faridabad_haryana') {
-    return lat >= 27 && lat <= 30 && lng >= 76 && lng <= 79
   }
   return true
 }
@@ -421,7 +330,7 @@ export function formatCountdownToText(dateValue, now = new Date()) {
 }
 
 export function getHijriPlaceholder() {
-  return '1447 AH • placeholder'
+  return '1448 AH • placeholder'
 }
 
 export function getPrayerStateLabel(lat, lng, now = new Date(), methodId = DEFAULT_METHOD_ID) {
@@ -626,60 +535,8 @@ export function getPrayerItem(lat, lng, key, date = new Date()) {
 /**
  * Returns the recommended prayer calculation method based on geographical coordinates.
  */
-export function getDefaultMethodForCoordinates(lat, lng, countryCode = '') {
-  if (typeof lat !== 'number' || typeof lng !== 'number') {
-    return DEFAULT_METHOD_ID
-  }
-
-  // Kashmir / Northern India region: Srinagar timetable (Raheemiya)
-  if (lat >= 31 && lat <= 38 && lng >= 72 && lng <= 81) {
-    return 'raheemiya'
-  }
-
-  // Bangalore region
-  if (lat >= 11 && lat <= 15 && lng >= 75 && lng <= 79) {
-    return 'blr_juk'
-  }
-
-  // Mumbai region
-  if (lat >= 17 && lat <= 21 && lng >= 71 && lng <= 75) {
-    return 'mumbai_jaset'
-  }
-
-  const cc = (countryCode || '').toUpperCase()
-
-  // Rest of India / South Asia
-  if (cc === 'IN' || (lat >= 8 && lat <= 36 && lng >= 68 && lng <= 90)) {
-    return 'raheemiya'
-  }
-
-  // North America (US / Canada)
-  if (cc === 'US' || cc === 'CA' || (lat >= 24 && lat <= 70 && lng >= -168 && lng <= -52)) {
-    return 'northAmerica'
-  }
-
-  // UAE / Oman / Qatar
-  if (cc === 'AE' || cc === 'OM' || cc === 'QA') {
-    return 'dubai'
-  }
-
-  // Saudi Arabia / Kuwait / Bahrain
-  if (cc === 'SA' || cc === 'KW' || cc === 'BH') {
-    return 'uummAlQura'
-  }
-
-  // Egypt / North Africa / Levant
-  if (['EG', 'LY', 'SD', 'SY', 'IQ', 'LB', 'JO'].includes(cc)) {
-    return 'egyptian'
-  }
-
-  // Pakistan / Afghanistan
-  if (cc === 'PK' || cc === 'AF') {
-    return 'karachi'
-  }
-
-  // Europe & International fallback
-  return 'muslimWorldLeague'
+export function getDefaultMethodForCoordinates() {
+  return DEFAULT_METHOD_ID
 }
 
 

@@ -22,9 +22,9 @@ function toAmPm(wallClock) {
   return `${displayHour}:${String(minutes).padStart(2, '0')} ${suffix}`
 }
 
-// 1. Method inventory: 8 iftarkar.com timetables + 6 standard methods
-assert.equal(CALCULATION_METHODS.length, 14, 'expected 14 calculation methods')
-assert.equal(CALENDAR_SOURCES.length, 8, 'expected 8 calendar sources')
+// 1. Method inventory: Raheemiya and Ahle Hadees only
+assert.equal(CALCULATION_METHODS.length, 2, 'expected 2 calculation methods')
+assert.equal(CALENDAR_SOURCES.length, 2, 'expected 2 calendar sources')
 assert.equal(DEFAULT_METHOD_ID, 'raheemiya')
 console.log('1. method inventory OK:', CALCULATION_METHODS.map((m) => m.id).join(', '))
 
@@ -60,38 +60,14 @@ assert.equal(raheemiya[0].time.toISOString(), '2026-01-01T00:38:00.000Z')
 console.log('3. IST instant conversion OK')
 
 // 4. Switching methods must change the prayer times
-const etk = getPrayerSchedule(SRINAGAR.lat, SRINAGAR.lng, jan1, 'etk')
-assert.equal(etk.length, 3, 'etk publishes fajr/zuhrain/maghribain only')
-assert.equal(etk[1].name, 'Zuhrain')
-assert.ok(raheemiya[0].time.getTime() !== etk[0].time.getTime(), 'fajr differs between orgs (6:08 vs 6:17)')
-
 const ahlehadees = getPrayerSchedule(SRINAGAR.lat, SRINAGAR.lng, jan1, 'ahlehadees')
 assert.ok(
   ahlehadees.find((r) => r.key === 'asr').time.getTime() !== raheemiya.find((r) => r.key === 'asr').time.getTime(),
   'asr differs between raheemiya and ahlehadees tables',
 )
+console.log('4. switching methods changes timings OK (Raheemiya vs Ahle Hadees)')
 
-const mwl = getPrayerSchedule(SRINAGAR.lat, SRINAGAR.lng, jan1, 'muslimWorldLeague')
-const isna = getPrayerSchedule(SRINAGAR.lat, SRINAGAR.lng, jan1, 'northAmerica')
-assert.equal(mwl.length, 6, 'adhan methods include sunrise')
-assert.ok(mwl.find((r) => r.key === 'isha').time.getTime() !== isna.find((r) => r.key === 'isha').time.getTime())
-assert.ok(mwl.find((r) => r.key === 'fajr').time.getTime() !== raheemiya.find((r) => r.key === 'fajr').time.getTime())
-console.log('4. switching methods changes timings OK')
-
-// 5. Feb 29 works for the 365-day table (etk)
-const etkFeb29 = getPrayerSchedule(SRINAGAR.lat, SRINAGAR.lng, new Date(2028, 1, 29, 12, 0), 'etk')
-assert.equal(etkFeb29.length, 3)
-console.log('5. Feb 29 fallback OK:', etkFeb29.map((r) => fmt(r)).join(' | '))
-
-// 6. Ramadan-only tables: inside window -> table row; outside -> adhan fallback
-const ajksaOffSeason = getPrayerSchedule(SRINAGAR.lat, SRINAGAR.lng, jan1, 'ajksa')
-assert.equal(ajksaOffSeason.length, 6, 'falls back to full adhan schedule outside Ramadan window')
-const ajksaRamadan = getPrayerSchedule(SRINAGAR.lat, SRINAGAR.lng, new Date(2026, 2, 1, 12, 0), 'ajksa')
-assert.equal(ajksaRamadan.length, 2, 'ajksa table publishes fajr + maghrib only')
-assert.equal(fmt(ajksaRamadan[0]), '5:38 AM', 'ajksa Mar 1 fajr matches published calendar')
-console.log('6. Ramadan-only table + fallback OK')
-
-// 7. next-prayer and sehri/iftar flows work for table methods
+// 5. next-prayer and sehri/iftar flows work for table methods
 const now = new Date()
 const next = getNextPrayer(SRINAGAR.lat, SRINAGAR.lng, now, 'raheemiya')
 assert.ok(next && next.time.getTime() > now.getTime())
